@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://respondeae.com.br
+
+# Sitemaps
+Sitemap: https://respondeae.com.br/sitemap.xml

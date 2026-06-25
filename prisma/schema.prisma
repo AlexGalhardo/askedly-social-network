@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+
+  is_seed Boolean @default(false)
+
+  is_admin Boolean @default(false)
+
+  name        String
+  nickname    String  @unique
+  email       String  @unique
+  password    String?
+  description String?
+  website     String?
+
+  public_questions_remaining_today    Int @default(10)
+  anonymous_questions_remaining_today Int @default(1)
+
+  pix_key String? @unique
+
+  avatar_url String? @unique
+
+  twitter   String?
+  instagram String?
+  youtube   String?
+  tiktok    String?
+  linkedin  String?
+  twitch    String?
+  facebook  String?
+  github    String?
+
+  reset_password_token            String?
+  reset_password_token_expires_at DateTime?
+
+  confirm_email_token            String?
+  confirm_email_token_expires_at DateTime?
+  confirmed_email                Boolean   @default(false)
+
+  api_key String @unique
+
+  privacy_is_private_profile                          Boolean @default(false)
+  privacy_accept_anonymous_questions                  Boolean @default(false)
+  privacy_show_anonymous_questions_public             Boolean @default(false)
+  privacy_show_questions_answered_only_to_followers   Boolean @default(false)
+  privacy_show_value_received_from_answering_question Boolean @default(false)
+  privacy_show_date_questions_was_answered            Boolean @default(false)
+  privacy_show_total_following_public                 Boolean @default(false)
+  privacy_show_total_followers_public                 Boolean @default(false)
+  privacy_show_total_questions_sent_public            Boolean @default(false)
+  privacy_show_likes_each_answer_public               Boolean @default(false)
+  privacy_show_dislikes_each_answer_public            Boolean @default(false)
+  privacy_show_total_likes_all_answers_public         Boolean @default(false)
+  privacy_show_total_questions_received_public        Boolean @default(false)
+  privacy_show_total_questions_answered_public        Boolean @default(false)
+
+  banned_first_time  Boolean   @default(false)
+  banned_second_time Boolean   @default(false)
+  banned_reason      String?
+  banned_until       DateTime?
+
+  created_at    DateTime  @default(now())
+  last_login_at DateTime?
+  updated_at    DateTime? @updatedAt
+  deleted_at    DateTime?
+
+  followers Follower[] @relation("UserFollowers")
+  following Follower[] @relation("UserFollowing")
+
+  follow_requests_sent     FollowRequest[] @relation("FollowRequestSender")
+  follow_requests_received FollowRequest[] @relation("FollowRequestReceiver")
+
+  questions_received Question[] @relation("QuestionOwner")
+  questions_sent     Question[] @relation("QuestionAsker")
+
+  blocked_users    UserBlock[] @relation("BlockerUser")
+  blocked_by_users UserBlock[] @relation("BlockedUser")
+
+  payment_withdraws PaymentWithdraw[]
+
+  @@map("users")
+}
+
+model UserBlock {
+  id String @id @default(uuid())
+
+  blocker_id String // Quem está bloqueando
+  blocked_id String // Quem está sendo bloqueado
+
+  created_at DateTime @default(now())
+
+  blocker User @relation("BlockerUser", fields: [blocker_id], references: [id], onDelete: Cascade)
+  blocked User @relation("BlockedUser", fields: [blocked_id], references: [id], onDelete: Cascade)
+
+  @@unique([blocker_id, blocked_id], name: "blocker_id_blocked_id")
+  @@map("user_blocks")
+}
+
+model Follower {
+  id String @id @default(uuid())
+
+  followerId  String
+  followingId String
+
+  follower  User @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([followerId, followingId])
+  @@map("followers")
+}
+
+model FollowRequest {
+  id String @id @default(uuid())
+
+  senderId   String
+  receiverId String
+
+  sender   User @relation("FollowRequestSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("FollowRequestReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([senderId, receiverId])
+  @@map("follow_requests")
+}
+
+model Question {
+  id String @id @default(uuid())
+
+  is_seed Boolean @default(false)
+
+  question_text String
+  answer_text   String?
+  answered_at   DateTime?
+
+  amount_paid Int
+
+  amount_already_withdraw Boolean @default(false)
+
+  asker_want_answer_to_be_private         Boolean @default(false)
+  asker_sent_anonymous_question           Boolean @default(false)
+  amount_paid_is_private                  Boolean @default(false)
+  onwer_wants_amount_paid_not_show_public Boolean @default(false)
+
+  owner_user_nickname    String
+  asked_by_user_nickname String
+
+  question_is_awaiting_answer Boolean @default(true)
+  question_answered           Boolean @default(false)
+  question_answer_was_recused Boolean @default(false)
+  question_answer_was_expired Boolean @default(false)
+
+  question_answer_recused_at DateTime?
+  question_answer_expired_at DateTime?
+
+  liked_by_users    String?
+  desliked_by_users String?
+
+  owner_reported_offensive_question  Boolean   @default(false)
+  onwer_reported_inadequate_question Boolean   @default(false)
+  onwer_reported_question_at         DateTime?
+
+  asker_reported_answer        Boolean   @default(false)
+  asker_reported_answer_reason String?
+  asker_reported_answer_at     DateTime?
+
+  payment_withdraw_id String?
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  webhook_id String            @unique
+  webhook    WebhookAbacatePay @relation(fields: [webhook_id], references: [id])
+
+  owner    User @relation("QuestionOwner", fields: [owner_user_nickname], references: [nickname], onDelete: Cascade)
+  asked_by User @relation("QuestionAsker", fields: [asked_by_user_nickname], references: [nickname], onDelete: Cascade)
+
+  payment_withdraw PaymentWithdraw? @relation(fields: [payment_withdraw_id], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+}
+
+model PaymentWithdraw {
+  id String @id @default(uuid())
+
+  user_id         String
+  user_nickname   String
+  send_to_pix_key String
+
+  amount_withdraw Int
+
+  user      User       @relation(fields: [user_id], references: [id])
+  questions Question[]
+
+  created_at DateTime @default(now())
+
+  @@map("payment_withdraws")
+}
+
+model WebhookAbacatePay {
+  id             String  @id @default(uuid())
+  is_seed        Boolean @default(false)
+  pix_id         String  @unique
+  status         String
+  amount         Int
+  fee            Int
+  method         String  @default("PIX")
+  kind           String
+  event_status   String
+  dev_mode       Boolean
+  complete_event String
+
+  question Question?
+
+  created_at DateTime @default(now())
+  userId     String?
+
+  @@map("webhooks_abacatepay")
+}
+
+model DeletedAccount {
+  id String @id @default(uuid())
+
+  is_seed Boolean @default(false)
+
+  user_id_was            String
+  name                   String
+  nickname               String
+  email                  String
+  account_was_created_at DateTime
+
+  created_at DateTime @default(now())
+
+  @@map("deleted_accounts")
+}
