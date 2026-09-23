@@ -1,0 +1,17 @@
+# Never let secrets or local-only state reach the Docker build context.
+.env
+.env.*
+!.env.example
+
+.git
+node_modules
+.next
+out
+build
+*.db
+*.db-journal
+
+.vscode
+.claude
+docs
+setups

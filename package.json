@@ -1,6 +1,6 @@
 {
   "name": "respondeae.com.br",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "license": "MIT",
   "packageManager": "bun@1.4.2",
@@ -107,6 +107,8 @@
     "zod": "4.6.5"
   },
   "devDependencies": {
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
     "@tailwindcss/typography": "0.5.20",
     "@types/node": "26.6.2",
     "@types/react": "19.3.0",

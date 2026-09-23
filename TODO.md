@@ -82,10 +82,11 @@ Decisão: pausar aqui e perguntar ao usuário se quer que eu tente esses 4 upgra
 
 ## Fase 7 — SemVer + Conventional Commits
 
-- [ ] Adicionar `"version": "1.0.0"` ao `package.json`
-- [ ] Criar `CHANGELOG.md` (Keep a Changelog + SemVer)
-- [ ] Adicionar commitlint (`@commitlint/cli` + `@commitlint/config-conventional`)
-- [ ] Commit (`chore: adopt semver and conventional commits`)
+- [x] Adicionar `"version": "1.0.0"` ao `package.json` (feito na Fase 1)
+- [x] Criar `CHANGELOG.md` (Keep a Changelog + SemVer)
+- [x] Adicionar commitlint (`@commitlint/cli` + `@commitlint/config-conventional`, pinados exatos) + `.husky/commit-msg`
+- [x] Testado: mensagem válida passa, mensagem inválida é rejeitada (`bunx commitlint`)
+- [x] Commit (`chore: adopt semver and conventional commits`)
 
 ## Fase 8 — Testes
 
