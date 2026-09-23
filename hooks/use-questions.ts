@@ -310,13 +310,7 @@ export function useAnswerQuestion() {
 
 export function useDeclineQuestion() {
 	return useMutation({
-		mutationFn: async ({
-			questionId,
-			nickname,
-		}: {
-			questionId: string;
-			nickname: string;
-		}) => {
+		mutationFn: async ({ questionId, nickname }: { questionId: string; nickname: string }) => {
 			const response = await fetch("/api/question/recused", {
 				method: "POST",
 				headers: {
@@ -345,13 +339,7 @@ export function useDeclineQuestion() {
 
 export function useDeleteQuestion() {
 	return useMutation({
-		mutationFn: async ({
-			questionId,
-			nickname,
-		}: {
-			questionId: string;
-			nickname: string;
-		}) => {
+		mutationFn: async ({ questionId, nickname }: { questionId: string; nickname: string }) => {
 			const response = await fetch("/api/question/delete", {
 				method: "POST",
 				headers: {

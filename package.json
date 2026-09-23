@@ -1,5 +1,13 @@
 {
   "name": "respondeae.com.br",
+  "version": "0.1.1",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "bun@1.4.2",
+  "engines": {
+    "bun": ">=1.4.2",
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
@@ -7,7 +15,7 @@
     "lint:next": "next lint",
     "lint": "biome check app/ --fix --unsafe",
     "format": "biome format app/ lib/ hooks/ contexts/ components/ prisma/ emails/ actions/ types/ --fix",
-    "husky": "npx husky",
+    "prepare": "husky",
     "prisma:generate:no-engine": "bunx prisma generate --no-engine",
     "prisma:generate": "bunx prisma generate",
     "prisma:migrate": "bunx prisma migrate dev",

@@ -35,13 +35,7 @@ export function useSentQuestions() {
 
 export function useReportAnswer() {
 	return useMutation({
-		mutationFn: async ({
-			questionId,
-			reason,
-		}: {
-			questionId: string;
-			reason: "offensive" | "inappropriate";
-		}) => {
+		mutationFn: async ({ questionId, reason }: { questionId: string; reason: "offensive" | "inappropriate" }) => {
 			await reportAnswer(questionId, reason);
 			return { questionId, reason };
 		},
@@ -56,13 +50,7 @@ export function useReportAnswer() {
 
 export function useLikeAnswer() {
 	return useMutation({
-		mutationFn: async ({
-			questionId,
-			nickname,
-		}: {
-			questionId: string;
-			nickname: string;
-		}) => {
+		mutationFn: async ({ questionId, nickname }: { questionId: string; nickname: string }) => {
 			await likeAnswer(questionId, nickname);
 			return { questionId };
 		},
@@ -74,13 +62,7 @@ export function useLikeAnswer() {
 
 export function useDislikeAnswer() {
 	return useMutation({
-		mutationFn: async ({
-			questionId,
-			nickname,
-		}: {
-			questionId: string;
-			nickname: string;
-		}) => {
+		mutationFn: async ({ questionId, nickname }: { questionId: string; nickname: string }) => {
 			await dislikeAnswer(questionId, nickname);
 			return { questionId };
 		},

@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
 
-const resend = new Resend(process.env.RESEND_API_KEY ?? "re_e26UwkM2_FeAy6n5Zr1NKf9sWrrt89a2F");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const contactSchema = z.object({
 	name: z
