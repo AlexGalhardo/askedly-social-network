@@ -1,6 +1,6 @@
 {
   "name": "respondeae.com.br",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "license": "MIT",
   "packageManager": "bun@1.4.2",
@@ -34,7 +34,7 @@
   },
   "lint-staged": {
     "*.{js,ts,cjs,mjs,d.cts,d.mts,json,jsonc}": [
-      "biome check --apply --no-errors-on-unmatched"
+      "biome check --write --no-errors-on-unmatched"
     ]
   },
   "dependencies": {
@@ -123,6 +123,7 @@
     "@types/react-dom": "19.3.0",
     "bun-types": "1.4.2",
     "husky": "9.1.7",
+    "lint-staged": "17.5.1",
     "postcss": "8.5.28",
     "prisma": "6.19.3",
     "tailwindcss": "4.3.3",

@@ -105,10 +105,12 @@ Decisão: pausar aqui e perguntar ao usuário se quer que eu tente esses 4 upgra
 
 ## Fase 9 — Husky
 
-- [ ] `pre-commit`: lint + format
-- [ ] `commit-msg`: validar Conventional Commits via commitlint
-- [ ] `pre-push`: rodar testes + build
-- [ ] Commit (`chore: update husky hooks for conventional commits and tests`)
+- [x] `pre-commit`: `bun run format` + `bunx lint-staged` (biome `--write`, sem `--unsafe`, só nos arquivos staged — evita travar todo commit nos ~31 erros de lint pré-existentes)
+- [x] `commit-msg`: validar Conventional Commits via commitlint (feito na Fase 7)
+- [x] `pre-push`: `bun run test` (unit) + `bun run build`
+- [x] Instalado pacote `lint-staged` de verdade (config já existia no `package.json` mas nada rodava ela) e corrigida a flag do Biome (`--apply` não existe mais no Biome 2.x, agora `--write`)
+- [x] Testado rodando um commit real com o novo hook
+- [x] Commit (`chore: update husky hooks for staged linting and pre-push tests`)
 
 ## Fase 10 — CI/CD GitHub Actions
 
