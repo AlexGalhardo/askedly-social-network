@@ -64,19 +64,21 @@ Decisão: pausar aqui e perguntar ao usuário se quer que eu tente esses 4 upgra
 
 ## Fase 5 — setups/
 
-- [ ] `setups/setup-windows-using-sqlite.sh`
-- [ ] `setups/setup-windows-using-postgres.sh`
-- [ ] `setups/setup-windows-using-postgres-with-docker.sh`
-- [ ] `setups/setup-unix-using-sqlite.sh`
-- [ ] `setups/setup-unix-using-postgres.sh`
-- [ ] `setups/setup-unix-using-postgres-with-docker.sh`
-- [ ] Commit (`feat: add setup scripts for windows/unix with sqlite/postgres/docker`)
+- [x] `setups/setup-windows-using-sqlite.sh`
+- [x] `setups/setup-windows-using-postgres.sh`
+- [x] `setups/setup-windows-using-postgres-with-docker.sh`
+- [x] `setups/setup-unix-using-sqlite.sh`
+- [x] `setups/setup-unix-using-postgres.sh`
+- [x] `setups/setup-unix-using-postgres-with-docker.sh`
+- [x] `prisma/schema.sqlite.prisma` criado e validado (`prisma validate` + `prisma db push` contra sqlite descartável)
+- [x] Commit (`feat: add setup scripts for windows/unix with sqlite/postgres/docker`)
+- [~] Scripts postgres/postgres+docker não foram executados de ponta a ponta neste ambiente (só `bash -n` sintático) — Docker local já tinha um Postgres de outro projeto ocupando a porta 5432; validar na próxima sessão com ambiente limpo
 
 ## Fase 6 — infra/
 
-- [ ] Mover `docker-compose.yaml` para `infra/docker-compose.yaml`, criar `infra/Dockerfile`
-- [ ] Atualizar `setup.sh`/scripts que referenciam o compose antigo (ou remover `setup.sh` em favor de `setups/`)
-- [ ] Commit (`chore: centralize infra configs under infra/`)
+- [x] Mover `docker-compose.yaml` para `infra/docker-compose.yaml` (pinado em `postgres:17-alpine`, com healthcheck), criar `infra/Dockerfile`
+- [x] Remover `setup.sh` (substituído por `setups/`)
+- [x] Commit (`chore: centralize infra configs under infra/`)
 
 ## Fase 7 — SemVer + Conventional Commits
 

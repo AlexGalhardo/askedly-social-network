@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.2.0] - 2026-09-23
+
+### Added
+
+- Add setup scripts for windows/unix with sqlite/postgres/docker
+
+### Changed
+
+- Centralize infra configs under infra/
+
 ## [0.1.3] - 2026-09-23
 
 ### Changed
