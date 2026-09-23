@@ -30,10 +30,19 @@
 
 ## Fase 2 — Upgrade de dependências
 
-- [ ] Levantar versão estável exata atual de cada dependência em `"latest"`: `@auth/core`, `@radix-ui/react-dialog`, `@radix-ui/react-radio-group`, `@react-email/components`, `next-auth`
-- [ ] Atualizar todas as demais dependências para a última versão estável de produção (sem canary/beta/rc)
-- [ ] Rodar `bun install`, `bun run build` e validar que nada quebrou
-- [ ] Commit (`chore(deps): pin all dependencies to latest stable versions`)
+- [x] Levantar versão estável exata atual de cada dependência em `"latest"`: `@auth/core`, `@radix-ui/react-dialog`, `@radix-ui/react-radio-group`, `@react-email/components`, `next-auth`
+- [x] Atualizar todas as demais dependências para a última versão estável de produção dentro da major atual (sem canary/beta/rc)
+- [x] Rodar `bun install`, `bun run build` (com Postgres descartável via Docker) e validar que nada quebrou
+- [x] Commit (`chore(deps): pin all dependencies to exact latest stable versions`)
+
+### ⚠️ Upgrades major pendentes (requerem seu aval antes de aplicar — risco real de quebra)
+
+- **`@prisma/client` / `prisma`**: atual `6.19.3`. `@prisma/client` tem major estável `7.10.0` disponível; já o CLI `prisma` aponta "latest" para `8.0.0-rc.15` (release candidate — **não deve ser usado** pela sua regra de nunca usar pre-release). Migrar exigiria revisar o guia oficial de major upgrade do Prisma e provavelmente adotar `prisma.config.ts` (o `package.json#prisma.seed` já está deprecated a partir do Prisma 7).
+- **`@react-email/components`**: atual `0.0.41` (pré-1.0). Major estável `1.0.12` disponível — API pode ter mudado significativamente vindo de uma versão 0.0.x.
+- **`framer-motion`**: atual `12.43.0` (já atualizado dentro da v12). Major `13.4.2` disponível.
+- **`typescript`**: atual `6.0.3`. Major `7.0.2` disponível — impacto potencial em todo o typecheck do projeto.
+
+Decisão: pausar aqui e perguntar ao usuário se quer que eu tente esses 4 upgrades agora (um de cada vez, com build+testes validando cada um) ou se ficam para depois.
 
 ## Fase 3 — AGENTS.md e CLAUDE.md (raiz)
 
