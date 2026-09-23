@@ -46,21 +46,21 @@ Decisão: pausar aqui e perguntar ao usuário se quer que eu tente esses 4 upgra
 
 ## Fase 3 — AGENTS.md e CLAUDE.md (raiz)
 
-- [ ] Criar `AGENTS.md` e `CLAUDE.md` idênticos, ≤50 linhas, linkando para `docs/*`
-- [ ] Commit (`docs: add AGENTS.md and CLAUDE.md`)
+- [x] Criar `AGENTS.md` e `CLAUDE.md` idênticos, ≤50 linhas, linkando para `docs/*`
+- [x] Commit (`docs: add AGENTS.md and CLAUDE.md`)
 
 ## Fase 4 — docs/ (contexto para agentes de IA)
 
-- [ ] `docs/architecture.md` — visão geral do app, App Router, camadas
-- [ ] `docs/database.md` — schema Prisma, migrations, seed, estratégia sqlite dev
-- [ ] `docs/auth.md` — NextAuth, fluxo de login/registro
-- [ ] `docs/payments-pix.md` — integração AbacatePay, webhook PIX
-- [ ] `docs/email.md` — Resend, templates em `emails/`
-- [ ] `docs/uploads.md` — UploadThing
-- [ ] `docs/telegram-bot.md` — bot de notificações
-- [ ] `docs/testing.md` — como rodar cada tipo de teste
-- [ ] `docs/deployment.md` — CI/CD, Vercel, envs
-- [ ] Commit (`docs: add AI-agent-focused documentation`)
+- [x] `docs/architecture.md` — visão geral do app, App Router, camadas
+- [x] `docs/database.md` — schema Prisma, migrations, seed, estratégia sqlite dev
+- [x] `docs/auth.md` — NextAuth, fluxo de login/registro
+- [x] `docs/payments-pix.md` — integração AbacatePay, webhook PIX (achado: API keys `NEXT_PUBLIC_*` expostas no client — revisar na Fase 11 OWASP)
+- [x] `docs/email.md` — Resend, templates em `emails/`
+- [x] `docs/uploads.md` — UploadThing
+- [x] `docs/telegram-bot.md` — bot de notificações
+- [~] `docs/testing.md` — escrito como "estado alvo", precisa ser atualizado quando a Fase 8 for implementada de verdade
+- [~] `docs/deployment.md` — escrito como "estado alvo", precisa ser atualizado quando a Fase 10 (CI/CD) for implementada de verdade
+- [x] Commit (`docs: add AI-agent-focused documentation`)
 
 ## Fase 5 — setups/
 
