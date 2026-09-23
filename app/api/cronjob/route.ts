@@ -1,6 +1,6 @@
+import { subDays } from "date-fns";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
-import { subDays } from "date-fns";
 
 async function deleteOldUsers(): Promise<number> {
 	const thirtyDaysAgo = subDays(new Date(), 30);

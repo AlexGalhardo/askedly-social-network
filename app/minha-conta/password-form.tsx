@@ -1,12 +1,12 @@
 // components/account/password-form.tsx
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { Check, Loader2, X } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Check, X } from "lucide-react";
 import { useUpdatePassword } from "@/hooks/use-account-mutations";
 
 const CriteriaItem = ({ met, text }: { met: boolean; text: string }) => (

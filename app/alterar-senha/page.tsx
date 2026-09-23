@@ -1,7 +1,7 @@
 "use client";
 
-import LoadingScreen from "@/components/loading-screen";
 import { Suspense } from "react";
+import LoadingScreen from "@/components/loading-screen";
 import ResetarSenhaComponent from "./alterar-senha";
 
 export default function ResetarSenhaPage() {

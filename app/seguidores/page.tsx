@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import LoadingScreen from "@/components/loading-screen";
+import { useEffect, useState } from "react";
 import { FollowersTabs } from "@/components/followers/followers-tabs";
+import LoadingScreen from "@/components/loading-screen";
 import { useFollowers, useFollowRequests } from "@/hooks/use-follower";
 
 export default function SeguidoresPage() {

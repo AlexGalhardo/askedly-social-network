@@ -1,17 +1,16 @@
 "use client";
 
+import { AlertCircle, CheckCircle2, Eye, EyeOff, XCircle } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import type React from "react";
-
+import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, CheckCircle2, Eye, EyeOff, XCircle } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import TelegramLog from "@/lib/telegram-logger";
-import { useSession } from "next-auth/react";
 
 export default function ResetarSenhaComponent() {
 	const router = useRouter();

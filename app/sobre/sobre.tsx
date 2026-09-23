@@ -1,10 +1,10 @@
 "use client";
 
+import { DollarSign, MessageCircle, Shield, Users } from "lucide-react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, MessageCircle, DollarSign, Shield } from "lucide-react";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
 
 export default function SobreClient() {
 	const { data: session } = useSession();

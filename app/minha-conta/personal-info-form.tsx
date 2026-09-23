@@ -1,16 +1,16 @@
 // components/account/personal-info-form.tsx
 "use client";
 
+import { Loader2, Upload } from "lucide-react";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Loader2 } from "lucide-react";
-import { UploadButton } from "@/lib/uploadthing";
-import { useToast } from "@/hooks/use-toast";
 import { useUpdatePersonalInfo } from "@/hooks/use-account-mutations";
+import { useToast } from "@/hooks/use-toast";
+import { UploadButton } from "@/lib/uploadthing";
 
 interface PersonalInfoFormProps {
 	user: {

@@ -1,8 +1,8 @@
 "use client";
 
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { QuestionInterface } from "@/lib/interfaces";
 
 interface FeedQuestionActionsProps {

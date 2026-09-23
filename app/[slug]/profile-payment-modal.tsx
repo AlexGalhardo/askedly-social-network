@@ -1,17 +1,17 @@
 // /app/[slug]/profile-question-modal.tsx
 "use client";
 
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Check, Clock, Copy, Loader } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
-import { formatCurrency } from "@/lib/utils";
-import { Clock, Check, Copy, Loader } from "lucide-react";
-import { ABACATEPAY_API_KEY } from "../api/pix/create/route";
 import TelegramLog from "@/lib/telegram-logger";
+import { formatCurrency } from "@/lib/utils";
+import { ABACATEPAY_API_KEY } from "../api/pix/create/route";
 
 const PRESET_AMOUNTS = [2, 5, 10, 20, 50];
 

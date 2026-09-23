@@ -1,6 +1,7 @@
 // app/api/question/recused/route.ts
-import { NextRequest, NextResponse } from "next/server";
+
 import { PrismaClient } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 import TelegramLog from "@/lib/telegram-logger";
 
 const prisma = new PrismaClient();

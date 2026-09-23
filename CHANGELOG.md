@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.3.0] - 2026-09-23
+
+### Changed
+
+- Add unit tests for lib/ pure functions with bun:test
+- Apply biome organizeImports across app/
+- Add integration tests for users repository
+- Add smoke test for the production server
+- Add Playwright e2e suite and document two critical bugs found
+
 ## [0.2.1] - 2026-09-23
 
 ### Changed

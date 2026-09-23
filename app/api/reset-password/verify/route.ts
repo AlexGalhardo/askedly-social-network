@@ -1,6 +1,6 @@
-import { prisma } from "@/prisma/prisma-client";
-import TelegramLog from "@/lib/telegram-logger";
 import { NextResponse } from "next/server";
+import TelegramLog from "@/lib/telegram-logger";
+import { prisma } from "@/prisma/prisma-client";
 
 export async function GET(request: Request) {
 	try {

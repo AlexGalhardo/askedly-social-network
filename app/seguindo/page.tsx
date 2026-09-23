@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import LoadingScreen from "@/components/loading-screen";
+import { useEffect } from "react";
 import { FollowingHeader } from "@/components/following/following-header";
 import { FollowingList } from "@/components/following/following-list";
+import LoadingScreen from "@/components/loading-screen";
 import { useFollowing } from "@/hooks/use-following";
 
 export default function SeguindoPage() {

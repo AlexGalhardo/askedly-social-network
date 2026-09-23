@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useRouter, useParams } from "next/navigation";
-import { useProfile } from "@/hooks/use-profile-queries";
+import { useEffect, useMemo, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useProfile } from "@/hooks/use-profile-queries";
 import { QuestionInterface } from "@/lib/interfaces";
 import { ProfileHeader } from "./profile-header";
 import { ProfilePagination } from "./profile-pagination";
+import { ProfilePaymentModal } from "./profile-payment-modal";
 import { ProfileQuestionCard } from "./profile-question-card";
 import { ProfileQuestionForm } from "./profile-question-form";
-import { ProfilePaymentModal } from "./profile-payment-modal";
 
 const QUESTIONS_PER_PAGE = 10;
 

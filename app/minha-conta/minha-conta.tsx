@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSessionVerification } from "@/hooks/use-session-verification";
+import { useEffect } from "react";
 import LoadingScreen from "@/components/loading-screen";
+import { useSessionVerification } from "@/hooks/use-session-verification";
 import BlockedUsersCard from "./blocked-users-card";
+import { DeleteAccountForm } from "./delete-account-form";
+import { PasswordForm } from "./password-form";
 import { PersonalInfoForm } from "./personal-info-form";
 import { PixForm } from "./pix-form";
-import { SocialMediaForm } from "./social-media-form";
-import { PasswordForm } from "./password-form";
 import { PrivacySettingsForm } from "./privacy-settings-form";
-import { DeleteAccountForm } from "./delete-account-form";
+import { SocialMediaForm } from "./social-media-form";
 
 export default function MinhaContaClient() {
 	const router = useRouter();

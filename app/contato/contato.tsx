@@ -1,5 +1,9 @@
 "use client";
 
+import Script from "next/script";
+import { useEffect, useRef, useState } from "react";
+import { contactSchema } from "@/app/api/send-contact-email/route";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,10 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { useEffect, useRef, useState } from "react";
-import { contactSchema } from "@/app/api/send-contact-email/route";
-import Script from "next/script";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import TelegramLog from "@/lib/telegram-logger";
 
 export default function ContatoClient() {
@@ -152,7 +152,7 @@ export default function ContatoClient() {
 		if (turnstileReady && turnstileRef.current && !turnstileRendered) {
 			(window as any).turnstile.render(turnstileRef.current, {
 				sitekey: "0x4AAAAAABiCEoK5rM8dg1Xm",
-				callback: function (token: string) {},
+				callback: (token: string) => {},
 			});
 			setTurnstileRendered(true);
 		}

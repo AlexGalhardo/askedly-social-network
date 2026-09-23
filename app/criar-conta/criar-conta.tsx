@@ -1,21 +1,20 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
-import { ArrowRight } from "lucide-react";
-import type React from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { createUser, getUserByEmail, getUserByNickname } from "@/lib/repositories/users.repository";
-import { Check, Eye, EyeOff, X } from "lucide-react";
-import { signIn, useSession } from "next-auth/react";
+import { ArrowRight, Check, Eye, EyeOff, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
+import { signIn, useSession } from "next-auth/react";
+import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
-import Script from "next/script";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { createUser, getUserByEmail, getUserByNickname } from "@/lib/repositories/users.repository";
 import TelegramLog from "@/lib/telegram-logger";
 
 const schemaUserSignup = z.object({
@@ -208,7 +207,7 @@ export default function CriarContaClient() {
 		if ((window as any).turnstile && turnstileRef.current) {
 			(window as any).turnstile.render(turnstileRef.current, {
 				sitekey: "0x4AAAAAABiCEoK5rM8dg1Xm",
-				callback: function (token: string) {},
+				callback: (token: string) => {},
 			});
 		}
 	}, []);

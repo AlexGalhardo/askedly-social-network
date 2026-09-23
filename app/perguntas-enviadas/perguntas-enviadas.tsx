@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
-import { SentQuestionsTabs } from "@/components/sent-questions/sent-questions-tabs";
 import { ReportModal } from "@/components/sent-questions/report-modal";
-import { useSentQuestions, useReportAnswer, useLikeAnswer, useDislikeAnswer } from "@/hooks/use-sent-questions";
-import { SentQuestionInterface } from "@/types/SentQuestion";
+import { SentQuestionsTabs } from "@/components/sent-questions/sent-questions-tabs";
+import { useDislikeAnswer, useLikeAnswer, useReportAnswer, useSentQuestions } from "@/hooks/use-sent-questions";
 import TelegramLog from "@/lib/telegram-logger";
+import { SentQuestionInterface } from "@/types/SentQuestion";
 
 export default function PerguntasEnviadasPage() {
 	const router = useRouter();

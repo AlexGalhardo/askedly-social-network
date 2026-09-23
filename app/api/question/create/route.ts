@@ -1,8 +1,8 @@
+import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import TelegramLog from "@/lib/telegram-logger";
 import { formatCurrency } from "@/lib/utils";
 import { prisma } from "@/prisma/prisma-client";
-import { randomUUID } from "node:crypto";
 
 export async function POST(request: NextRequest) {
 	try {

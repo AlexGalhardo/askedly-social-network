@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/prisma/prisma-client";
 import TelegramLog from "@/lib/telegram-logger";
 import { formatCurrency } from "@/lib/utils";
+import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(req: NextRequest) {
 	const { searchParams } = new URL(req.url);

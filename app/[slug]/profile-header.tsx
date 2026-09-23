@@ -1,17 +1,17 @@
 "use client";
 
+import { Clock, Loader, UserCheck, UserPlus } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useFollowUser } from "@/hooks/use-profile-queries";
-import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { UserPlus, UserCheck, Clock, Loader } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useFollowUser } from "@/hooks/use-profile-queries";
+import TelegramLog from "@/lib/telegram-logger";
+import { QuestionInterface } from "@/types/QuestionInterface";
 import { ProfileBlockUserButton } from "./profile-block-user-button";
 import { ProfileSocialLinks } from "./profile-social-linkts";
-import { QuestionInterface } from "@/types/QuestionInterface";
-import TelegramLog from "@/lib/telegram-logger";
 
 interface ProfileHeaderProps {
 	profile: any;

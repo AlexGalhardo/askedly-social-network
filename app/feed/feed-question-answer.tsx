@@ -1,11 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { memo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatDate } from "@/lib/utils";
-import Link from "next/link";
-import { QuestionInterface } from "@/lib/interfaces";
 import { getInitials } from "@/lib/functions";
+import { QuestionInterface } from "@/lib/interfaces";
+import { formatDate } from "@/lib/utils";
 
 interface FeedQuestionAnswerProps {
 	question: QuestionInterface;

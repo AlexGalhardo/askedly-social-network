@@ -1,5 +1,5 @@
-import LoadingScreen from "@/components/loading-screen";
 import { Suspense } from "react";
+import LoadingScreen from "@/components/loading-screen";
 import EntrarClient from "./entrar";
 
 export const metadata = {

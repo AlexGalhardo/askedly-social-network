@@ -1,19 +1,19 @@
 // /app/[slug]/profile-question-card.tsx
 "use client";
 
+import { ThumbsDown, ThumbsUp } from "lucide-react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { ThumbsUp, ThumbsDown } from "lucide-react";
-import Link from "next/link";
-import { useLikeQuestion, useDislikeQuestion } from "@/hooks/use-profile-queries";
-import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
-import { QuestionInterface } from "@/lib/interfaces";
+import { useDislikeQuestion, useLikeQuestion } from "@/hooks/use-profile-queries";
 import { getInitials } from "@/lib/functions";
+import { QuestionInterface } from "@/lib/interfaces";
 import TelegramLog from "@/lib/telegram-logger";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface QuestionCardProps {
 	question: QuestionInterface;

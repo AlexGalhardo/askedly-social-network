@@ -1,12 +1,12 @@
 // components/account/privacy-settings-form.tsx
 "use client";
 
+import { Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Loader2 } from "lucide-react";
 import { useUpdatePrivacySettings } from "@/hooks/use-account-mutations";
 
 interface PrivacySettingsFormProps {

@@ -3,9 +3,9 @@
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { QuestionInterface } from "@/lib/interfaces";
-import { FeedQuestionHeader } from "./feed-question-header";
 import { FeedQuestionActions } from "./feed-question-actions";
 import { FeedQuestionAnswer } from "./feed-question-answer";
+import { FeedQuestionHeader } from "./feed-question-header";
 
 interface QuestionCardProps {
 	question: QuestionInterface;

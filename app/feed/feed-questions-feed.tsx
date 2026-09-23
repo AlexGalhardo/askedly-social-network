@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { type FeedType, useDislikeQuestion, useLikeQuestion, useQuestions } from "@/hooks/use-questions";
 import { QuestionInterface } from "@/lib/interfaces";
-import { useQuestions, useLikeQuestion, useDislikeQuestion, type FeedType } from "@/hooks/use-questions";
-import { FeedTabs } from "./feed-tabs";
 import { FeedQuestionCard } from "./feed-question-card";
+import { FeedTabs } from "./feed-tabs";
 
 interface FeedQuestionsFeedProps {
 	userNickname?: string;

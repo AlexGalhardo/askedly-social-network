@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
 import { PaymentTabs } from "@/components/payments/payment-tabs";
 import { PaymentWithdrawModal } from "@/components/payments/payment-withdraw-modal";
-import { useAnsweredPaymentDetails, useSentPaymentDetails, useProcessWithdraw } from "@/hooks/use-payments";
-import { PaymentTab } from "@/types/PaymentInterface";
-import { canWithdraw } from "@/lib/utils/payment-utils";
+import { useAnsweredPaymentDetails, useProcessWithdraw, useSentPaymentDetails } from "@/hooks/use-payments";
 import TelegramLog from "@/lib/telegram-logger";
+import { canWithdraw } from "@/lib/utils/payment-utils";
+import { PaymentTab } from "@/types/PaymentInterface";
 
 export default function PagamentosPage() {
 	const router = useRouter();

@@ -1,6 +1,6 @@
+import { NextRequest, NextResponse } from "next/server";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
-import { NextRequest, NextResponse } from "next/server";
 
 interface ValidQuestion {
 	id: string;

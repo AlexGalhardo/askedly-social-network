@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { UserX, UserCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { UserCheck, UserX } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -14,7 +14,7 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import TelegramLog from "@/lib/telegram-logger";
 
 interface BlockUserButtonProps {

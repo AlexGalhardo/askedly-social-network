@@ -1,12 +1,12 @@
 "use client";
 
-import { memo } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatCurrency, formatDate } from "@/lib/utils";
 import Link from "next/link";
-import { QuestionInterface } from "@/lib/interfaces";
+import { memo } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { getInitials } from "@/lib/functions";
+import { QuestionInterface } from "@/lib/interfaces";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface FeedQuestionHeaderProps {
 	question: QuestionInterface;

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/prisma/prisma-client";
 import { z } from "zod";
+import { authOptions } from "@/lib/auth";
 import TelegramLog from "@/lib/telegram-logger";
+import { prisma } from "@/prisma/prisma-client";
 
 export const personalInfoSchema = z.object({
 	name: z

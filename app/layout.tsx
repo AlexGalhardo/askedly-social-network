@@ -1,15 +1,15 @@
-import type React from "react";
 import type { Metadata } from "next";
+import type React from "react";
 import "@/app/globals.css";
-import { Inter } from "next/font/google";
-import { Toaster } from "@/components/ui/toaster";
-import { Providers } from "./providers";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
-import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { ThemeProvider } from "@/components/theme-provider";
+import { Inter } from "next/font/google";
+import Script from "next/script";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { MySidebar } from "@/components/my-sidebar";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 import { ReactQueryProvider } from "../providers/react-query-provider";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 

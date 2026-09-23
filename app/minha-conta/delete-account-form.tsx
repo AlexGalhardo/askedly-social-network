@@ -1,12 +1,12 @@
 // components/account/delete-account-form.tsx
 "use client";
 
+import { Loader2 } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
-import { signOut } from "next-auth/react";
 import { useDeleteAccount } from "@/hooks/use-account-mutations";
 
 export function DeleteAccountForm() {

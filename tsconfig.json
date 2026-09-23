@@ -26,7 +26,10 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    "types": [
+      "bun-types"
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -34,8 +37,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "types",
-    "app/pix/pix-2.twx",
-    "app/feed/feed-client.txtt",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [

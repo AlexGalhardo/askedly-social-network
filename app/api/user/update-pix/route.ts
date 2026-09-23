@@ -1,10 +1,10 @@
+import { cnpj, cpf } from "cpf-cnpj-validator";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/prisma/prisma-client";
 import { z } from "zod";
+import { authOptions } from "@/lib/auth";
 import TelegramLog from "@/lib/telegram-logger";
-import { cpf, cnpj } from "cpf-cnpj-validator";
+import { prisma } from "@/prisma/prisma-client";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^\+?[1-9]\d{10,14}$/;

@@ -1,9 +1,9 @@
+import { type NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
-import { getServerSession } from "next-auth";
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 
 const deleteAccountSchema = z.object({
 	userId: z.string().uuid().min(1, "UUID do usuário é obrigatório para deletar conta"),

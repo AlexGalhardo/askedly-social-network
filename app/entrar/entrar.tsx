@@ -1,5 +1,11 @@
 "use client";
 
+import { ArrowRight, Check, Eye, EyeOff, X } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Script from "next/script";
+import { signIn, useSession } from "next-auth/react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,12 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import TelegramLog from "@/lib/telegram-logger";
-import { ArrowRight, Check, Eye, EyeOff, X } from "lucide-react";
-import { signIn, useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
 
 export default function EntrarClient() {
 	const router = useRouter();
@@ -113,7 +113,7 @@ export default function EntrarClient() {
 		if (turnstileReady && turnstileRef.current && !turnstileRendered) {
 			(window as any).turnstile.render(turnstileRef.current, {
 				sitekey: "0x4AAAAAABiCEoK5rM8dg1Xm",
-				callback: function (token: string) {},
+				callback: (token: string) => {},
 			});
 			setTurnstileRendered(true);
 		}

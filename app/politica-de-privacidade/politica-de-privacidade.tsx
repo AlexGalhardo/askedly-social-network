@@ -40,6 +40,7 @@ export default function PoliticaDePrivacidadeClient() {
 							href="https://www.microsoft.com/pt-br/privacy/privacystatement"
 							target="_blank"
 							className="text-blue-600 underline"
+							rel="noopener"
 						>
 							Declaração de Privacidade da Microsoft
 						</a>

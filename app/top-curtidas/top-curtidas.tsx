@@ -1,21 +1,21 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { ThumbsUp, ThumbsDown, Loader2, Trophy } from "lucide-react";
+import { Loader2, ThumbsDown, ThumbsUp, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
+import { useDislikeQuestion, useLikeQuestion } from "@/hooks/use-profile-queries";
 import { getInitials } from "@/lib/functions";
 import { QuestionInterface } from "@/lib/interfaces";
-import { useLikeQuestion, useDislikeQuestion } from "@/hooks/use-profile-queries";
-import { useToast } from "@/components/ui/use-toast";
 import TelegramLog from "@/lib/telegram-logger";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface TopCurtidasProps {
 	today: QuestionInterface[];

@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { FaInstagram, FaFacebook, FaTiktok, FaTwitch, FaXTwitter, FaGithub, FaLinkedin } from "react-icons/fa6";
 import Link from "next/link";
+import { FaFacebook, FaGithub, FaInstagram, FaLinkedin, FaTiktok, FaTwitch, FaXTwitter } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
 
 interface SocialLinksProps {
 	profile: any;
