@@ -21,6 +21,7 @@ async function paidWebhook(amount: number): Promise<string> {
 			event_status: "billing.paid",
 			dev_mode: false,
 			complete_event: "{}",
+			userId: askerId,
 		},
 	});
 	return pixId;

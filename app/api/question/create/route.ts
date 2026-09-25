@@ -11,7 +11,6 @@ export async function POST(request: NextRequest) {
 
 		const {
 			question_text,
-			amount_paid,
 			is_anonymous,
 			asker_want_answer_to_be_private,
 			amount_paid_is_private,
@@ -29,11 +28,6 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "ID do proprietário é obrigatório" }, { status: 400 });
 		}
 
-		const testMode = process.env.NEXT_PUBLIC_TEST_MODE === "true";
-		if (testMode && (typeof amount_paid !== "number" || amount_paid < 200)) {
-			return NextResponse.json({ error: "Valor a pagar deve ser pelo menos R$ 2,00" }, { status: 400 });
-		}
-
 		const question = await createPaidQuestion({
 			askerId: user.id,
 			ownerId: owner_user_id,
@@ -42,7 +36,6 @@ export async function POST(request: NextRequest) {
 			isAnonymous: Boolean(is_anonymous),
 			askerWantsPrivateAnswer: Boolean(asker_want_answer_to_be_private),
 			amountIsPrivate: Boolean(amount_paid_is_private),
-			testModeAmount: testMode ? amount_paid : undefined,
 		});
 
 		await TelegramLog.info(`NOVA PERGUNTA CRIADA COM SUCESSO!

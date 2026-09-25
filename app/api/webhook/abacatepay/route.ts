@@ -1,44 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ABACATEPAY_WEBHOOK_SECRET } from "@/lib/abacatepay";
+import { ABACATEPAY_WEBHOOK_SECRET, verifyWebhookSignature } from "@/lib/abacatepay";
+import { markChargePaid } from "@/lib/services/pix-charge.service";
 import TelegramLog from "@/lib/telegram-logger";
 import { formatCurrency } from "@/lib/utils";
-import { prisma } from "@/prisma/prisma-client";
+
+interface TransparentCompletedEvent {
+	id: string;
+	event: string;
+	devMode: boolean;
+	data?: { transparent?: { id?: string; paidAmount?: number; platformFee?: number } };
+}
 
 export async function POST(req: NextRequest) {
-	const { searchParams } = new URL(req.url);
-	const webhookSecret = searchParams.get("webhookSecret");
-
-	if (!ABACATEPAY_WEBHOOK_SECRET || webhookSecret !== ABACATEPAY_WEBHOOK_SECRET)
+	const webhookSecret = new URL(req.url).searchParams.get("webhookSecret");
+	if (!ABACATEPAY_WEBHOOK_SECRET || webhookSecret !== ABACATEPAY_WEBHOOK_SECRET) {
 		return NextResponse.json({ error: "Invalid webhook secret" }, { status: 401 });
+	}
+
+	// A assinatura cobre o corpo cru: ler como texto antes de qualquer parse.
+	const rawBody = await req.text();
+	if (!verifyWebhookSignature(rawBody, req.headers.get("x-webhook-signature"))) {
+		return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+	}
 
 	try {
-		const event = await req.json();
+		const event = JSON.parse(rawBody) as TransparentCompletedEvent;
+		const charge = event.data?.transparent;
 
-		await prisma.webhookAbacatePay.create({
-			data: {
-				pix_id: event.data.pixQrCode.id,
-				status: event.data.pixQrCode.status,
-				amount: event.data.payment.amount,
-				fee: event.data.payment.fee,
-				method: event.data.payment.method,
-				kind: event.data.pixQrCode.kind,
-				event_status: event.event,
-				dev_mode: event.devMode,
-				complete_event: JSON.stringify(event),
-			},
-		});
+		// Outros eventos são aceitos (2xx) para a AbacatePay não reenviar, mas não mudam nada aqui.
+		if (event.event !== "transparent.completed" || !charge?.id) return NextResponse.json({ received: true });
 
-		TelegramLog.info(`RECEBIDO WEBHOOK DE PIX PAGO DA ABACATEPAY:
+		if (await markChargePaid(charge.id, rawBody)) {
+			await TelegramLog.info(`PIX PAGO (webhook AbacatePay):
 
-		PIX_ID: ${event.data.pixQrCode.id}
-		PAGOU: ${formatCurrency(event.data.payment.amount)}
-		TAXA: ${formatCurrency(event.data.payment.fee)}
+		PIX_ID: ${charge.id}
+		PAGOU: ${formatCurrency(charge.paidAmount ?? 0)}
+		TAXA: ${formatCurrency(charge.platformFee ?? 0)}
 		DEV_MODE: ${event.devMode}
 		`);
+		}
 
 		return NextResponse.json({ received: true });
-	} catch (error: any) {
-		await TelegramLog.error(`Catch Error webhook-abacatepay.ts: ${error?.message}`);
-		return NextResponse.json({ error: "Invalid JSON body or internal error" }, { status: 400 });
+	} catch (error: unknown) {
+		await TelegramLog.error(`Catch Error webhook-abacatepay.ts: ${(error as Error)?.message}`);
+		return NextResponse.json({ error: "Internal error" }, { status: 500 });
 	}
 }

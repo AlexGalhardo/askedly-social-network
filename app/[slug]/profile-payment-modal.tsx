@@ -253,13 +253,11 @@ export function ProfilePaymentModal({
 		try {
 			const questionData = {
 				question_text: question,
-				amount_paid: (selectedAmount ?? 0) * 100,
 				is_anonymous: isAnonymousNewQuestion,
 				asker_want_answer_to_be_private: isPrivateAnswer,
 				amount_paid_is_private: questionAmountPaidIsPrivate,
 				pix_id: pixData?.id,
 				owner_user_id: profile.id,
-				asker_id: session?.user?.id,
 			};
 
 			const response = await fetch("/api/question/create", {

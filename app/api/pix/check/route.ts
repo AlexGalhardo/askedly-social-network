@@ -1,40 +1,31 @@
 import { NextResponse } from "next/server";
-import { ABACATEPAY_API_KEY } from "@/lib/abacatepay";
+import { checkPixCharge } from "@/lib/abacatepay";
+import { markChargePaid } from "@/lib/services/pix-charge.service";
+import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
+import { prisma } from "@/prisma/prisma-client";
 
 export async function GET(request: Request) {
 	try {
-		const { searchParams } = new URL(request.url);
-		const pixId = searchParams.get("id");
+		const user = await getSessionUser();
+		if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
-		if (!pixId) {
-			return NextResponse.json({ error: "ID do pagamento não fornecido." }, { status: 400 });
-		}
+		const pixId = new URL(request.url).searchParams.get("id");
+		if (!pixId) return NextResponse.json({ error: "ID do pagamento não fornecido." }, { status: 400 });
 
-		const response = await fetch(`https://api.abacatepay.com/v1/pixQrCode/check?id=${pixId}`, {
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${ABACATEPAY_API_KEY}`,
-				"Content-Type": "application/json",
-			},
+		const charge = await prisma.webhookAbacatePay.findUnique({
+			where: { pix_id: pixId },
+			select: { userId: true },
 		});
+		if (charge?.userId !== user.id)
+			return NextResponse.json({ error: "Pagamento não encontrado" }, { status: 404 });
 
-		const data = await response.json();
+		const { status, expiresAt } = await checkPixCharge(pixId);
+		if (status === "PAID") await markChargePaid(pixId, JSON.stringify({ source: "check", status }), "check.paid");
 
-		if (data.error) {
-			await TelegramLog.error(`ERRO ao verificar status PIX: ${JSON.stringify(data.error)}`);
-			return NextResponse.json({ error: data.error }, { status: 500 });
-		}
-
-		if (data.data) {
-			if (data.data.status === "PAID")
-				await TelegramLog.info(`STATUS PIX PAID VERIFICADO NA ABACATEPAY: \n\n${JSON.stringify(data.data)}`);
-			return NextResponse.json(data.data);
-		}
-
-		return NextResponse.json({ error: "Resposta inesperada da API" }, { status: 500 });
-	} catch (error: any) {
-		await TelegramLog.error(`Catch ERRO ao verificar status PIX: ${error?.message}`);
+		return NextResponse.json({ status, expiresAt });
+	} catch (error: unknown) {
+		await TelegramLog.error(`Catch ERRO ao verificar status PIX: ${(error as Error)?.message}`);
 		return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
 	}
 }
