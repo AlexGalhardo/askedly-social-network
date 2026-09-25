@@ -21,4 +21,4 @@ Toda pergunta enviada no app é paga via PIX através do gateway [AbacatePay](ht
 
 `NEXT_PUBLIC_ABACATEPAY_API_KEY`, `NEXT_PUBLIC_ABACATEPAY_WEBHOOK_SECRET`, `NEXT_PUBLIC_TEST_ABACATEPAY_API_KEY_PROD`, `NEXT_PUBLIC_TEST_MODE`, `DANGER_MODE`.
 
-**Atenção:** as chaves de API estão como `NEXT_PUBLIC_*`, ou seja, expostas ao client. Isso é um risco de segurança existente a revisar na fase de auditoria OWASP do `TODO.md` — o ideal é mover a criação de cobrança inteiramente para o servidor sem expor a API key no bundle do browser.
+**Atenção:** as chaves de API estão como `NEXT_PUBLIC_*`, ou seja, expostas ao client. Isso é um risco de segurança existente a revisar na fase de auditoria OWASP do `PLAN.md` (Fases 11 e 14) — o ideal é mover a criação de cobrança inteiramente para o servidor sem expor a API key no bundle do browser.

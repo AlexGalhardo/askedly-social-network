@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.4.0] - 2026-09-25
+
+### Changed
+
+- Rename TODO.md to PLAN.md
+- Vendor third-party agent skills into .claude/
+- Add .editorconfig and make biome follow it
+- Add github actions for lint, test, build and deploy
+- Require skills in agent guides, add OWASP Top Ten final phase
+
 ## [0.3.1] - 2026-09-23
 
 ### Changed

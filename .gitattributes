@@ -1,0 +1,4 @@
+# Mantém LF no working tree em qualquer SO, alinhado ao .editorconfig/Biome (core.autocrlf no Windows converteria para CRLF).
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf

@@ -38,8 +38,19 @@ Infra (Docker/docker-compose) fica em `infra/`.
 - [`docs/testing.md`](docs/testing.md) — como rodar cada tipo de teste
 - [`docs/deployment.md`](docs/deployment.md) — CI/CD e deploy
 
+## Skills (uso obrigatório)
+
+Skills de terceiros vendorizadas em `.claude/skills/` (origem/commit em `.claude/skills/SOURCES.md`), mais agentes em `.claude/agents/` e checklists em `.claude/references/`. **Toda sessão/agente deve usá-las na refatoração** (plano em `PLAN.md`):
+
+- Antes de qualquer tarefa: `using-agent-skills` para escolher a skill; `graphify` para mapear o código (CLI `graphifyy==0.9.68`) em vez de grep cego
+- Código: `ponytail` (solução mínima, YAGNI), `code-simplification`, `incremental-implementation`, `test-driven-development`, `debugging-and-error-recovery`
+- Revisão: `code-review-and-quality`, `ponytail-review`/`ponytail-audit`, `security-and-hardening` (OWASP), `performance-optimization`
+- UI: `impeccable`, `frontend-design`, `frontend-ui-engineering`, `ui-ux-pro-max`, `web-design-guidelines`, `vercel-react-best-practices`
+- Processo: `git-workflow-and-versioning`, `ci-cd-and-automation`, `documentation-and-adrs`, `planning-and-task-breakdown`
+
 ## Convenções
 
+- Formatação: `.editorconfig` (tab, largura 4, LF) é a fonte da verdade; Biome lê via `formatter.useEditorconfig`. YAML e `package.json` usam espaços
 - Conventional Commits obrigatório (validado por commitlint no `commit-msg`)
 - Comentários só para edge cases/decisões não óbvias — nunca comentário redundante
 - TypeScript com tipagem forte; evite `any` não justificado

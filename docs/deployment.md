@@ -1,18 +1,33 @@
 # Deploy
 
-**Status atual:** deploy manual/automático via integração Git da Vercel (sem workflow de CI próprio ainda — ver Fase 10 em `TODO.md` para o CI/CD com GitHub Actions planejado).
-
 ## Vercel
 
 - `vercel.json` define um cron (`/api/cronjob`, todo dia às 3h) — usado para expirar perguntas não respondidas dentro do prazo.
 - `@vercel/speed-insights` já integrado em `app/layout.tsx`.
 - Variáveis de ambiente de produção são configuradas direto no dashboard da Vercel (nunca commitar `.env`; usar `.env.example` como referência do que precisa existir).
 
-## CI/CD planejado (Fase 10)
+## CI/CD (GitHub Actions, `.github/workflows/`)
 
-1. `ci.yml` — lint (`bun run lint`) + testes (`bun run test`) + build (`bun run build`) em todo PR
-2. `e2e.yml` — Playwright contra um preview deployment ou ambiente efêmero com Postgres em container
-3. `deploy.yml` — deploy para produção na Vercel ao dar merge em `main`
+- **`ci.yml`** (PR e push em `main`): jobs `lint` (Biome), `typecheck` (`tsc --noEmit`), `security-audit` (`bun audit --audit-level=high`), `unit-tests`, `integration-tests` (Postgres em service container) e `build` (Postgres + `bun run test:smoke`).
+- **`e2e.yml`** (PR e push em `main`): sobe Postgres em service container, instala o Chromium do Playwright e roda `bun run test:e2e`. Em falha, sobe o relatório HTML (`playwright-report/`, gerado só com `CI=true`) como artifact.
+- **`deploy.yml`** (disparado por `workflow_run` quando o `CI` termina com sucesso num push em `main`): `vercel pull` → `vercel build --prod` → `vercel deploy --prebuilt --prod`. O CLI é chamado como `bunx vercel@<versão>` pinado no próprio workflow — **não** é devDependency do projeto (só esse workflow usa, e ele trazia ~16 vulnerabilidades transitivas para o `bun.lock`).
+- Todos os workflows usam `concurrency` para cancelar execuções antigas da mesma branch; o deploy nunca é cancelado no meio.
+
+### Secrets necessários (Settings → Environments → `production`)
+
+- `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` — obtidos rodando `bunx vercel link` localmente na conta/projeto Vercel corretos e lendo `.vercel/project.json`.
+
+> Se o projeto também estiver conectado à integração Git da Vercel, cada push em `main` gera **dois** deploys. Escolha um: ou desligue o auto-deploy da integração Git (Project Settings → Git → Ignored Build Step: `exit 0`), ou apague o `deploy.yml`.
+
+### Jobs não bloqueantes (dívida da Fase 11)
+
+`lint`, `typecheck` e `security-audit` rodam com `continue-on-error: true` porque hoje há dívida pré-existente: ~31 erros de lint, ~35 erros de tipo (o build só passa por `typescript.ignoreBuildErrors`) e vulnerabilidades transitivas conhecidas. Remover o `continue-on-error` de cada um assim que a respectiva dívida for paga — deixar o CI permanentemente verde escondendo um gate quebrado é pior do que não ter o job.
+
+### Validar workflows localmente
+
+```bash
+docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.7
+```
 
 ## Build local antes de deploy
 

@@ -12,13 +12,15 @@
 - **docs/:** os 8 arquivos antigos (já deletados no working tree, não commitados) NÃO serão restaurados — docs/ recomeça do zero, focada em dar contexto para agentes de IA.
 - **Ritmo de execução:** autonomia total nas fases de baixo risco (commit por tarefa). Parar para revisão do usuário antes de: (a) qualquer refatoração de lógica/arquitetura que mude comportamento (Fase 12), (b) bumps de versão *major* que possam quebrar build.
 - **Deploy alvo do CI/CD:** Vercel (evidência: `vercel.json` + `@vercel/speed-insights` já em uso). Ajustar se o usuário corrigir.
+- **Skills obrigatórias:** toda fase deste plano deve ser executada usando as skills de `.claude/skills/` (lista e quando usar cada uma em `CLAUDE.md`/`AGENTS.md`, origem em `.claude/skills/SOURCES.md`).
+- **Formatação:** `.editorconfig` na raiz (tab, largura 4, LF) é a fonte da verdade; `biome.json` usa `formatter.useEditorconfig: true` e repete os mesmos valores. Exceções: YAML (spec proíbe tab) e `package.json` (Bun reescreve com 2 espaços).
 
 ---
 
 ## Fase 0 — Housekeeping git
 
 - [x] Commit da remoção dos 8 arquivos antigos de `docs/` (`docs: remove outdated documentation`)
-- [x] Commit de `.claude/skills/` e primeira versão do `TODO.md` (`chore: add claude skills and refactor plan`)
+- [x] Commit de `.claude/skills/` e primeira versão do plano, hoje `PLAN.md` (`chore: add claude skills and refactor plan`)
 
 ## Fase 1 — Bun/tooling baseline
 
@@ -114,14 +116,18 @@ Decisão: pausar aqui e perguntar ao usuário se quer que eu tente esses 4 upgra
 
 ## Fase 10 — CI/CD GitHub Actions
 
-- [ ] Workflow `ci.yml`: lint, testes, build em PRs
-- [ ] Workflow `e2e.yml`: Playwright
-- [ ] Workflow `deploy.yml`: deploy Vercel em push para `main`
-- [ ] Commit (`ci: add github actions for lint, test, build and deploy`)
+- [x] Workflow `ci.yml`: lint, format, typecheck, `bun audit`, unit, integração (Postgres service), build + smoke — `lint`/`typecheck`/`security-audit` não bloqueantes até a Fase 11 pagar a dívida
+- [x] Workflow `e2e.yml`: Playwright (reporter HTML só em `CI=true`, publicado como artifact em falha)
+- [x] Workflow `deploy.yml`: deploy Vercel via `workflow_run` só depois do CI verde em `main`; CLI `vercel@59.26.0` pinado no workflow em vez de devDependency (removia 16 das 26 vulnerabilidades do `bun audit`)
+- [x] Validado: `actionlint` limpo + todos os passos rodados localmente com Postgres descartável (format, 48 unit, 6 integração, build, smoke, e2e 2 passed/1 fixme)
+- [x] Commit (`ci: add github actions for lint, test, build and deploy`)
+- [~] Depende de você: criar o environment `production` no GitHub com `VERCEL_TOKEN`/`VERCEL_ORG_ID`/`VERCEL_PROJECT_ID`, e decidir entre este `deploy.yml` ou a integração Git da Vercel (os dois juntos = deploy duplicado). Ver `docs/deployment.md`.
 
 ## Fase 11 — [CHECKPOINT: parar e pedir revisão do usuário antes de iniciar]
 
-- [ ] Revisão de lógica de negócio (OWASP Top 10 2025, clean architecture, DRY/KISS)
+- [ ] Revisão de lógica de negócio (OWASP Top 10 2025, clean architecture, DRY/KISS) — skills: `security-and-hardening`, `code-simplification`, `ponytail-audit`, `graphify` (mapa do código antes de mexer)
+- [ ] Triar as 10 vulnerabilidades restantes de `bun audit` (`brace-expansion`, `minimatch`, `effect`, `deepmerge-ts`, `baseline-browser-mapping` — todas transitivas) e tornar o job `security-audit` bloqueante
+- [ ] Zerar erros de `tsc --noEmit`, remover `typescript.ignoreBuildErrors` do `next.config.mjs` e tornar o job `typecheck` bloqueante
 - [ ] Remover comentários redundantes, manter só os que explicam edge cases/decisões
 - [ ] Aplicar design patterns onde fizer sentido, sem over-engineering
 
@@ -139,3 +145,15 @@ Decisão: pausar aqui e perguntar ao usuário se quer que eu tente esses 4 upgra
 ## Fase 13 — Skills novas (.claude/skills/)
 
 - [ ] Avaliar necessidade de skills específicas do projeto (ex: "como rodar migrations", "como adicionar novo endpoint de pagamento") conforme forem surgindo durante as fases acima
+
+## Fase 14 — [FINAL] Auditoria de segurança OWASP Top Ten (aplicação inteira)
+
+> Última fase, depois de todas as outras. Diferente da Fase 11 (que revisa lógica pontualmente), aqui é uma passada completa e sistemática na aplicação como um todo.
+
+- [ ] Ler a versão vigente em <https://owasp.org/projects/top-ten> (não confiar em lista memorizada — categorias mudam entre edições) e montar checklist por categoria
+- [ ] Rodar `graphify` no repo para mapear superfícies de ataque: API routes (`app/api/*`), Server Actions (`actions/`), webhook PIX, auth (NextAuth), uploads (UploadThing), cron (`/api/cronjob`), variáveis `NEXT_PUBLIC_*`
+- [ ] Verificar cada categoria contra cada superfície usando as skills `security-and-hardening` (+ `.claude/references/security-checklist.md`) e o agente `.claude/agents/security-auditor.md`
+- [ ] Registrar achados em `docs/security.md` (categoria OWASP, arquivo, severidade, correção) e linkar em `AGENTS.md`/`CLAUDE.md`
+- [ ] Corrigir achados críticos/altos (1 commit por correção, com teste que prova a correção); médios/baixos viram itens no plano
+- [ ] `bun audit` sem vulnerabilidades altas/críticas; CI `security-audit` bloqueante
+- [ ] Commit (`docs: add OWASP Top Ten security audit report`)

@@ -9,7 +9,8 @@ export default defineConfig({
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
 	workers: 1,
-	reporter: "list",
+	// No CI o relatório HTML é publicado como artifact quando a suíte falha (ver .github/workflows/e2e.yml).
+	reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
 	use: {
 		baseURL,
 		trace: "on-first-retry",
