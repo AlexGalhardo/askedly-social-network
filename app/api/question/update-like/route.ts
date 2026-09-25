@@ -52,7 +52,5 @@ export async function POST(request: NextRequest) {
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error question-update-like.ts: ${error?.message}`);
 		return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
-	} finally {
-		await prisma.$disconnect();
 	}
 }

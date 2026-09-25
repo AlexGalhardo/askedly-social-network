@@ -8,9 +8,14 @@ test("homepage loads and offers a way to sign in", async ({ page }) => {
 
 test("login page renders the credentials form", async ({ page }) => {
 	await page.goto("/entrar");
-	// app/layout.tsx renders {children} twice (once per responsive breakpoint --
-	// see TODO.md Fase 11), so every id on every page is duplicated in the DOM.
-	// .first() works around it here; the duplication itself is a flagged finding.
-	await expect(page.locator("#email:visible")).toBeVisible();
-	await expect(page.locator("#password:visible")).toBeVisible();
+	await expect(page.locator("#email")).toBeVisible();
+	await expect(page.locator("#password")).toBeVisible();
+});
+
+// Regressão: o layout raiz já renderizou {children} duas vezes (uma árvore por breakpoint),
+// duplicando ids, efeitos e chamadas de API em todas as páginas.
+test("page content is rendered only once", async ({ page }) => {
+	await page.goto("/entrar");
+	await expect(page.locator("main")).toHaveCount(1);
+	await expect(page.locator("#email")).toHaveCount(1);
 });

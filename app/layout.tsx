@@ -68,12 +68,9 @@ export default function RootLayout({
 						<ReactQueryProvider>
 							<div className="min-h-screen bg-background">
 								<MySidebar />
-								<div className="lg:hidden">
-									<main className="pt-14">{children}</main>
-								</div>
-								<div className="hidden lg:block">
-									<main className="max-w-7xl mx-auto pl-96 pr-6 min-h-screen">{children}</main>
-								</div>
+								<main className="pt-14 lg:pt-0 lg:max-w-7xl lg:mx-auto lg:pl-96 lg:pr-6 lg:min-h-screen">
+									{children}
+								</main>
 							</div>
 						</ReactQueryProvider>
 					</ThemeProvider>

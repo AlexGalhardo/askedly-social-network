@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
 		const parsedData = socialMediaSchema.safeParse(body);
 		if (!parsedData.success) {
-			const firstError = parsedData.error.errors[0];
+			const firstError = parsedData.error.issues[0];
 			return NextResponse.json({ error: firstError.message }, { status: 400 });
 		}
 

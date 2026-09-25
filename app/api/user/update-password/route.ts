@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 		if (!parsed.success) {
 			return NextResponse.json(
 				{
-					errors: parsed.error.errors.map((err) => ({
+					errors: parsed.error.issues.map((err) => ({
 						path: err.path.join("."),
 						message: err.message,
 					})),

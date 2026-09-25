@@ -1,0 +1,4 @@
+# Skills vendorizadas e artefatos: fora do knowledge graph do código do app.
+.claude/
+prisma/generated/
+prisma/migrations/

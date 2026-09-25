@@ -15,9 +15,7 @@ export const contactSchema = z.object({
 	email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
 	subject: z.enum(
 		["Problemas Técnicos", "Problemas Com Pagamentos", "Problemas com Conta", "Sugestões e Feedbacks", "Outros"],
-		{
-			errorMap: () => ({ message: "Assunto inválido" }),
-		},
+		{ error: "Assunto inválido" },
 	),
 	message: z.string().min(32, "Mensagem deve ter pelo menos 32 caracteres").trim(),
 });
@@ -38,7 +36,7 @@ export async function POST(request: Request) {
 		console.log("validationResult.success -> ", validationResult.success);
 
 		if (!validationResult.success) {
-			const errors = validationResult.error.errors.map((error) => ({
+			const errors = validationResult.error.issues.map((error) => ({
 				field: error.path[0],
 				message: error.message,
 			}));

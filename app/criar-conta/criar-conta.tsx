@@ -41,10 +41,6 @@ export default function CriarContaClient() {
 	const { data: session } = useSession();
 	const router = useRouter();
 
-	useEffect(() => {
-		if (session && session?.user?.nickname) router.push("/feed");
-	}, [session]);
-
 	const [name, setName] = useState("");
 	const [nickname, setNickname] = useState("");
 	const [email, setEmail] = useState("");
@@ -60,6 +56,11 @@ export default function CriarContaClient() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [password, setPassword] = useState("");
 	const [showPasswordCriteria, setShowPasswordCriteria] = useState(false);
+
+	// Quem já estava logado vai para o feed; quem acabou de criar a conta segue para /minha-conta (handleSignup).
+	useEffect(() => {
+		if (session?.user?.nickname && !accountCreated) router.push("/feed");
+	}, [session, accountCreated, router]);
 
 	const handleSignup = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -82,7 +83,7 @@ export default function CriarContaClient() {
 		} catch (err) {
 			await TelegramLog.error(`Error criar-conta.ts: ${err}`);
 			if (err instanceof z.ZodError) {
-				err.errors.forEach((error) => {
+				err.issues.forEach((error) => {
 					const path = error.path[0];
 					switch (path) {
 						case "name":
@@ -149,10 +150,10 @@ export default function CriarContaClient() {
 				setError("Ocorreu algum erro ao criar conta. Tente novamente mais tarde.");
 				setLoading(false);
 				return;
-			} else {
-				setAccountCreated(true);
-				router.push("/minha-conta");
 			}
+
+			setAccountCreated(true);
+			router.push("/minha-conta");
 		} catch (err: any) {
 			await TelegramLog.error(`Catch Error file criar-conta.ts handleSignup: ${err?.message}`);
 			setError("Ocorreu algum erro ao criar conta. Tente novamente mais tarde.");

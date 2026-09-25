@@ -52,7 +52,7 @@ export default function ContatoClient() {
 			message: false,
 		};
 
-		validationResult.error.errors.forEach((error) => {
+		validationResult.error.issues.forEach((error) => {
 			const field = error.path[0] as keyof typeof newErrors;
 			if (field) {
 				newErrors[field] = true;
