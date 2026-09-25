@@ -3,12 +3,12 @@
 import { ArrowRight, Check, Eye, EyeOff, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Script from "next/script";
 import { signIn, useSession } from "next-auth/react";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { signUp } from "@/actions/signup-actions";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { signupSchema } from "@/lib/schemas/signup";
 import TelegramLog from "@/lib/telegram-logger";
+import { getTurnstile } from "@/lib/turnstile";
 
 export default function CriarContaClient() {
 	const { data: session } = useSession();
@@ -92,7 +93,7 @@ export default function CriarContaClient() {
 		let token = null;
 
 		if (process.env.NODE_ENV === "production") {
-			token = (window as any).turnstile?.getResponse?.();
+			token = getTurnstile()?.getResponse();
 
 			if (!token) {
 				setError("Por favor, verifique o CAPTCHA.");
@@ -140,7 +141,7 @@ export default function CriarContaClient() {
 			setError("Ocorreu algum erro ao criar conta. Tente novamente mais tarde.");
 		} finally {
 			setLoading(false);
-			(window as any).turnstile?.reset();
+			getTurnstile()?.reset();
 		}
 	};
 
@@ -183,25 +184,8 @@ export default function CriarContaClient() {
 		</div>
 	);
 
-	const turnstileRef = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		if ((window as any).turnstile && turnstileRef.current) {
-			(window as any).turnstile.render(turnstileRef.current, {
-				sitekey: "0x4AAAAAABiCEoK5rM8dg1Xm",
-				callback: (token: string) => {},
-			});
-		}
-	}, []);
-
 	return (
 		<>
-			<Script
-				src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
-				async
-				defer
-				onLoad={() => console.log("Turnstile script carregado")}
-			/>
 			<div className="min-h-screen flex items-center justify-center p-4">
 				<Card className="w-full max-w-md border-none">
 					<CardHeader className="text-center">
@@ -411,7 +395,7 @@ export default function CriarContaClient() {
 								{errorTerms && <p className="font-bold text-red-600">{errorTerms}</p>}
 							</div>
 
-							<div className="w-full" ref={turnstileRef}></div>
+							<TurnstileWidget />
 
 							{error && error !== "Callback" && <p className="font-bold text-red-600">{error}</p>}
 

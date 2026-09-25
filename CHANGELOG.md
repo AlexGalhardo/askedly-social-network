@@ -5,6 +5,17 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.6.2] - 2026-09-25
+
+### Changed
+
+- Move the anonymous-asker helper out of the repository
+
+### Fixed
+
+- Render the theme toggle without depending on the theme
+- Render the captcha on the first load of the signup page
+
 ## [0.6.1] - 2026-09-25
 
 ### Security

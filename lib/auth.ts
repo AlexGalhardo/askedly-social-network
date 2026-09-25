@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import slugify from "slugify";
 import { QuestionInterface } from "./interfaces";
-import { hideAnonymousAsker } from "./repositories/questions.repository";
 import {
 	createUser,
 	getUserByEmail,
@@ -13,6 +12,7 @@ import {
 } from "./repositories/users.repository";
 import { stripPrivateFields } from "./services/profile.service";
 import TelegramLog from "./telegram-logger";
+import { hideAnonymousAsker } from "./utils/question-privacy";
 import { isQuestionExpired } from "./utils/question-utils";
 
 interface ExtendedUser {

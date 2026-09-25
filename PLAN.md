@@ -145,9 +145,9 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 ### Pendências técnicas menores
 
 - [ ] Seed não roda no SQLite (`createMany({ skipDuplicates })`)
-- [ ] Erro de hidratação no botão de tema (`Moon`/`Sun` dependem do tema, que só é conhecido no client)
+- [x] Erro de hidratação no botão de tema (`Moon`/`Sun` dependem do tema, que só é conhecido no client)
 - [ ] Páginas que têm `<main>` próprio dentro do `<main>` do layout (landmark duplicado, a11y)
-- [ ] Campo de nickname aceita só `a-z`, mas o schema aceita dígitos e `_`: alinhar
+- [x] Campo de nickname aceita só `a-z`, mas o schema aceita dígitos e `_`: alinhar
 - [ ] O callback `session` do NextAuth carrega o usuário com todas as perguntas a cada leitura de sessão (performance)
 - [ ] 61 warnings do Biome (não bloqueiam)
 
@@ -176,4 +176,13 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 - [ ] Registrar achados em `docs/security.md` (categoria OWASP, arquivo, severidade, correção) e linkar em `AGENTS.md`/`CLAUDE.md`
 - [ ] Corrigir achados críticos/altos (1 commit por correção, com teste que prova a correção); médios/baixos viram itens no plano
 - [ ] `bun audit` sem vulnerabilidades altas/críticas; CI `security-audit` bloqueante
+
+### Achados antecipados (encontrados antes da auditoria formal)
+
+- [x] **Crítico:** repositórios com `"use server"` (endpoints públicos: dump de usuários, troca de senha de qualquer conta, webhook forjado). Corrigido + teste de guarda
+- [x] **Crítico:** linhas inteiras de `User` serializadas para o browser (feed, top curtidas, perfil, sessão) e autor de pergunta anônima revelado. Corrigido
+- [x] **Crítico:** chave da Resend hardcoded em `app/api/send-contact-email/route.ts` (bloqueava o push pelo Push Protection do GitHub). Removida do código e do histórico local; **a chave precisa ser rotacionada na Resend** (já estava pública no commit `ca19d3b`)
+- [ ] **Alto:** `getUserByNicknameAction` (perfil) e `/top-curtidas` ainda devolvem as respostas de perfil privado, respostas privadas e perguntas pendentes para o client filtrar. Filtrar no servidor, como o feed já faz (`lib/services/feed.service.ts`)
+- [ ] **Médio:** cadastro sem captcha no servidor (o token Turnstile é de uso único e hoje é gasto no `signIn` logo depois). Resolver junto com o rate limit
+- [ ] **Médio:** as consultas públicas de perguntas ainda devolvem campos internos da pergunta (`webhook_id`, `payment_withdraw_id`, motivo de report). Trocar `include` por `select` explícito
 - [ ] Commit (`docs: add OWASP Top Ten security audit report`)

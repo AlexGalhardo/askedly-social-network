@@ -47,7 +47,9 @@ type SidebarItem = {
 export function MySidebar() {
 	const { session, isAuthenticated, isLoading, error, refetch } = useSessionVerification();
 	const [sidebarOpen, setSidebarOpen] = useState(false);
-	const { theme, setTheme } = useTheme();
+	// O tema só é conhecido no client: o markup não pode depender dele (hydration), então os dois ícones
+	// são renderizados e o CSS `dark:` escolhe qual aparece.
+	const { resolvedTheme, setTheme } = useTheme();
 	const pathname = usePathname();
 
 	const sidebarItems = useMemo((): SidebarItem[] => {
@@ -174,7 +176,7 @@ export function MySidebar() {
 	};
 
 	const toggleTheme = () => {
-		setTheme(theme === "light" ? "dark" : "light");
+		setTheme(resolvedTheme === "dark" ? "light" : "dark");
 		setSidebarOpen(false);
 	};
 
@@ -207,8 +209,10 @@ export function MySidebar() {
 	const renderAuthSection = (isMobile = false) => (
 		<div className="p-4 border-t space-y-2 flex-shrink-0">
 			<Button variant="ghost" className="w-full justify-start h-11" onClick={toggleTheme}>
-				{theme === "light" ? <Moon className="mr-3 h-5 w-5" /> : <Sun className="mr-3 h-5 w-5" />}
-				<span className="flex-1 text-left">{theme === "light" ? "Modo Escuro" : "Modo Claro"}</span>
+				<Moon className="mr-3 h-5 w-5 dark:hidden" />
+				<Sun className="mr-3 h-5 w-5 hidden dark:block" />
+				<span className="flex-1 text-left dark:hidden">Modo Escuro</span>
+				<span className="flex-1 text-left hidden dark:inline">Modo Claro</span>
 			</Button>
 
 			{isAuthenticated ? (
@@ -295,12 +299,9 @@ export function MySidebar() {
 					</div>
 
 					<div className="flex items-center space-x-2">
-						<Button
-							variant="ghost"
-							size="sm"
-							onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-						>
-							{theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+						<Button variant="ghost" size="sm" onClick={toggleTheme}>
+							<Moon className="h-4 w-4 dark:hidden" />
+							<Sun className="h-4 w-4 hidden dark:block" />
 						</Button>
 					</div>
 				</div>

@@ -1,4 +1,4 @@
-import { hideAnonymousAsker } from "@/lib/repositories/questions.repository";
+import { hideAnonymousAsker } from "@/lib/utils/question-privacy";
 
 const PRIVATE_USER_FIELDS = new Set([
 	"password",

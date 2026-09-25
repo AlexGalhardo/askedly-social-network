@@ -3,9 +3,9 @@
 import { ArrowRight, Check, Eye, EyeOff, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Script from "next/script";
 import { signIn, useSession } from "next-auth/react";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import TelegramLog from "@/lib/telegram-logger";
+import { getTurnstile } from "@/lib/turnstile";
 
 export default function EntrarClient() {
 	const router = useRouter();
@@ -22,8 +23,6 @@ export default function EntrarClient() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [password, setPassword] = useState("");
 	const [showPasswordCriteria, setShowPasswordCriteria] = useState(false);
-	const [turnstileReady, setTurnstileReady] = useState(false);
-	const [turnstileRendered, setTurnstileRendered] = useState(false);
 
 	const { data: session } = useSession();
 
@@ -59,7 +58,7 @@ export default function EntrarClient() {
 		let token = null;
 
 		if (process.env.NODE_ENV === "production") {
-			token = (window as any).turnstile?.getResponse?.();
+			token = getTurnstile()?.getResponse();
 
 			if (!token) {
 				setError("Por favor, verifique o CAPTCHA.");
@@ -92,7 +91,7 @@ export default function EntrarClient() {
 			setError("Ocorreu um erro ao fazer login. Tente novamente.");
 		} finally {
 			setLoading(false);
-			(window as any).turnstile?.reset();
+			getTurnstile()?.reset();
 		}
 	};
 
@@ -107,62 +106,8 @@ export default function EntrarClient() {
 		</div>
 	);
 
-	const turnstileRef = useRef<HTMLDivElement>(null);
-
-	const renderTurnstile = () => {
-		if (turnstileReady && turnstileRef.current && !turnstileRendered) {
-			(window as any).turnstile.render(turnstileRef.current, {
-				sitekey: "0x4AAAAAABiCEoK5rM8dg1Xm",
-				callback: (token: string) => {},
-			});
-			setTurnstileRendered(true);
-		}
-	};
-
-	const handleTurnstileLoad = () => {
-		setTurnstileReady(true);
-	};
-
-	// Sempre a versão atual de renderTurnstile, sem re-executar o efeito a cada render.
-	const onTurnstileReady = useEffectEvent(() => renderTurnstile());
-
-	useEffect(() => {
-		if (turnstileReady) {
-			onTurnstileReady();
-		}
-	}, [turnstileReady]);
-
-	useEffect(() => {
-		const checkTurnstileAvailability = () => {
-			if ((window as any).turnstile && !turnstileReady) {
-				setTurnstileReady(true);
-			}
-		};
-
-		const interval = setInterval(checkTurnstileAvailability, 100);
-
-		return () => clearInterval(interval);
-	}, [turnstileReady]);
-
-	useEffect(() => {
-		(window as any).onloadTurnstileCallback = () => {
-			setTurnstileReady(true);
-		};
-
-		return () => {
-			delete (window as any).onloadTurnstileCallback;
-		};
-	}, []);
-
 	return (
 		<>
-			<Script
-				src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
-				async
-				defer
-				onLoad={handleTurnstileLoad}
-				strategy="afterInteractive"
-			/>
 			<div className="min-h-screen flex items-center justify-center p-4">
 				<Card className="w-full max-w-md border-none">
 					<CardHeader className="text-center">
@@ -297,7 +242,7 @@ export default function EntrarClient() {
 								)}
 							</div>
 
-							<div className="w-full" ref={turnstileRef}></div>
+							<TurnstileWidget />
 
 							{error && error !== "Callback" && (
 								<Alert

@@ -1,7 +1,7 @@
 "use client";
 
-import Script from "next/script";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useState } from "react";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,11 +12,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { contactSchema } from "@/lib/schemas/contact";
 import TelegramLog from "@/lib/telegram-logger";
+import { getTurnstile } from "@/lib/turnstile";
 
 export default function ContatoClient() {
 	const [error, setError] = useState("");
-	const [turnstileReady, setTurnstileReady] = useState(false);
-	const [turnstileRendered, setTurnstileRendered] = useState(false);
 
 	const [formData, setFormData] = useState({
 		name: "",
@@ -73,7 +72,7 @@ export default function ContatoClient() {
 		let token = null;
 
 		if (process.env.NODE_ENV === "production") {
-			token = (window as any).turnstile?.getResponse?.();
+			token = getTurnstile()?.getResponse();
 
 			if (!token) {
 				setError("Por favor, verifique o CAPTCHA.");
@@ -121,7 +120,7 @@ export default function ContatoClient() {
 			});
 		} finally {
 			setLoading(false);
-			(window as any).turnstile?.reset();
+			getTurnstile()?.reset();
 		}
 	};
 
@@ -146,62 +145,8 @@ export default function ContatoClient() {
 		setFormData((prev) => ({ ...prev, subject: value }));
 	};
 
-	const turnstileRef = useRef<HTMLDivElement>(null);
-
-	const renderTurnstile = () => {
-		if (turnstileReady && turnstileRef.current && !turnstileRendered) {
-			(window as any).turnstile.render(turnstileRef.current, {
-				sitekey: "0x4AAAAAABiCEoK5rM8dg1Xm",
-				callback: (token: string) => {},
-			});
-			setTurnstileRendered(true);
-		}
-	};
-
-	const handleTurnstileLoad = () => {
-		setTurnstileReady(true);
-	};
-
-	// Sempre a versão atual de renderTurnstile, sem re-executar o efeito a cada render.
-	const onTurnstileReady = useEffectEvent(() => renderTurnstile());
-
-	useEffect(() => {
-		if (turnstileReady) {
-			onTurnstileReady();
-		}
-	}, [turnstileReady]);
-
-	useEffect(() => {
-		const checkTurnstileAvailability = () => {
-			if ((window as any).turnstile && !turnstileReady) {
-				setTurnstileReady(true);
-			}
-		};
-
-		const interval = setInterval(checkTurnstileAvailability, 100);
-
-		return () => clearInterval(interval);
-	}, [turnstileReady]);
-
-	useEffect(() => {
-		(window as any).onloadTurnstileCallback = () => {
-			setTurnstileReady(true);
-		};
-
-		return () => {
-			delete (window as any).onloadTurnstileCallback;
-		};
-	}, []);
-
 	return (
 		<>
-			<Script
-				src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
-				async
-				defer
-				onLoad={handleTurnstileLoad}
-				strategy="afterInteractive"
-			/>
 			<main className="p-4 lg:p-6">
 				<div className="max-w-6xl mx-auto">
 					<div className="text-center mb-8 dark:text-white p-8 rounded-lg">
@@ -292,7 +237,7 @@ export default function ContatoClient() {
 									)}
 								</div>
 
-								<div className="w-full" ref={turnstileRef}></div>
+								<TurnstileWidget />
 
 								{error && error !== "Callback" && (
 									<Alert
