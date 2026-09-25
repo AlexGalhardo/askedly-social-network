@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { reportAnswer, withdrawUnanswered } from "@/actions/sent-question-actions";
+import { reportAnswer } from "@/actions/sent-question-actions";
 import { SentQuestionInterface } from "@/types/SentQuestion";
 
 export function useSentQuestions() {
@@ -44,18 +44,6 @@ export function useReportAnswer() {
 		},
 		onSuccess: () => {
 			toast.success("Resposta reportada com sucesso");
-		},
-	});
-}
-
-export function useWithdrawUnanswered() {
-	return useMutation({
-		mutationFn: withdrawUnanswered,
-		onError: (error) => {
-			toast.error(error instanceof Error ? error.message : "Erro ao processar saque");
-		},
-		onSuccess: () => {
-			toast.success("Saque solicitado com sucesso");
 		},
 	});
 }

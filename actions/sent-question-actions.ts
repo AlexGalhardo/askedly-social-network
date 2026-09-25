@@ -1,70 +1,19 @@
 "use server";
 
 import { updateTag } from "next/cache";
-import { headers } from "next/headers";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import TelegramLog from "@/lib/telegram-logger";
+import { type ReportReason, reportAnswer as reportAnswerAsAsker } from "@/lib/services/question-report.service";
+import { getSessionUser } from "@/lib/session";
 
-// A chamada servidor→servidor não herda os cookies do navegador; sem repassá-los a rota não enxerga a sessão.
-async function forwardedHeaders(): Promise<HeadersInit> {
-	return { "Content-Type": "application/json", cookie: (await headers()).get("cookie") ?? "" };
-}
+export async function reportAnswer(questionId: string, reason: ReportReason): Promise<{ success: true }> {
+	const user = await getSessionUser();
+	if (!user) throw new Error("Usuário não autenticado");
 
-export async function reportAnswer(questionId: string, reason: "offensive" | "inappropriate") {
-	try {
-		const session = await getServerSession(authOptions);
+	if (reason !== "offensive" && reason !== "inappropriate") throw new Error("Motivo inválido");
 
-		if (!session?.user?.id) {
-			throw new Error("Usuário não autenticado");
-		}
-
-		const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/question/report-answer`, {
-			method: "POST",
-			headers: await forwardedHeaders(),
-			body: JSON.stringify({
-				questionId,
-				reason,
-			}),
-		});
-
-		if (!response.ok) {
-			const errorData = await response.json();
-			throw new Error(errorData.error || "Erro ao reportar resposta");
-		}
-
-		updateTag("user-session");
-
-		return { success: true };
-	} catch (error: any) {
-		await TelegramLog.error(`Catch Error file sent-question-actions.ts reportAnswer: ${error?.message}`);
-		throw new Error(error?.message);
+	if (!(await reportAnswerAsAsker(questionId, user.nickname, reason))) {
+		throw new Error("Não foi possível reportar esta resposta");
 	}
-}
 
-export async function withdrawUnanswered() {
-	try {
-		const session = await getServerSession(authOptions);
-
-		if (!session?.user?.id) {
-			throw new Error("Usuário não autenticado");
-		}
-
-		const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/withdraw/unanswered`, {
-			method: "POST",
-			headers: await forwardedHeaders(),
-		});
-
-		if (!response.ok) {
-			const errorData = await response.json();
-			throw new Error(errorData.error || "Erro ao processar saque");
-		}
-
-		updateTag("user-session");
-
-		return { success: true };
-	} catch (error: any) {
-		await TelegramLog.error(`Catch Error file sent-question-actions.ts withdrawUnanswered: ${error?.message}`);
-		throw new Error(error?.message);
-	}
+	updateTag("user-session");
+	return { success: true };
 }
