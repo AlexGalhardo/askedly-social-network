@@ -2,8 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("signing up with a new account logs in and redirects to /minha-conta", async ({ page }) => {
 	const unique = Date.now();
-	// O campo de nickname só aceita a-z: dígitos do timestamp viram letras para manter a unicidade.
-	const nickname = `e${String(unique).replace(/\d/g, (d) => String.fromCharCode(97 + Number(d)))}`.slice(0, 16);
+	const nickname = `e_${unique}`;
 	const email = `e2e-${unique}@example.com`;
 
 	await page.goto("/criar-conta");

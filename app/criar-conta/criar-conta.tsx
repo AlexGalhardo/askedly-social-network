@@ -8,34 +8,15 @@ import { signIn, useSession } from "next-auth/react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
+import { signUp } from "@/actions/signup-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { createUser, getUserByEmail, getUserByNickname } from "@/lib/repositories/users.repository";
+import { signupSchema } from "@/lib/schemas/signup";
 import TelegramLog from "@/lib/telegram-logger";
-
-const schemaUserSignup = z.object({
-	name: z.string().min(4, "Nome deve ter pelo menos 4 letras").max(32, "Nome deve ter no máximo 32 caracters"),
-	nickname: z
-		.string()
-		.min(4, "Nickname deve ter pelo menos 4 letras")
-		.max(16, "Nickname deve ter no máximo 16 letras")
-		.regex(/^[a-zA-Z0-9_]+$/, "Nickname não pode conter caracteres especiais (exceto _)"),
-	email: z.string().email("Email deve ser válido"),
-	password: z
-		.string()
-		.min(8, "Senha deve ter pelo menos 8 caracteres")
-		.regex(/(?=.*[a-z])/, "Senha deve conter pelo menos 1 letra minúscula")
-		.regex(/(?=.*[A-Z])/, "Senha deve conter pelo menos 1 letra maiúscula")
-		.regex(/(?=.*\d)/, "Senha deve conter pelo menos 1 número")
-		.regex(/(?=.*[!@#$%^&*(),.?":{}|<>])/, "Senha deve conter pelo menos 1 caractere especial"),
-	acceptTerms: z
-		.boolean()
-		.refine((val) => val === true, "Você deve aceitar os termos de uso e política de privacidade"),
-});
 
 export default function CriarContaClient() {
 	const { data: session } = useSession();
@@ -73,7 +54,7 @@ export default function CriarContaClient() {
 		setLoading(true);
 
 		try {
-			schemaUserSignup.parse({
+			signupSchema.parse({
 				name: name.trim(),
 				nickname: nickname.trim(),
 				email: email.trim(),
@@ -121,23 +102,23 @@ export default function CriarContaClient() {
 		}
 
 		try {
-			const existingUserNickname = await getUserByNickname(nickname);
+			const signup = await signUp({
+				name: name.trim(),
+				nickname: nickname.trim(),
+				email: email.trim(),
+				password,
+				acceptTerms,
+			});
 
-			if (existingUserNickname) {
-				setErrorNickname(`Esse @${nickname} está indisponível`);
+			if (!signup.ok) {
+				setErrorName(signup.fieldErrors.name ?? "");
+				setErrorNickname(signup.fieldErrors.nickname ?? "");
+				setErrorEmail(signup.fieldErrors.email ?? "");
+				setErrorPassword(signup.fieldErrors.password ?? "");
+				setErrorTerms(signup.fieldErrors.acceptTerms ?? "");
 				setLoading(false);
 				return;
 			}
-
-			const existingUserEmail = await getUserByEmail(email);
-
-			if (existingUserEmail) {
-				setErrorEmail("Esse Email está indisponível");
-				setLoading(false);
-				return;
-			}
-
-			await createUser(name, nickname, email, password);
 
 			const result = await signIn("credentials", {
 				redirect: false,
@@ -308,7 +289,7 @@ export default function CriarContaClient() {
 										value={`@${nickname}`}
 										onChange={(e) => {
 											const rawValue = e.target.value;
-											const sanitizedValue = rawValue.toLowerCase().replace(/[^a-z]/g, "");
+											const sanitizedValue = rawValue.toLowerCase().replace(/[^a-z0-9_]/g, "");
 											setNickname(sanitizedValue);
 										}}
 										className="dark:text-white"

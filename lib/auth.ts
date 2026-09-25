@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import slugify from "slugify";
 import { QuestionInterface } from "./interfaces";
+import { hideAnonymousAsker } from "./repositories/questions.repository";
 import {
 	createUser,
 	getUserByEmail,
@@ -10,6 +11,7 @@ import {
 	updateLastLoginAt,
 	verifyCredentials,
 } from "./repositories/users.repository";
+import { stripPrivateFields } from "./services/profile.service";
 import TelegramLog from "./telegram-logger";
 import { isQuestionExpired } from "./utils/question-utils";
 
@@ -24,6 +26,8 @@ interface ExtendedUser {
 	public_questions_remaining_today?: number;
 	anonymous_questions_remaining_today?: number;
 	pix_key?: string | null;
+	/** Só um booleano: o hash da senha nunca entra na sessão. */
+	has_password?: boolean;
 	twitter?: string | null;
 	instagram?: string | null;
 	youtube?: string | null;
@@ -89,6 +93,7 @@ const processExpiredQuestions = (questions: any[]): any[] => {
 
 const mapUserToSession = (dbUser: any): Partial<ExtendedUser> => ({
 	id: dbUser?.id,
+	has_password: Boolean(dbUser?.password),
 	avatar_url: dbUser?.avatar_url,
 	name: dbUser?.name,
 	nickname: dbUser?.nickname,
@@ -231,24 +236,33 @@ export const authOptions: NextAuthOptions = {
 
 				Object.assign(session.user, mapUserToSession(dbUser));
 
-				session.user.questions_received = processExpiredQuestions(
-					dbUser.questions_received?.map((q: any) => ({
-						...q,
-						owner: q.owner ?? null,
-					})) ?? [],
-				);
+				// A sessão é serializada para o browser: as relações passam pelo mesmo filtro do perfil público
+				// (sem hash/email/PIX/api_key de ninguém, sem revelar autor de pergunta anônima).
+				session.user.questions_received = stripPrivateFields(
+					processExpiredQuestions(
+						dbUser.questions_received?.map((q: any) =>
+							hideAnonymousAsker({ ...q, owner: q.owner ?? null }),
+						) ?? [],
+					),
+				) as QuestionInterface[];
 
-				session.user.questions_sent = processExpiredQuestions(
-					dbUser.questions_sent?.map((q: any) => ({
-						...q,
-						asked_by: q.asked_by ?? null,
-					})) ?? [],
-				);
+				session.user.questions_sent = stripPrivateFields(
+					processExpiredQuestions(
+						dbUser.questions_sent?.map((q: any) => ({
+							...q,
+							asked_by: q.asked_by ?? null,
+						})) ?? [],
+					),
+				) as QuestionInterface[];
 
-				session.user.followers = dbUser.followers ?? [];
-				session.user.following = dbUser.following ?? [];
-				session.user.blocked_users = dbUser.blocked_users ?? [];
-				session.user.blocked_by_users = dbUser.blocked_by_users ?? [];
+				session.user.followers = stripPrivateFields(dbUser.followers ?? []) as typeof session.user.followers;
+				session.user.following = stripPrivateFields(dbUser.following ?? []) as typeof session.user.following;
+				session.user.blocked_users = stripPrivateFields(
+					dbUser.blocked_users ?? [],
+				) as typeof session.user.blocked_users;
+				session.user.blocked_by_users = stripPrivateFields(
+					dbUser.blocked_by_users ?? [],
+				) as typeof session.user.blocked_by_users;
 			} catch (error: any) {
 				await TelegramLog.error(`Erro na autenticação auth.ts callbacks session: ${error?.message}`);
 			}

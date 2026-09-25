@@ -2,7 +2,6 @@
 
 import Script from "next/script";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { contactSchema } from "@/app/api/send-contact-email/route";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { contactSchema } from "@/lib/schemas/contact";
 import TelegramLog from "@/lib/telegram-logger";
 
 export default function ContatoClient() {

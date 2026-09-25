@@ -14,6 +14,10 @@ NextAuth v4 (`next-auth`), configurado em `lib/auth.ts` e exposto em `app/api/au
 - `session.user` é enriquecido com todos os campos de perfil, privacidade, seguidores/seguindo e perguntas (com marcação de expiradas via `processExpiredQuestions`).
 - Tipagem estendida da sessão declarada via `declare module "next-auth"` no próprio `lib/auth.ts`.
 
+## Troca de senha
+
+`updatePassword` (`actions/user-actions.ts`) chama `changePassword` (`lib/services/password.service.ts`), que exige a senha atual: uma sessão roubada não basta para tomar a conta. Contas criadas pelo Google não têm senha; nelas a mesma tela define a primeira senha sem pedir a atual. A UI decide qual formulário mostrar por `session.user.has_password`, um booleano (o hash nunca entra na sessão).
+
 ## Verificação de sessão no cliente
 
 `hooks/use-session-verification.ts` + `app/api/auth/verify-session/route.ts` fazem polling/validação de sessão ativa no client (ex: detectar logout em outra aba, banimento).

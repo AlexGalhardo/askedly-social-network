@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
+import { AskerAvatar, AskerName } from "@/components/question-asker";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,19 +14,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDislikeQuestion, useLikeQuestion } from "@/hooks/use-profile-queries";
 import { useToast } from "@/hooks/use-toast";
 import { getInitials } from "@/lib/functions";
-import { QuestionInterface } from "@/lib/interfaces";
+import type { PublicQuestion } from "@/lib/repositories/questions.repository";
 import TelegramLog from "@/lib/telegram-logger";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface TopCurtidasProps {
-	today: QuestionInterface[];
-	week: QuestionInterface[];
-	month: QuestionInterface[];
-	year: QuestionInterface[];
-	allTime: QuestionInterface[];
+	today: PublicQuestion[];
+	week: PublicQuestion[];
+	month: PublicQuestion[];
+	year: PublicQuestion[];
+	allTime: PublicQuestion[];
 }
 
-function sortQuestionsByLikes(questions: QuestionInterface[]): QuestionInterface[] {
+function sortQuestionsByLikes(questions: PublicQuestion[]): PublicQuestion[] {
 	return questions.sort((a, b) => {
 		const likesA = JSON.parse(a.liked_by_users || "[]").length;
 		const likesB = JSON.parse(b.liked_by_users || "[]").length;
@@ -40,21 +41,21 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 	const dislikeMutation = useDislikeQuestion();
 	const { status } = useSession();
 	const [activeTab, setActiveTab] = useState("today");
-	const [displayedQuestions, setDisplayedQuestions] = useState<QuestionInterface[]>([]);
-	const [currentData, setCurrentData] = useState<QuestionInterface[]>([]);
+	const [displayedQuestions, setDisplayedQuestions] = useState<PublicQuestion[]>([]);
+	const [currentData, setCurrentData] = useState<PublicQuestion[]>([]);
 	const [isLoadingMore, setIsLoadingMore] = useState(false);
 	const [hasMoreQuestions, setHasMoreQuestions] = useState(true);
 
-	const [todayQuestions, setTodayQuestions] = useState<QuestionInterface[]>(today);
-	const [weekQuestions, setWeekQuestions] = useState<QuestionInterface[]>(week);
-	const [monthQuestions, setMonthQuestions] = useState<QuestionInterface[]>(month);
-	const [yearQuestions, setYearQuestions] = useState<QuestionInterface[]>(year);
-	const [allTimeQuestions, setAllTimeQuestions] = useState<QuestionInterface[]>(allTime);
+	const [todayQuestions, setTodayQuestions] = useState<PublicQuestion[]>(today);
+	const [weekQuestions, setWeekQuestions] = useState<PublicQuestion[]>(week);
+	const [monthQuestions, setMonthQuestions] = useState<PublicQuestion[]>(month);
+	const [yearQuestions, setYearQuestions] = useState<PublicQuestion[]>(year);
+	const [allTimeQuestions, setAllTimeQuestions] = useState<PublicQuestion[]>(allTime);
 
 	const questionsPerLoad = 10;
 
-	const updateQuestionInAllStates = (updatedQuestion: QuestionInterface) => {
-		const updateQuestion = (questions: QuestionInterface[]) =>
+	const updateQuestionInAllStates = (updatedQuestion: PublicQuestion) => {
+		const updateQuestion = (questions: PublicQuestion[]) =>
 			questions.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q));
 
 		setTodayQuestions((prev) => updateQuestion(prev));
@@ -65,7 +66,7 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 	};
 
 	useEffect(() => {
-		let newData: QuestionInterface[] = [];
+		let newData: PublicQuestion[] = [];
 
 		switch (activeTab) {
 			case "today":
@@ -126,19 +127,19 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, [loadMoreQuestions]);
 
-	const hasUserLiked = (question: QuestionInterface) => {
+	const hasUserLiked = (question: PublicQuestion) => {
 		if (!session?.user?.nickname) return false;
 		const likedUsers = JSON.parse(question.liked_by_users || "[]");
 		return likedUsers.includes(session.user.nickname);
 	};
 
-	const hasUserDisliked = (question: QuestionInterface) => {
+	const hasUserDisliked = (question: PublicQuestion) => {
 		if (!session?.user?.nickname) return false;
 		const dislikedUsers = JSON.parse(question.desliked_by_users || "[]");
 		return dislikedUsers.includes(session.user.nickname);
 	};
 
-	const handleLike = async (question: QuestionInterface) => {
+	const handleLike = async (question: PublicQuestion) => {
 		if (!session?.user?.nickname) return;
 
 		try {
@@ -177,7 +178,7 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 		}
 	};
 
-	const handleDislike = async (question: QuestionInterface) => {
+	const handleDislike = async (question: PublicQuestion) => {
 		if (!session?.user?.nickname) return;
 
 		try {
@@ -219,28 +220,13 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 
 	if (status === "loading") return <LoadingScreen />;
 
-	const renderQuestionCard = (question: QuestionInterface, index: number) => (
+	const renderQuestionCard = (question: PublicQuestion, index: number) => (
 		<Card key={question.id} className="border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800">
 			<CardContent className="p-4 sm:p-6">
 				<div className="flex items-start gap-3 mb-4">
-					<Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
-						<AvatarImage src={question?.asked_by?.avatar_url as string} alt={question.asked_by.name} />
-						<AvatarFallback className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-							{getInitials(question.asked_by.name)}
-						</AvatarFallback>
-					</Avatar>
+					<AskerAvatar asker={question.asked_by} />
 					<div className="flex-1 min-w-0">
-						<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-							<span className="font-medium text-gray-900 dark:text-gray-100 text-sm sm:text-base truncate">
-								{question.asked_by.name}
-							</span>
-							<Link
-								href={`/${question.asked_by.nickname}`}
-								className="text-sm font-bold text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 truncate"
-							>
-								@{question.asked_by.nickname}
-							</Link>
-						</div>
+						<AskerName asker={question.asked_by} />
 						<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
 							{question.owner.privacy_show_value_received_from_answering_question &&
 								!question.amount_paid_is_private && (

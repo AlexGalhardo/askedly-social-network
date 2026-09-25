@@ -1,7 +1,8 @@
 "use client";
 
 import { Check, Loader2, X } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
+import { useSession } from "next-auth/react";
+import { type FormEvent, useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,7 +19,10 @@ const CriteriaItem = ({ met, text }: { met: boolean; text: string }) => (
 export function PasswordForm() {
 	const [isPending, startTransition] = useTransition();
 	const updatePasswordMutation = useUpdatePassword();
+	const { data: session } = useSession();
+	const hasPassword = session?.user?.has_password ?? true;
 
+	const [currentPassword, setCurrentPassword] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [showPasswordCriteria, setShowPasswordCriteria] = useState(false);
@@ -50,11 +54,16 @@ export function PasswordForm() {
 		}
 	}, [newPassword]);
 
-	const handleSubmit = (formData: FormData) => {
+	// onSubmit em vez de <form action>: o React reseta o DOM do form após uma action, e numa senha atual
+	// errada os campos sumiriam da tela embora o estado ainda os tenha.
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		const formData = new FormData(event.currentTarget);
 		startTransition(() => {
 			updatePasswordMutation.mutate(formData, {
 				onSuccess: (data) => {
 					if (!data.error) {
+						setCurrentPassword("");
 						setNewPassword("");
 						setConfirmPassword("");
 						setShowPasswordCriteria(false);
@@ -72,7 +81,27 @@ export function PasswordForm() {
 				<CardTitle>Alterar Senha</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<form action={handleSubmit} className="space-y-4">
+				<form onSubmit={handleSubmit} className="space-y-4">
+					{hasPassword ? (
+						<div className="space-y-2">
+							<Label htmlFor="current-password">Senha Atual</Label>
+							<Input
+								id="current-password"
+								name="currentPassword"
+								type="password"
+								autoComplete="current-password"
+								value={currentPassword}
+								onChange={(e) => setCurrentPassword(e.target.value)}
+								required
+							/>
+						</div>
+					) : (
+						<p className="text-sm text-gray-600">
+							Sua conta foi criada com o Google e ainda não tem senha. Defina uma para também entrar com
+							email e senha.
+						</p>
+					)}
+
 					<div className="space-y-2">
 						<Label htmlFor="new-password">Nova Senha</Label>
 						<Input

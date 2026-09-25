@@ -1,14 +1,43 @@
-"use server";
-
 import { prisma } from "@/prisma/prisma-client";
 
+// Estas consultas alimentam páginas públicas e vão serializadas para o browser: só campos públicos do usuário,
+// nunca `include: true` (que levaria hash de senha, email, chave PIX e api_key).
+const publicQuestionInclude = {
+	owner: {
+		select: {
+			id: true,
+			nickname: true,
+			name: true,
+			avatar_url: true,
+			privacy_is_private_profile: true,
+			privacy_show_likes_each_answer_public: true,
+			privacy_show_dislikes_each_answer_public: true,
+			privacy_show_value_received_from_answering_question: true,
+		},
+	},
+	asked_by: { select: { nickname: true, name: true, avatar_url: true } },
+} as const;
+
+interface AnonymizableQuestion {
+	asker_sent_anonymous_question: boolean;
+	asked_by: unknown;
+	asked_by_user_nickname: string;
+}
+
+export type WithOptionalAsker<T extends AnonymizableQuestion> = Omit<T, "asked_by"> & {
+	asked_by: T["asked_by"] | null;
+};
+
+export function hideAnonymousAsker<T extends AnonymizableQuestion>(question: T): WithOptionalAsker<T> {
+	return question.asker_sent_anonymous_question
+		? { ...question, asked_by: null, asked_by_user_nickname: "" }
+		: question;
+}
+
 class QuestionsRepository {
-	async getAllLatestDescPublicQuestionsAnswered(): Promise<any[]> {
+	async getAllLatestDescPublicQuestionsAnswered() {
 		const allQuestions = await prisma.question.findMany({
-			include: {
-				owner: true,
-				asked_by: true,
-			},
+			include: publicQuestionInclude,
 			where: {
 				question_answered: true,
 				answered_at: {
@@ -24,7 +53,7 @@ class QuestionsRepository {
 		return allQuestions;
 	}
 
-	async getFollowingQuestionsAnswered(userNickname: string): Promise<any[]> {
+	async getFollowingQuestionsAnswered(userNickname: string) {
 		const followingUsers = await prisma.follower.findMany({
 			where: {
 				follower: {
@@ -47,10 +76,7 @@ class QuestionsRepository {
 		}
 
 		const followingQuestions = await prisma.question.findMany({
-			include: {
-				owner: true,
-				asked_by: true,
-			},
+			include: publicQuestionInclude,
 			where: {
 				question_answered: true,
 				answered_at: {
@@ -69,7 +95,7 @@ class QuestionsRepository {
 		return followingQuestions;
 	}
 
-	async getTopLikedAnswersToday(): Promise<any[]> {
+	async getTopLikedAnswersToday() {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 
@@ -77,10 +103,7 @@ class QuestionsRepository {
 		tomorrow.setDate(tomorrow.getDate() + 1);
 
 		return await prisma.question.findMany({
-			include: {
-				owner: true,
-				asked_by: true,
-			},
+			include: publicQuestionInclude,
 			where: {
 				question_answered: true,
 				answered_at: {
@@ -104,7 +127,7 @@ class QuestionsRepository {
 		});
 	}
 
-	async getTopLikedAnswersThisWeek(): Promise<any[]> {
+	async getTopLikedAnswersThisWeek() {
 		const today = new Date();
 		const startOfWeek = new Date(today);
 		startOfWeek.setDate(today.getDate() - today.getDay());
@@ -114,10 +137,7 @@ class QuestionsRepository {
 		endOfWeek.setDate(startOfWeek.getDate() + 7);
 
 		return await prisma.question.findMany({
-			include: {
-				owner: true,
-				asked_by: true,
-			},
+			include: publicQuestionInclude,
 			where: {
 				question_answered: true,
 				answered_at: {
@@ -141,16 +161,13 @@ class QuestionsRepository {
 		});
 	}
 
-	async getTopLikedAnswersThisMonth(): Promise<any[]> {
+	async getTopLikedAnswersThisMonth() {
 		const today = new Date();
 		const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 		const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
 
 		return await prisma.question.findMany({
-			include: {
-				owner: true,
-				asked_by: true,
-			},
+			include: publicQuestionInclude,
 			where: {
 				question_answered: true,
 				answered_at: {
@@ -174,16 +191,13 @@ class QuestionsRepository {
 		});
 	}
 
-	async getTopLikedAnswersThisYear(): Promise<any[]> {
+	async getTopLikedAnswersThisYear() {
 		const today = new Date();
 		const startOfYear = new Date(today.getFullYear(), 0, 1);
 		const endOfYear = new Date(today.getFullYear() + 1, 0, 1);
 
 		return await prisma.question.findMany({
-			include: {
-				owner: true,
-				asked_by: true,
-			},
+			include: publicQuestionInclude,
 			where: {
 				question_answered: true,
 				answered_at: {
@@ -207,12 +221,9 @@ class QuestionsRepository {
 		});
 	}
 
-	async getTopLikedAnswersAllTime(): Promise<any[]> {
+	async getTopLikedAnswersAllTime() {
 		return await prisma.question.findMany({
-			include: {
-				owner: true,
-				asked_by: true,
-			},
+			include: publicQuestionInclude,
 			where: {
 				question_answered: true,
 				answered_at: {
@@ -389,31 +400,31 @@ class QuestionsRepository {
 const repo = new QuestionsRepository();
 
 export async function getAllLatestDescPublicQuestionsAnswered() {
-	return repo.getAllLatestDescPublicQuestionsAnswered();
+	return (await repo.getAllLatestDescPublicQuestionsAnswered()).map(hideAnonymousAsker);
 }
 
 export async function getFollowingQuestionsAnswered(userNickname: string) {
-	return repo.getFollowingQuestionsAnswered(userNickname);
+	return (await repo.getFollowingQuestionsAnswered(userNickname)).map(hideAnonymousAsker);
 }
 
 export async function getTopLikedAnswersToday() {
-	return repo.getTopLikedAnswersToday();
+	return (await repo.getTopLikedAnswersToday()).map(hideAnonymousAsker);
 }
 
 export async function getTopLikedAnswersThisWeek() {
-	return repo.getTopLikedAnswersThisWeek();
+	return (await repo.getTopLikedAnswersThisWeek()).map(hideAnonymousAsker);
 }
 
 export async function getTopLikedAnswersThisMonth() {
-	return repo.getTopLikedAnswersThisMonth();
+	return (await repo.getTopLikedAnswersThisMonth()).map(hideAnonymousAsker);
 }
 
 export async function getTopLikedAnswersThisYear() {
-	return repo.getTopLikedAnswersThisYear();
+	return (await repo.getTopLikedAnswersThisYear()).map(hideAnonymousAsker);
 }
 
 export async function getTopLikedAnswersAllTime() {
-	return repo.getTopLikedAnswersAllTime();
+	return (await repo.getTopLikedAnswersAllTime()).map(hideAnonymousAsker);
 }
 
 export async function getUserQuestionsAnsweredPaymentDetails(nickname: string) {
@@ -423,3 +434,6 @@ export async function getUserQuestionsAnsweredPaymentDetails(nickname: string) {
 export async function getUserQuestionsSentPaymentDetails(nickname: string) {
 	return repo.getUserQuestionsSentPaymentDetails(nickname);
 }
+
+/** Pergunta como as páginas públicas (feed, top curtidas) a recebem. */
+export type PublicQuestion = Awaited<ReturnType<typeof getAllLatestDescPublicQuestionsAnswered>>[number];

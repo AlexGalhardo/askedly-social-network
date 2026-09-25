@@ -2,17 +2,17 @@
 
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { QuestionInterface } from "@/lib/interfaces";
+import type { PublicQuestion } from "@/lib/repositories/questions.repository";
 import { FeedQuestionActions } from "./feed-question-actions";
 import { FeedQuestionAnswer } from "./feed-question-answer";
 import { FeedQuestionHeader } from "./feed-question-header";
 
 interface QuestionCardProps {
-	question: QuestionInterface;
+	question: PublicQuestion;
 	userNickname?: string;
 	userId?: string;
-	onLike: (question: QuestionInterface) => void;
-	onDislike: (question: QuestionInterface) => void;
+	onLike: (question: PublicQuestion) => void;
+	onDislike: (question: PublicQuestion) => void;
 	hasUserLiked: boolean;
 	hasUserDisliked: boolean;
 	optimisticLikeCount?: number;

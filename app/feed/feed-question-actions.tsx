@@ -3,14 +3,14 @@
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
-import { QuestionInterface } from "@/lib/interfaces";
+import type { PublicQuestion } from "@/lib/repositories/questions.repository";
 
 interface FeedQuestionActionsProps {
-	question: QuestionInterface;
+	question: PublicQuestion;
 	userNickname?: string;
 	userId?: string;
-	onLike: (question: QuestionInterface) => void;
-	onDislike: (question: QuestionInterface) => void;
+	onLike: (question: PublicQuestion) => void;
+	onDislike: (question: PublicQuestion) => void;
 	hasUserLiked: boolean;
 	hasUserDisliked: boolean;
 	optimisticLikeCount?: number;

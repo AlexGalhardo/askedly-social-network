@@ -81,7 +81,8 @@ export interface QuestionInterface {
 	updated_at: string | Date;
 	deleted_at: string | null;
 	owner: User;
-	asked_by: User;
+	/** null quando a pergunta é anônima e quem vê não é o autor. */
+	asked_by: User | null;
 }
 
 export interface FeedClientProps {

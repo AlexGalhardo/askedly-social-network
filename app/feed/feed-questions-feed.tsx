@@ -3,7 +3,7 @@
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { type FeedType, useDislikeQuestion, useLikeQuestion, useQuestions } from "@/hooks/use-questions";
-import { QuestionInterface } from "@/lib/interfaces";
+import type { PublicQuestion } from "@/lib/repositories/questions.repository";
 import { FeedQuestionCard } from "./feed-question-card";
 import { FeedTabs } from "./feed-tabs";
 
@@ -45,7 +45,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestio
 
 	const questions = useMemo(() => {
 		const allQuestions =
-			(data?.pages as { questions: QuestionInterface[] }[] | undefined)?.flatMap((page) => page.questions) || [];
+			(data?.pages as { questions: PublicQuestion[] }[] | undefined)?.flatMap((page) => page.questions) || [];
 
 		let filteredQuestions = allQuestions;
 
@@ -64,7 +64,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestio
 		if (userNickname && blockedNicknames.length > 0) {
 			filteredQuestions = filteredQuestions.filter((question) => {
 				const isOwnerBlocked = blockedNicknames.includes(question.owner.nickname);
-				const isAskerBlocked = blockedNicknames.includes(question.asked_by.nickname);
+				const isAskerBlocked = !!question.asked_by && blockedNicknames.includes(question.asked_by.nickname);
 
 				return !isOwnerBlocked && !isAskerBlocked;
 			});
@@ -74,7 +74,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestio
 	}, [data, userNickname, blockedNicknames, session?.user?.following]);
 
 	const hasUserLiked = useCallback(
-		(question: QuestionInterface) => {
+		(question: PublicQuestion) => {
 			if (!userNickname) return false;
 			const likedUsers = JSON.parse(question.liked_by_users || "[]");
 			return likedUsers.includes(userNickname);
@@ -83,7 +83,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestio
 	);
 
 	const hasUserDisliked = useCallback(
-		(question: QuestionInterface) => {
+		(question: PublicQuestion) => {
 			if (!userNickname) return false;
 			const dislikedUsers = JSON.parse(question.desliked_by_users || "[]");
 			return dislikedUsers.includes(userNickname);
@@ -113,7 +113,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestio
 	}, []);
 
 	const handleLike = useCallback(
-		(question: QuestionInterface) => {
+		(question: PublicQuestion) => {
 			if (!userNickname) return;
 
 			const currentLiked = hasUserLiked(question);
@@ -152,7 +152,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestio
 	);
 
 	const handleDislike = useCallback(
-		(question: QuestionInterface) => {
+		(question: PublicQuestion) => {
 			if (!userNickname) return;
 
 			const currentLiked = hasUserLiked(question);

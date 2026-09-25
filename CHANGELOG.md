@@ -5,6 +5,15 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.6.1] - 2026-09-25
+
+### Security
+
+- Require the current password to change it
+- Keep the Resend key out of the source and the client bundle
+- Stop exposing repositories as public server actions
+- Strip private user data from profiles and the session
+
 ## [0.6.0] - 2026-09-25
 
 ### Added

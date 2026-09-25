@@ -4,17 +4,15 @@ import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-q
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { getFeedQuestions } from "@/actions/feed-actions";
 import { useToast } from "@/hooks/use-toast";
-import {
-	getAllLatestDescPublicQuestionsAnswered,
-	getFollowingQuestionsAnswered,
-} from "@/lib/repositories/questions.repository";
+import type { PublicQuestion } from "@/lib/repositories/questions.repository";
 import { QuestionInterface } from "@/types/QuestionInterface";
 
 const QUESTIONS_PER_PAGE = 10;
 
 interface QuestionsPageData {
-	questions: QuestionInterface[];
+	questions: PublicQuestion[];
 	nextCursor: number | undefined;
 	hasMore: boolean;
 	total: number;
@@ -44,13 +42,7 @@ export const useQuestions = (feedType: FeedType = "community", userNickname?: st
 	const queryResult = useInfiniteQuery<QuestionsPageData, QuestionsError>({
 		queryKey: ["questions", "public", "answered", feedType, userNickname],
 		queryFn: async ({ pageParam = 0 }): Promise<QuestionsPageData> => {
-			let allQuestions: QuestionInterface[] = [];
-
-			if (feedType === "following" && userNickname) {
-				allQuestions = await getFollowingQuestionsAnswered(userNickname);
-			} else {
-				allQuestions = await getAllLatestDescPublicQuestionsAnswered();
-			}
+			const allQuestions = await getFeedQuestions(feedType);
 
 			const start = (pageParam as number) * QUESTIONS_PER_PAGE;
 			const end = start + QUESTIONS_PER_PAGE;

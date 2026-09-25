@@ -137,7 +137,7 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 
 ### Pendências que dependem de decisão do usuário
 
-- [ ] **Troca de senha sem pedir a senha atual** (A07): exige mudança de UI e tratar contas Google, que não têm senha
+- [x] **Troca de senha sem pedir a senha atual** (A07): senha atual obrigatória; contas Google definem a primeira senha (`lib/services/password.service.ts`)
 - [ ] **Rate limit** em login/cadastro/contato: um limitador em memória não funciona em serverless. Precisa de um store compartilhado (ex.: Upstash Redis via Vercel Marketplace)
 - [ ] **Funcionalidades quebradas**: "reportar resposta" (rota era arquivo vazio) e "sacar perguntas não respondidas" (`/api/withdraw/unanswered` nunca existiu). Implementar ou remover da UI?
 - [ ] **Vercel**: a conta conectada (time "Fitness Projects") não tem projeto do RespondeAê; falta decidir conta/projeto e configurar `VERCEL_*`, `ABACATEPAY_*`, `CRON_SECRET`, `CLOUDFLARE_TURNSTILE_SECRET`, `DATABASE_URL` de produção. **Rotacionar a chave da AbacatePay**, que ficou exposta
