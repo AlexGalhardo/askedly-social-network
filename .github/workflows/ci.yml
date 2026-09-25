@@ -46,10 +46,7 @@ jobs:
           bun-version: 1.4.2
       - run: bun install --frozen-lockfile
       - run: bun run prisma:generate
-      # TODO(Fase 11 do PLAN.md): ~35 erros de tipo pré-existentes (o build só passa
-      # por causa de typescript.ignoreBuildErrors). Tornar bloqueante após corrigir.
       - run: bunx tsc --noEmit
-        continue-on-error: true
 
   security-audit:
     runs-on: ubuntu-latest

@@ -1,10 +1,10 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/prisma/prisma-client";
 import TelegramLog from "@/lib/telegram-logger";
+import { prisma } from "@/prisma/prisma-client";
 
 export async function unfollowUser(followingId: string) {
 	try {
@@ -22,7 +22,7 @@ export async function unfollowUser(followingId: string) {
 			},
 		});
 
-		revalidateTag("user-session");
+		updateTag("user-session");
 
 		return { success: true };
 	} catch (error: any) {

@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useDislikeQuestion, useLikeQuestion } from "@/hooks/use-profile-queries";
 import { getInitials } from "@/lib/functions";
 import { QuestionInterface } from "@/lib/interfaces";

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useFollowUser } from "@/hooks/use-profile-queries";
 import TelegramLog from "@/lib/telegram-logger";
 import { QuestionInterface } from "@/types/QuestionInterface";

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -33,7 +33,7 @@ export async function reportAnswer(questionId: string, reason: "offensive" | "in
 			throw new Error(errorData.error || "Erro ao reportar resposta");
 		}
 
-		revalidateTag("user-session");
+		updateTag("user-session");
 
 		return { success: true };
 	} catch (error: any) {
@@ -61,7 +61,7 @@ export async function likeAnswer(questionId: string) {
 			throw new Error(errorData.error || "Erro ao curtir resposta");
 		}
 
-		revalidateTag("user-session");
+		updateTag("user-session");
 
 		return { success: true };
 	} catch (error: any) {
@@ -89,7 +89,7 @@ export async function dislikeAnswer(questionId: string) {
 			throw new Error(errorData.error || "Erro ao descurtir resposta");
 		}
 
-		revalidateTag("user-session");
+		updateTag("user-session");
 
 		return { success: true };
 	} catch (error: any) {
@@ -116,7 +116,7 @@ export async function withdrawUnanswered() {
 			throw new Error(errorData.error || "Erro ao processar saque");
 		}
 
-		revalidateTag("user-session");
+		updateTag("user-session");
 
 		return { success: true };
 	} catch (error: any) {

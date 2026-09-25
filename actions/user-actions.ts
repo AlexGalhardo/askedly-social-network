@@ -1,13 +1,13 @@
 "use server";
 
-import { revalidateTag, revalidatePath, unstable_cache } from "next/cache";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/prisma/prisma-client";
-import { getUserByNickname } from "@/lib/repositories/users.repository";
-import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { revalidatePath, updateTag } from "next/cache";
+import { getServerSession } from "next-auth";
+import { z } from "zod";
+import { authOptions } from "@/lib/auth";
+import { getUserByNickname } from "@/lib/repositories/users.repository";
 import TelegramLog from "@/lib/telegram-logger";
+import { prisma } from "@/prisma/prisma-client";
 
 const personalInfoSchema = z.object({
 	name: z
@@ -89,7 +89,7 @@ export async function updatePersonalInfo(data: FormData) {
 			},
 		});
 
-		revalidateTag(`user-${session.user.id}`);
+		updateTag(`user-${session.user.id}`);
 		revalidatePath("/minha-conta");
 
 		return {
@@ -127,7 +127,7 @@ export async function updateSocialMedia(data: FormData) {
 
 		const validatedData = socialMediaSchema.parse(formData);
 
-		const updatedUser = await prisma.user.update({
+		await prisma.user.update({
 			where: {
 				id: session.user.id,
 			},
@@ -144,7 +144,7 @@ export async function updateSocialMedia(data: FormData) {
 			},
 		});
 
-		revalidateTag(`user-${session.user.id}`);
+		updateTag(`user-${session.user.id}`);
 		revalidatePath("/minha-conta");
 
 		return { success: true };
@@ -164,7 +164,7 @@ export async function updatePixKey(data: FormData) {
 		const pixKey = data.get("pixKey") as string;
 		const validatedData = pixSchema.parse({ pixKey });
 
-		const updatedUser = await prisma.user.update({
+		await prisma.user.update({
 			where: {
 				id: session.user.id,
 			},
@@ -174,7 +174,7 @@ export async function updatePixKey(data: FormData) {
 			},
 		});
 
-		revalidateTag(`user-${session.user.id}`);
+		updateTag(`user-${session.user.id}`);
 		revalidatePath("/minha-conta");
 
 		return { success: true };
@@ -263,7 +263,7 @@ export async function updatePrivacySettings(data: FormData) {
 			},
 		});
 
-		revalidateTag(`user-${session.user.id}`);
+		updateTag(`user-${session.user.id}`);
 		revalidatePath("/minha-conta");
 
 		return { success: true };
@@ -446,7 +446,7 @@ export const followUserAction = async (followingId: string, followerId: string) 
 			}
 		}
 
-		revalidateTag("user-profile");
+		updateTag("user-profile");
 
 		return {
 			success: true,
@@ -510,7 +510,7 @@ export const likeQuestionAction = async (questionId: string, nickname: string) =
 			},
 		});
 
-		revalidateTag("user-profile");
+		updateTag("user-profile");
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts like question: ${error?.message}`);
@@ -568,7 +568,7 @@ export const dislikeQuestionAction = async (questionId: string, nickname: string
 			},
 		});
 
-		revalidateTag("user-profile");
+		updateTag("user-profile");
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts dislike question: ${error?.message}`);
@@ -612,7 +612,7 @@ export const blockUserAction = async (blockedUserId: string) => {
 			},
 		});
 
-		revalidateTag("user-profile");
+		updateTag("user-profile");
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts block user: ${error?.message}`);
@@ -636,7 +636,7 @@ export const unblockUserAction = async (blockedUserId: string) => {
 			},
 		});
 
-		revalidateTag("user-profile");
+		updateTag("user-profile");
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts unblock user: ${error?.message}`);

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import TelegramLog from "@/lib/telegram-logger";
@@ -21,7 +21,7 @@ export async function removeFollower(followerId: string) {
 			},
 		});
 
-		revalidateTag("user-session");
+		updateTag("user-session");
 
 		return { success: true };
 	} catch (error: any) {
@@ -59,9 +59,9 @@ export async function acceptFollowRequest(requestId: string) {
 			where: { id: requestId },
 		});
 
-		revalidateTag("user-session");
-		revalidateTag("follow-requests");
-		revalidateTag("user-profile");
+		updateTag("user-session");
+		updateTag("follow-requests");
+		updateTag("user-profile");
 
 		return {
 			success: true,
@@ -96,8 +96,8 @@ export async function rejectFollowRequest(requestId: string) {
 			where: { id: requestId },
 		});
 
-		revalidateTag("follow-requests");
-		revalidateTag("user-profile");
+		updateTag("follow-requests");
+		updateTag("user-profile");
 
 		return {
 			success: true,

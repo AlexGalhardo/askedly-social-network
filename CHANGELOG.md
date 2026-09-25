@@ -5,6 +5,18 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.5.4] - 2026-09-25
+
+### Changed
+
+- Remove 30 unused shadcn components and 28 unused dependencies
+
+### Fixed
+
+- Clear all type errors and stop ignoring them at build time
+- Restore the updatedUser binding updatePersonalInfo still reads
+- Show toasts from profile, question, payment and ranking screens
+
 ## [0.5.3] - 2026-09-25
 
 ### Security

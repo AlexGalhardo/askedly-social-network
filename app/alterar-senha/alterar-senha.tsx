@@ -7,7 +7,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import TelegramLog from "@/lib/telegram-logger";
@@ -128,7 +128,8 @@ export default function ResetarSenhaComponent() {
 		);
 	}
 
-	if (!tokenValid) return router.push("/");
+	// O efeito de validação acima já redireciona quando o token é inválido.
+	if (!tokenValid) return null;
 
 	return (
 		<div className="min-h-screen flex items-center justify-center text-black p-4">
