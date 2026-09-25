@@ -3,8 +3,8 @@
 import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/prisma/prisma-client";
 import TelegramLog from "@/lib/telegram-logger";
+import { prisma } from "@/prisma/prisma-client";
 
 export async function removeFollower(followerId: string) {
 	try {
@@ -39,8 +39,8 @@ export async function acceptFollowRequest(requestId: string) {
 			throw new Error("Usuário não autenticado");
 		}
 
-		const request = await prisma.followRequest.findUnique({
-			where: { id: requestId },
+		const request = await prisma.followRequest.findFirst({
+			where: { id: requestId, receiverId: session.user.id },
 		});
 
 		if (!request) {
@@ -83,8 +83,8 @@ export async function rejectFollowRequest(requestId: string) {
 			throw new Error("Usuário não autenticado");
 		}
 
-		const request = await prisma.followRequest.findUnique({
-			where: { id: requestId },
+		const request = await prisma.followRequest.findFirst({
+			where: { id: requestId, receiverId: session.user.id },
 		});
 
 		if (!request) {

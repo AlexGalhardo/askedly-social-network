@@ -1,7 +1,7 @@
 "use server";
 
-import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
+import { v4 as uuidv4 } from "uuid";
 import { prisma } from "@/prisma/prisma-client";
 import TelegramLog from "../telegram-logger";
 
@@ -14,7 +14,7 @@ class UsersRepository {
 	}
 
 	private async hashPassword(password: string): Promise<string> {
-		return bcrypt.hash(password, 10);
+		return bcrypt.hash(password, 12);
 	}
 
 	private readonly userIncludeRelations = {

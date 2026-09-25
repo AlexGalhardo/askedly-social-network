@@ -51,7 +51,13 @@ async function deleteOldUsers(): Promise<number> {
 	return usersToDelete.length;
 }
 
-export async function GET(_: Request) {
+export async function GET(request: Request) {
+	// A Vercel envia este header nas execuções agendadas; sem ele qualquer um dispararia a exclusão de contas.
+	const cronSecret = process.env.CRON_SECRET;
+	if (!cronSecret || request.headers.get("authorization") !== `Bearer ${cronSecret}`) {
+		return Response.json({ error: "Não autorizado" }, { status: 401 });
+	}
+
 	const now = new Date();
 	const formattedNow = now.toLocaleString("pt-BR");
 

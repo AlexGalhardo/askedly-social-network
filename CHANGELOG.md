@@ -5,6 +5,15 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.5.3] - 2026-09-25
+
+### Security
+
+- Price questions by the confirmed payment and the session asker
+- Require CRON_SECRET on the cron route
+- Only let the receiver accept or reject a follow request
+- Hash every password with bcrypt cost 12
+
 ## [0.5.2] - 2026-09-25
 
 ### Fixed

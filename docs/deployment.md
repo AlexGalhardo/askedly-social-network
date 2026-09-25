@@ -2,7 +2,7 @@
 
 ## Vercel
 
-- `vercel.json` define um cron (`/api/cronjob`, todo dia às 3h) — usado para expirar perguntas não respondidas dentro do prazo.
+- `vercel.json` define um cron (`/api/cronjob`, todo dia às 3h) que reseta os limites diários de perguntas e apaga contas excluídas há mais de 30 dias ou inativas há mais de 2 anos. A rota exige `Authorization: Bearer $CRON_SECRET`, que a Vercel envia sozinha quando a variável `CRON_SECRET` existe no projeto.
 - `@vercel/speed-insights` já integrado em `app/layout.tsx`.
 - Variáveis de ambiente de produção são configuradas direto no dashboard da Vercel (nunca commitar `.env`; usar `.env.example` como referência do que precisa existir).
 
