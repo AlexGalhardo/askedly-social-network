@@ -31,7 +31,7 @@ export default function MinhaContaClient() {
 	}
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<div className="space-y-6">
 				<PersonalInfoForm user={session.user} />
 				<PixForm initialPixKey={session.user.pix_key} />
@@ -41,6 +41,6 @@ export default function MinhaContaClient() {
 				<BlockedUsersCard />
 				<DeleteAccountForm />
 			</div>
-		</main>
+		</div>
 	);
 }

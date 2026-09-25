@@ -12,7 +12,7 @@
 ## CI/CD (GitHub Actions, `.github/workflows/`)
 
 - **`ci.yml`** (PR e push em `main`): jobs `lint` (Biome), `typecheck` (`tsc --noEmit`), `security-audit` (`bun audit --audit-level=high`), `unit-tests`, `integration-tests` (Postgres em service container) e `build` (Postgres + `bun run test:smoke`).
-- **`e2e.yml`** (PR e push em `main`): sobe Postgres em service container, instala o Chromium do Playwright e roda `bun run test:e2e`. Em falha, sobe o relatório HTML (`playwright-report/`, gerado só com `CI=true`) como artifact.
+- **`e2e.yml`** (PR e push em `main`): sobe Postgres em service container, instala o Chromium do Playwright, roda `bun run build` e `bun run test:e2e` (servidor de produção). Em falha, sobe o relatório HTML (`playwright-report/`, gerado só com `CI=true`) como artifact.
 - **`deploy.yml`** (disparado por `workflow_run` quando o `CI` termina com sucesso num push em `main`): `vercel pull` → `vercel build --prod` → `vercel deploy --prebuilt --prod`. O CLI é chamado como `bunx vercel@<versão>` pinado no próprio workflow — **não** é devDependency do projeto (só esse workflow usa, e ele trazia ~16 vulnerabilidades transitivas para o `bun.lock`).
 - Todos os workflows usam `concurrency` para cancelar execuções antigas da mesma branch; o deploy nunca é cancelado no meio.
 
@@ -22,9 +22,14 @@
 
 > Se o projeto também estiver conectado à integração Git da Vercel, cada push em `main` gera **dois** deploys. Escolha um: ou desligue o auto-deploy da integração Git (Project Settings → Git → Ignored Build Step: `exit 0`), ou apague o `deploy.yml`.
 
-### Jobs não bloqueantes (dívida da Fase 11)
+### Todos os jobs bloqueiam
 
-`lint`, `typecheck` e `security-audit` rodam com `continue-on-error: true` porque hoje há dívida pré-existente: ~31 erros de lint, ~35 erros de tipo (o build só passa por `typescript.ignoreBuildErrors`) e vulnerabilidades transitivas conhecidas. Remover o `continue-on-error` de cada um assim que a respectiva dívida for paga — deixar o CI permanentemente verde escondendo um gate quebrado é pior do que não ter o job.
+- `lint` roda `bun run lint:ci`, que falha também com **warning** do Biome (`--error-on-warnings`).
+- `typecheck` (`tsc --noEmit`, sem `ignoreBuildErrors` no `next.config`).
+- `security-audit` (`bun audit --audit-level=high`). A única exceção (`--ignore=GHSA-ggr8-5vv4-36mx`) é o `deepmerge-ts`, que só existe no CLI do Prisma e nunca roda em produção.
+- `unit-tests` roda `prisma:generate` antes: alguns testes unitários importam services que importam o client.
+- O e2e roda contra `next build` + `next start` (produção), com as chaves de teste oficiais da Cloudflare para o Turnstile (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA`), que sempre passam.
+- Smoke e e2e sobem o Next com **Node**, como na Vercel: sob o runtime do Bun os módulos que o Turbopack externaliza (`@prisma/client`, `pg`) não resolvem.
 
 ### Validar workflows localmente
 

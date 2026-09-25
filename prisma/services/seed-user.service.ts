@@ -1,5 +1,6 @@
 import { SeedUserFactory } from "../factories/seed-user.factory";
 import type { PrismaClient } from "../generated/prisma/client";
+import { SeedDatabaseConfig } from "../helpers/seed-database.helper";
 import { SeedUserInterface } from "../helpers/seed-interfaces.helper";
 import { SeedLogger } from "../helpers/seed-logger.helper";
 import { SeedUniqueTracker } from "../helpers/seed-unique-tracker.helper";
@@ -71,7 +72,7 @@ export class SeedUserService {
 
 			await this.prisma.user.createMany({
 				data: batch,
-				skipDuplicates: true,
+				...SeedDatabaseConfig.skipDuplicates,
 			});
 
 			const batchUsers = await this.prisma.user.findMany({

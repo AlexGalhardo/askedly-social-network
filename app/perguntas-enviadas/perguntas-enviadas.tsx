@@ -85,14 +85,14 @@ export default function PerguntasEnviadasPage() {
 
 	if (questions.length === 0) {
 		return (
-			<main className="p-4 lg:p-6">
+			<div className="p-4 lg:p-6">
 				<div className="text-center py-12 text-gray-500">Você ainda não enviou nenhuma pergunta.</div>
-			</main>
+			</div>
 		);
 	}
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<SentQuestionsTabs
 				questions={questions}
 				currentPage={currentPage}
@@ -110,6 +110,6 @@ export default function PerguntasEnviadasPage() {
 				onConfirmReport={handleConfirmReport}
 				isReporting={loadingStates.reporting !== ""}
 			/>
-		</main>
+		</div>
 	);
 }

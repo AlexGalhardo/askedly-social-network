@@ -27,7 +27,7 @@
 - [x] Adicionar `"packageManager": "bun@1.4.2"` e `engines.bun` no `package.json`
 - [x] Remover `package-lock.json` duplicado (mantido só `bun.lock`)
 - [x] Corrigir `biome.json` (schema desatualizado quebrava o hook `pre-commit`) e habilitar `css.parser.tailwindDirectives` para `globals.css` formatar sem erro
-- [~] `.nvmrc`/`.bun-version`: não criado — `engines.bun` no `package.json` já expressa o requisito; adicionar só se surgir necessidade real (ex: CI que dependa de arquivo de versão)
+- [x] `.nvmrc`/`.bun-version`: decidido não criar — `packageManager`/`engines.bun` no `package.json` já fixam o Bun e o CI usa `bun-version: 1.4.2` explícito
 - [x] Script `husky` renomeado para `prepare` (convenção Husky v9, roda hooks automaticamente após `bun install`)
 
 ## Fase 2 — Upgrade de dependências
@@ -43,7 +43,7 @@
 - [x] `@react-email/components` 0.0.41 → 1.0.12 (os dois templates renderizam igual).
 - [x] `framer-motion`: removido em vez de atualizado. Só girava um ícone que já tinha `animate-spin`.
 - [x] TypeScript mantido na 6.x (6.0.3, a mais recente) por decisão do usuário.
-- [~] SQLite nativo do Bun (`bun:sqlite`): o usuário pediu. O único adapter Prisma para ele é comunitário (`prisma-adapter-bun-sqlite@0.8.0`, mantenedor individual), e a instalação foi bloqueada pelo classificador de segurança do Claude Code. Além disso, `bun:sqlite` só existe no runtime Bun, e o Next roda em Node. Depende de decisão do usuário (ver resumo da sessão).
+- [x] SQLite nativo do Bun (`bun:sqlite`): **descartado por inviabilidade técnica**. `bun:sqlite` só existe no runtime Bun, e o Next precisa rodar em Node (a Vercel roda Node, e sob Bun os módulos externalizados pelo Turbopack nem resolvem — ver `docs/deployment.md`). Além disso o único adapter Prisma é comunitário, de um mantenedor só. O SQLite local segue com `@prisma/adapter-libsql`, que funciona em Node e Bun
 
 ## Fase 3 — AGENTS.md e CLAUDE.md (raiz)
 
@@ -59,8 +59,8 @@
 - [x] `docs/email.md` — Resend, templates em `emails/`
 - [x] `docs/uploads.md` — UploadThing
 - [x] `docs/telegram-bot.md` — bot de notificações
-- [~] `docs/testing.md` — escrito como "estado alvo", precisa ser atualizado quando a Fase 8 for implementada de verdade
-- [~] `docs/deployment.md` — escrito como "estado alvo", precisa ser atualizado quando a Fase 10 (CI/CD) for implementada de verdade
+- [x] `docs/testing.md` — atualizado com o estado real (tipos, modos local/CI do e2e, captcha)
+- [x] `docs/deployment.md` — atualizado com o estado real (todos os gates bloqueantes, e2e em produção, Node nos testes)
 - [x] Commit (`docs: add AI-agent-focused documentation`)
 
 ## Fase 5 — setups/
@@ -73,7 +73,7 @@
 - [x] `setups/setup-unix-using-postgres-with-docker.sh`
 - [x] `prisma/schema.sqlite.prisma` criado e validado (`prisma validate` + `prisma db push` contra sqlite descartável)
 - [x] Commit (`feat: add setup scripts for windows/unix with sqlite/postgres/docker`)
-- [~] Scripts postgres/postgres+docker não foram executados de ponta a ponta neste ambiente (só `bash -n` sintático) — Docker local já tinha um Postgres de outro projeto ocupando a porta 5432; validar na próxima sessão com ambiente limpo
+- [x] Scripts executados de ponta a ponta num worktree limpo (sem `.env`, como um contribuidor novo): os 3 Windows no Git Bash e `unix-sqlite`/`unix-postgres` num container `oven/bun:1.4.2`. O `unix-postgres-with-docker` difere do Windows só nas mensagens de instalação
 
 ## Fase 6 — infra/
 
@@ -144,11 +144,11 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 
 ### Pendências técnicas menores
 
-- [ ] Seed não roda no SQLite (`createMany({ skipDuplicates })`)
+- [x] Seed não roda no SQLite (`createMany({ skipDuplicates })`): `skipDuplicates` só fora do SQLite (validado nos dois bancos)
 - [x] Erro de hidratação no botão de tema (`Moon`/`Sun` dependem do tema, que só é conhecido no client)
-- [ ] Páginas que têm `<main>` próprio dentro do `<main>` do layout (landmark duplicado, a11y)
+- [x] Páginas que têm `<main>` próprio dentro do `<main>` do layout (landmark duplicado, a11y): 13 páginas agora usam `<div>`
 - [x] Campo de nickname aceita só `a-z`, mas o schema aceita dígitos e `_`: alinhar
-- [ ] O callback `session` do NextAuth carrega o usuário com todas as perguntas a cada leitura de sessão (performance)
+- [x] O callback `session` do NextAuth carrega o usuário com todas as perguntas a cada leitura de sessão (performance): não grava mais `last_login_at` nem reativa conta a cada leitura (só no sign-in), e usuários relacionados vêm só com campos públicos (`publicUserSelect`). Tirar as relações da sessão de vez exige migrar ~10 telas para buscar por action; fica como melhoria futura
 - [x] 61 warnings do Biome: zerados, e `lint:ci` agora usa `--error-on-warnings`
 
 ## Fase 12 — README.md final
@@ -181,7 +181,7 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 
 - [x] **Crítico:** repositórios com `"use server"` (endpoints públicos: dump de usuários, troca de senha de qualquer conta, webhook forjado). Corrigido + teste de guarda
 - [x] **Crítico:** linhas inteiras de `User` serializadas para o browser (feed, top curtidas, perfil, sessão) e autor de pergunta anônima revelado. Corrigido
-- [x] **Crítico:** chave da Resend hardcoded em `app/api/send-contact-email/route.ts` (bloqueava o push pelo Push Protection do GitHub). Removida do código e do histórico local; **a chave precisa ser rotacionada na Resend** (já estava pública no commit `ca19d3b`)
+- [x] **Crítico:** chave da Resend hardcoded em `app/api/send-contact-email/route.ts` (bloqueava o push pelo Push Protection do GitHub). Removida do código e do histórico local; chave antiga revogada na Resend pelo usuário
 - [ ] **Alto:** `getUserByNicknameAction` (perfil) e `/top-curtidas` ainda devolvem as respostas de perfil privado, respostas privadas e perguntas pendentes para o client filtrar. Filtrar no servidor, como o feed já faz (`lib/services/feed.service.ts`)
 - [ ] **Médio:** cadastro sem captcha no servidor (o token Turnstile é de uso único e hoje é gasto no `signIn` logo depois). Resolver junto com o rate limit
 - [ ] **Médio:** as consultas públicas de perguntas ainda devolvem campos internos da pergunta (`webhook_id`, `payment_withdraw_id`, motivo de report). Trocar `include` por `select` explícito

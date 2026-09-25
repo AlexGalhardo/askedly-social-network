@@ -378,7 +378,7 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 	);
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<div className="mb-6 text-center mt-12">
 				<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2 dark:text-white">
 					<Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500 dark:text-yellow-400" />
@@ -418,6 +418,6 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 
 				<TabsContent value="allTime">{renderTabContent("de todos os tempos")}</TabsContent>
 			</Tabs>
-		</main>
+		</div>
 	);
 }

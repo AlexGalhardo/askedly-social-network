@@ -31,11 +31,11 @@ export default function SeguindoPage() {
 	}
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<div>
 				<FollowingHeader count={following.length} />
 				<FollowingList following={following} onUnfollow={handleUnfollow} />
 			</div>
-		</main>
+		</div>
 	);
 }

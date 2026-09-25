@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function TermosDeUsoClient() {
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<Card className="border-none">
 				<CardContent className="p-6 prose prose-gray dark:prose-invert max-w-none">
 					<p className="text-muted-foreground mb-6">Última atualização: 21 de Junho de 2025</p>
@@ -128,6 +128,6 @@ export default function TermosDeUsoClient() {
 					</p>
 				</CardContent>
 			</Card>
-		</main>
+		</div>
 	);
 }

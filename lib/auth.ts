@@ -230,10 +230,7 @@ export const authOptions: NextAuthOptions = {
 
 				if (!dbUser) return session;
 
-				await handleDeletedAccount(dbUser);
-
-				await updateLastLoginAt(dbUser.nickname);
-
+				// Reativar conta e registrar login acontecem no sign-in (authorize/jwt), não a cada leitura de sessão.
 				Object.assign(session.user, mapUserToSession(dbUser));
 
 				// A sessão é serializada para o browser: as relações passam pelo mesmo filtro do perfil público
@@ -288,6 +285,7 @@ export const authOptions: NextAuthOptions = {
 					}
 
 					await handleDeletedAccount(dbUser);
+					if (dbUser) await updateLastLoginAt(dbUser.nickname);
 
 					Object.assign(token, mapUserToSession(dbUser));
 

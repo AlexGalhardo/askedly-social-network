@@ -10,7 +10,7 @@ export default function SobreClient() {
 	const { data: session } = useSession();
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<div className="space-y-6 max-w-4xl">
 				<Card>
 					<CardContent className="p-8 text-center">
@@ -115,6 +115,6 @@ export default function SobreClient() {
 					</Card>
 				)}
 			</div>
-		</main>
+		</div>
 	);
 }

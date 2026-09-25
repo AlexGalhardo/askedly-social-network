@@ -276,7 +276,7 @@ export default function PerguntasRecebidasPage() {
 	}
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<QuestionsTabs
 				questions={questions}
 				currentPage={currentPage}
@@ -310,6 +310,6 @@ export default function PerguntasRecebidasPage() {
 				onConfirmDelete={handleConfirmDelete}
 				onConfirmReport={handleConfirmReport}
 			/>
-		</main>
+		</div>
 	);
 }

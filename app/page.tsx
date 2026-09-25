@@ -10,7 +10,7 @@ export default function HomePage() {
 	if (status === "loading") return <LoadingScreen />;
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<div className="min-h-screen">
 				<div className="container mx-auto px-3 py-4 max-w-6xl">
 					<FeedQuestionsFeed
@@ -20,6 +20,6 @@ export default function HomePage() {
 					/>
 				</div>
 			</div>
-		</main>
+		</div>
 	);
 }

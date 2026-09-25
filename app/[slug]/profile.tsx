@@ -167,7 +167,7 @@ export default function ProfileClient() {
 	};
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<ProfileHeader
 				profile={profileFound}
 				isBlocked={isBlocked}
@@ -252,6 +252,6 @@ export default function ProfileClient() {
 					/>
 				</>
 			)}
-		</main>
+		</div>
 	);
 }

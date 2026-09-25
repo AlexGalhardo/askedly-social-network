@@ -146,7 +146,7 @@ export default function ContatoClient() {
 	};
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<div className="max-w-6xl mx-auto">
 				<div className="text-center mb-8 dark:text-white p-8 rounded-lg">
 					<h2 className="text-3xl font-bold text-foreground mb-4">Contato</h2>
@@ -258,6 +258,6 @@ export default function ContatoClient() {
 						CNPJ 61.414.573/0001-56 Galhardo Tecnologia da Informação LTDA
 					</p> */}
 			</div>
-		</main>
+		</div>
 	);
 }

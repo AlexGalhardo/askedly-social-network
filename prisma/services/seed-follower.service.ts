@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import type { PrismaClient } from "../generated/prisma/client";
+import { SeedDatabaseConfig } from "../helpers/seed-database.helper";
 import { SeedFollowerInterface, SeedUserInterface } from "../helpers/seed-interfaces.helper";
 import { SeedLogger } from "../helpers/seed-logger.helper";
 import { SeedUniqueTracker } from "../helpers/seed-unique-tracker.helper";
@@ -58,7 +59,7 @@ export class SeedFollowerService {
 								followerId: followerId,
 								followingId: followingId,
 							})),
-							skipDuplicates: true,
+							...SeedDatabaseConfig.skipDuplicates,
 						});
 
 						for (const rel of relations) {

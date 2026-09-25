@@ -5,6 +5,18 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.6.4] - 2026-09-25
+
+### Changed
+
+- Stop writing to the database on every session read
+- Bring testing and deployment docs in line with the real setup
+
+### Fixed
+
+- Run on SQLite by skipping skipDuplicates there
+- Keep a single main landmark per page
+
 ## [0.6.3] - 2026-09-25
 
 ### Changed

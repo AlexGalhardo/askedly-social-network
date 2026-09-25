@@ -44,7 +44,7 @@ export default function SeguidoresPage() {
 	}
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<FollowersTabs
 				followers={followers}
 				followRequests={localRequests}
@@ -53,6 +53,6 @@ export default function SeguidoresPage() {
 				onAcceptRequest={handleAcceptRequest}
 				onRejectRequest={handleRejectRequest}
 			/>
-		</main>
+		</div>
 	);
 }

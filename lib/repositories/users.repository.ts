@@ -3,6 +3,38 @@ import { v4 as uuidv4 } from "uuid";
 import { prisma } from "@/prisma/prisma-client";
 import TelegramLog from "../telegram-logger";
 
+export const publicUserSelect = {
+	id: true,
+	nickname: true,
+	name: true,
+	avatar_url: true,
+	description: true,
+	website: true,
+	twitter: true,
+	instagram: true,
+	youtube: true,
+	tiktok: true,
+	linkedin: true,
+	twitch: true,
+	facebook: true,
+	github: true,
+	created_at: true,
+	privacy_accept_anonymous_questions: true,
+	privacy_is_private_profile: true,
+	privacy_show_anonymous_questions_public: true,
+	privacy_show_date_questions_was_answered: true,
+	privacy_show_dislikes_each_answer_public: true,
+	privacy_show_likes_each_answer_public: true,
+	privacy_show_questions_answered_only_to_followers: true,
+	privacy_show_total_followers_public: true,
+	privacy_show_total_following_public: true,
+	privacy_show_total_likes_all_answers_public: true,
+	privacy_show_total_questions_answered_public: true,
+	privacy_show_total_questions_received_public: true,
+	privacy_show_total_questions_sent_public: true,
+	privacy_show_value_received_from_answering_question: true,
+} as const;
+
 class UsersRepository {
 	private static readonly API_KEY_PREFIX = "api_key_dinherin_";
 	private static readonly API_KEY_PERGUNTAE_PREFIX = "api_key_perguntae_";
@@ -15,20 +47,20 @@ class UsersRepository {
 		return bcrypt.hash(password, 12);
 	}
 
+	// Usuários relacionados só com campos públicos: esses includes alimentam a sessão e o perfil, que vão para o
+	// browser, e carregar linhas inteiras de todo seguidor/autor a cada leitura de sessão também custava caro.
 	private readonly userIncludeRelations = {
-		followers: { include: { follower: true } },
-		following: { include: { following: true } },
-		questions_received: { include: { asked_by: true, owner: true } },
-		questions_sent: { include: { owner: true, asked_by: true } },
+		followers: { include: { follower: { select: publicUserSelect } } },
+		following: { include: { following: { select: publicUserSelect } } },
+		questions_received: {
+			include: { asked_by: { select: publicUserSelect }, owner: { select: publicUserSelect } },
+		},
+		questions_sent: { include: { owner: { select: publicUserSelect }, asked_by: { select: publicUserSelect } } },
 		blocked_by_users: { include: { blocked: { select: { nickname: true } } } },
 		blocked_users: { include: { blocked: { select: { nickname: true } } } },
 		follow_requests_sent: true,
 		follow_requests_received: true,
 	};
-
-	async getAllUsers() {
-		return prisma.user.findMany({ include: this.userIncludeRelations });
-	}
 
 	async getUserById(id: string) {
 		return prisma.user.findUnique({ where: { id } });
@@ -134,10 +166,6 @@ class UsersRepository {
 }
 
 const repo = new UsersRepository();
-
-export async function getAllUsers() {
-	return repo.getAllUsers();
-}
 
 export async function reactiveDeletedAccount(userId: string) {
 	return repo.reactiveDeletedAccount(userId);

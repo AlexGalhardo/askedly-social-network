@@ -62,18 +62,18 @@ export default function PagamentosPage() {
 
 	if (answeredError || sentError) {
 		return (
-			<main className="p-4 lg:p-6">
+			<div className="p-4 lg:p-6">
 				<div className="text-center py-12">
 					<p className="text-muted-foreground">Erro ao carregar dados de pagamento. Tente novamente.</p>
 				</div>
-			</main>
+			</div>
 		);
 	}
 
 	const currentData = activeTab === "respondidas" ? answeredData : sentData;
 
 	return (
-		<main className="p-4 lg:p-6">
+		<div className="p-4 lg:p-6">
 			<PaymentTabs
 				answeredData={answeredData || null}
 				sentData={sentData || null}
@@ -92,6 +92,6 @@ export default function PagamentosPage() {
 				onConfirmWithdraw={handleConfirmWithdraw}
 				isProcessing={withdrawMutation.isPending}
 			/>
-		</main>
+		</div>
 	);
 }
