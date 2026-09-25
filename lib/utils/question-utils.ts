@@ -46,9 +46,9 @@ export function paginateQuestions(questions: QuestionInterface[], currentPage: n
 	};
 }
 
-// CORREÇÃO: Ordem de prioridade corrigida
+// A ordem importa: respondida > reportada > recusada > expirada > pendente. Uma pergunta respondida
+// nunca conta como expirada, mesmo depois do prazo.
 export function getQuestionStatus(question: QuestionInterface): QuestionStatus {
-	// PRIMEIRO: Verifica se foi respondida (prioridade máxima)
 	if (
 		question.question_answered === true &&
 		question.question_is_awaiting_answer === false &&
@@ -65,7 +65,6 @@ export function getQuestionStatus(question: QuestionInterface): QuestionStatus {
 		return "answered";
 	}
 
-	// SEGUNDO: Verifica se é reportada
 	if (
 		question.owner_reported_offensive_question === true ||
 		question.onwer_reported_inadequate_question === true ||
@@ -74,22 +73,18 @@ export function getQuestionStatus(question: QuestionInterface): QuestionStatus {
 		return "reported";
 	}
 
-	// TERCEIRO: Verifica se foi recusada
 	if (question.question_answer_was_recused === true || question.question_answer_recused_at !== null) {
 		return "declined";
 	}
 
-	// QUARTO: Verifica se expirou explicitamente
 	if (question.question_answer_was_expired === true || question.question_answer_expired_at !== null) {
 		return "expired";
 	}
 
-	// QUINTO: Verifica se expirou por tempo (só se não foi respondida, reportada, recusada)
 	if (isQuestionExpired(question.created_at)) {
 		return "expired";
 	}
 
-	// SEXTO: Verifica se está pendente
 	if (
 		question.question_is_awaiting_answer === true &&
 		question.question_answered === false &&
@@ -104,7 +99,6 @@ export function getQuestionStatus(question: QuestionInterface): QuestionStatus {
 		return "pending";
 	}
 
-	// Fallback para pending se não se encaixar em nenhuma categoria
 	return "pending";
 }
 
@@ -166,7 +160,6 @@ export function filterQuestionsByStatus(questions: QuestionInterface[], status: 
 
 	switch (status) {
 		case "answered":
-			// PRIORIDADE: Perguntas respondidas (independente do tempo)
 			filteredQuestions = questions.filter(
 				(q) =>
 					q.question_answered === true &&
@@ -184,7 +177,6 @@ export function filterQuestionsByStatus(questions: QuestionInterface[], status: 
 			break;
 
 		case "reported":
-			// Perguntas reportadas (não respondidas, não recusadas, não expiradas)
 			filteredQuestions = questions.filter(
 				(q) =>
 					!q.question_answered &&
@@ -197,7 +189,6 @@ export function filterQuestionsByStatus(questions: QuestionInterface[], status: 
 			break;
 
 		case "declined":
-			// Perguntas recusadas (não respondidas, não expiradas)
 			filteredQuestions = questions.filter(
 				(q) =>
 					!q.question_answered &&
@@ -207,12 +198,9 @@ export function filterQuestionsByStatus(questions: QuestionInterface[], status: 
 			break;
 
 		case "expired":
-			// Perguntas expiradas (não respondidas, não reportadas, não recusadas)
 			filteredQuestions = questions.filter((q) => {
-				// Não pode estar respondida
 				if (q.question_answered) return false;
 
-				// Não pode estar reportada
 				if (
 					q.owner_reported_offensive_question ||
 					q.onwer_reported_inadequate_question ||
@@ -220,16 +208,13 @@ export function filterQuestionsByStatus(questions: QuestionInterface[], status: 
 				)
 					return false;
 
-				// Não pode estar recusada
 				if (q.question_answer_was_recused || q.question_answer_recused_at) return false;
 
-				// Deve estar expirada (explicitamente ou por tempo)
 				return q.question_answer_was_expired || q.question_answer_expired_at || isQuestionExpired(q.created_at);
 			});
 			break;
 
 		case "pending":
-			// Perguntas pendentes (não respondidas, não reportadas, não recusadas, não expiradas)
 			filteredQuestions = questions.filter(
 				(q) =>
 					!q.question_answered &&

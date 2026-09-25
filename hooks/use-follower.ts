@@ -1,12 +1,12 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { acceptFollowRequest, rejectFollowRequest, removeFollower } from "@/actions/follower-actions";
 import { followerService } from "@/lib/services/follower-service";
 import { FollowerUserInterface, FollowRequestInterface } from "@/types/FollowerUserInterface";
-import { toast } from "sonner";
-import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { removeFollower, acceptFollowRequest, rejectFollowRequest } from "@/actions/follower-actions";
 
 export function useFollowers() {
 	const { data: session } = useSession();
@@ -78,13 +78,11 @@ export function useAcceptFollowRequest() {
 		onSuccess: (data) => {
 			toast.success("Seguidor aceito");
 
-			// Invalida os perfis específicos envolvidos na solicitação
 			if (data.senderId && data.receiverId) {
 				queryClient.invalidateQueries({ queryKey: ["profile", data.senderId] });
 				queryClient.invalidateQueries({ queryKey: ["profile", data.receiverId] });
 			}
 
-			// Invalida todas as queries de perfil para garantir
 			queryClient.invalidateQueries({ queryKey: ["profile"] });
 		},
 		onSettled: () => {
@@ -124,7 +122,6 @@ export function useRejectFollowRequest() {
 				queryClient.invalidateQueries({ queryKey: ["profile", data.receiverId] });
 			}
 
-			// Invalida todas as queries de perfil para garantir
 			queryClient.invalidateQueries({ queryKey: ["profile"] });
 		},
 		onSettled: () => {

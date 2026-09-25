@@ -3,7 +3,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { FollowingUserInterface } from "@/types/FollowingUserInterface";
 import { FollowingUserCard } from "./following-user-card";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface FollowingListProps {
 	following: FollowingUserInterface[];

@@ -1,10 +1,9 @@
-// hooks/use-profile-queries.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-	getUserByNicknameAction,
-	followUserAction,
-	likeQuestionAction,
 	dislikeQuestionAction,
+	followUserAction,
+	getUserByNicknameAction,
+	likeQuestionAction,
 } from "@/actions/user-actions";
 
 export const useProfile = (nickname: string) => {
@@ -35,7 +34,7 @@ export const useFollowUser = () => {
 
 				const currentFollowers = oldData.followers || [];
 
-				let updatedFollowers;
+				let updatedFollowers: unknown[];
 				if (data.isFollowing) {
 					const followerExists = currentFollowers.some((f: any) => f.followerId === variables.followerId);
 					if (!followerExists) {

@@ -1,40 +1,39 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import { isAfter, subDays } from "date-fns";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { useTheme } from "next-themes";
-import { signOut } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
 import {
-	User,
-	Settings,
+	AlertCircle,
 	Bell,
-	Trophy,
-	Send,
-	LogOut,
-	Sun,
-	Moon,
-	Menu,
-	X,
-	Home,
 	CreditCard,
+	FileText,
+	Home,
+	Info,
+	LogIn,
+	LogOut,
+	Mail,
+	Menu,
+	Moon,
+	Send,
+	Settings,
+	Shield,
+	Sun,
+	Trophy,
+	User,
 	UserPlus,
 	Users,
-	FileText,
-	Shield,
-	Info,
-	Mail,
-	LogIn,
-	AlertCircle,
+	X,
 } from "lucide-react";
-import { useSessionVerification } from "@/hooks/use-session-verification";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { useMemo, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useSessionVerification } from "@/hooks/use-session-verification";
 import { MySidebarSkeleton } from "./my-sidebar-skeleton";
-import TelegramLog from "@/lib/telegram-logger";
 
 type SidebarItem = {
 	icon: React.ElementType;
@@ -89,7 +88,7 @@ export function MySidebar() {
 						);
 					}).length;
 				}
-			} catch (error: any) {
+			} catch {
 				pendingQuestions = 0;
 			}
 
@@ -331,7 +330,12 @@ export function MySidebar() {
 
 			{sidebarOpen && (
 				<div className="lg:hidden fixed inset-0 z-50 flex">
-					<div className="fixed inset-0 bg-black/20" onClick={() => setSidebarOpen(false)} />
+					<button
+						type="button"
+						aria-label="Fechar menu"
+						className="fixed inset-0 bg-black/20 cursor-default"
+						onClick={() => setSidebarOpen(false)}
+					/>
 					<aside className="relative flex w-80 h-full flex-col bg-background border-r">
 						<div className="flex items-center justify-between h-16 px-6 border-b flex-shrink-0">
 							<div className="flex items-center space-x-3">

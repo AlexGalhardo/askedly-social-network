@@ -53,14 +53,12 @@ export async function POST(req: NextRequest) {
 
 		const { name, website, description, userId } = parsed.data;
 
-		// Verificar se o userId fornecido corresponde ao usuário da sessão
 		const targetUserId = userId || session.user.id;
 
 		if (targetUserId !== session.user.id) {
 			return NextResponse.json({ error: "Não autorizado a atualizar este usuário" }, { status: 403 });
 		}
 
-		// Verificar se o usuário existe
 		const existingUser = await prisma.user.findUnique({
 			where: { id: targetUserId },
 		});

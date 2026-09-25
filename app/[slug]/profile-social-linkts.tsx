@@ -50,9 +50,9 @@ export function ProfileSocialLinks({ profile }: SocialLinksProps) {
 	return (
 		<div className="flex flex-wrap justify-center gap-3 mb-4">
 			{socialLinks.map(
-				(social, index) =>
+				(social) =>
 					social.href && (
-						<Link key={index} href={social.href} target="_blank" rel="noopener noreferrer">
+						<Link key={social.href} href={social.href} target="_blank" rel="noopener noreferrer">
 							<Button variant="ghost" size="icon" className={`text-xl ${social.color}`}>
 								<social.icon className="h-5 w-5" />
 							</Button>

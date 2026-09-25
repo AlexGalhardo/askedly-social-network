@@ -198,7 +198,6 @@ export async function updatePassword(data: FormData) {
 
 		const validatedData = passwordSchema.parse(formData);
 
-		// Hash da nova senha
 		const hashedPassword = await bcrypt.hash(validatedData.newPassword, 12);
 
 		await prisma.user.update({
@@ -428,7 +427,6 @@ export const followUserAction = async (followingId: string, followerId: string) 
 					},
 				});
 
-				// Remover solicitação se existir
 				if (followRequest) {
 					await prisma.followRequest.delete({
 						where: {

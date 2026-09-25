@@ -1,9 +1,9 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/utils/payment-utils";
 import { LucideIcon } from "lucide-react";
 import { ReactNode } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/utils/payment-utils";
 
 interface PaymentCardProps {
 	title: string;

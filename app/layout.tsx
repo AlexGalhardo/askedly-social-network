@@ -80,19 +80,15 @@ export default function RootLayout({
 
 				<SpeedInsights />
 
-				<Script
-					id="ms-clarity"
-					strategy="afterInteractive"
-					dangerouslySetInnerHTML={{
-						__html: `
+				<Script id="ms-clarity" strategy="afterInteractive">
+					{`
 							(function(c,l,a,r,i,t,y){
 								c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
 								t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
 								y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 							})(window, document, "clarity", "script", "rxiv4z7b4u");
-						`,
-					}}
-				/>
+						`}
+				</Script>
 			</body>
 		</html>
 	);

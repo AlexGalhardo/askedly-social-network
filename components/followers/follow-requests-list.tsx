@@ -1,8 +1,8 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { FollowRequestInterface } from "@/types/FollowerUserInterface";
 import { FollowRequestCard } from "./follow-request-card";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface FollowRequestsListProps {
 	requests: FollowRequestInterface[];
@@ -15,6 +15,7 @@ function FollowRequestsSkeleton() {
 	return (
 		<div className="space-y-4">
 			{Array.from({ length: 3 }).map((_, i) => (
+				// biome-ignore lint/suspicious/noArrayIndexKey: placeholders fixos de loading, nunca reordenados
 				<div key={i} className="p-4 border rounded-lg">
 					<div className="flex items-center justify-between">
 						<div className="flex items-center space-x-3">

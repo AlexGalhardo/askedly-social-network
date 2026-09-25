@@ -1,11 +1,11 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { FollowingUserInterface } from "@/types/FollowingUserInterface";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { unfollowUser } from "@/actions/follow-actions";
+import { FollowingUserInterface } from "@/types/FollowingUserInterface";
 
 export function useFollowing() {
 	const { data: session } = useSession();

@@ -1,5 +1,3 @@
-// app/api/question/recused/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";

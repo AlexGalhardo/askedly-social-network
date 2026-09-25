@@ -54,7 +54,9 @@ Skills de terceiros vendorizadas em `.claude/skills/` (origem/commit em `.claude
 - Conventional Commits obrigatório (validado por commitlint no `commit-msg`)
 - Comentários só para edge cases/decisões não óbvias — nunca comentário redundante
 - TypeScript com tipagem forte; evite `any` não justificado
-- Antes de considerar algo pronto: `bun run build` + testes relevantes devem passar
+- Segurança: quem age vem de `getSessionUser()` (`lib/session.ts`), nunca do body; valores de dinheiro são calculados no servidor; segredo nunca é `NEXT_PUBLIC_*`. Detalhes em [`docs/architecture.md`](docs/architecture.md)
+- Prisma 7: rode `bun run prisma:generate` após `bun install`; use só a instância de `@/prisma/prisma-client`
+- Antes de considerar algo pronto: `bun run lint:ci`, `bunx tsc --noEmit`, `bun run build` e os testes relevantes devem passar (o CI bloqueia em todos)
 
 <!-- BEGIN:nextjs-agent-rules -->
 

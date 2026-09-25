@@ -1,4 +1,3 @@
-// app/api/user/follow-requests/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -13,7 +12,6 @@ export async function GET(request: NextRequest) {
 			return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
 		}
 
-		// Buscar pedidos de seguidor recebidos pelo usuário logado
 		const followRequests = await prisma.followRequest.findMany({
 			where: {
 				receiverId: session.user.id,

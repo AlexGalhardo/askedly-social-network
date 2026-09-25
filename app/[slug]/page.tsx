@@ -1,9 +1,7 @@
-// ./app/[slug]/page.tsx
 import { Metadata } from "next";
 import ProfileClient from "./profile";
 
 export async function generateMetadata({ params }: any): Promise<Metadata> {
-	// Aguarda o params antes de acessar suas propriedades
 	const resolvedParams = await params;
 	const nickname = resolvedParams.slug;
 

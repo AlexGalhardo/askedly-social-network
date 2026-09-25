@@ -71,7 +71,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestio
 		}
 
 		return filteredQuestions;
-	}, [data, userNickname, blockedNicknames]);
+	}, [data, userNickname, blockedNicknames, session?.user?.following]);
 
 	const hasUserLiked = useCallback(
 		(question: QuestionInterface) => {

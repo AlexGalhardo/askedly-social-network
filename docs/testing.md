@@ -9,7 +9,7 @@
 | Tipo | O que cobre | Onde |
 |---|---|---|
 | Unitário/funcional | funções puras (`lib/utils/*`, `lib/date-time.ts`, `lib/utils.ts`) | `*.test.ts` ao lado do arquivo testado |
-| Integração | repositórios (`lib/repositories/*`) contra um Postgres de teste real (não mockado) | `tests/integration/*.test.ts` |
+| Integração | repositórios e services contra um Postgres de teste real (não mockado): usuários, saque (incluindo saque concorrente), criação de pergunta (valor do webhook, limite diário), expiração, autorização do cron | `tests/integration/*.test.ts` |
 | Smoke | a aplicação sobe e responde (`bun run build && bun run start` + checar `/api/health`) | `tests/smoke/*.test.ts` |
 | E2E | fluxos no browser: home, formulário de login, cadastro (`test.fixme` até o bug do Zod ser corrigido). Fluxo de pergunta paga via PIX/responder ainda não coberto | `tests/e2e/*.spec.ts` (Playwright) |
 

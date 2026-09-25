@@ -1,4 +1,3 @@
-// components/account/password-form.tsx
 "use client";
 
 import { Check, Loader2, X } from "lucide-react";

@@ -58,7 +58,6 @@ export async function POST(request: NextRequest) {
 				question_is_awaiting_answer: false,
 				question_answer_was_recused: false,
 				question_answer_was_expired: false,
-				// question_deleted_at: new Date(),
 			},
 		});
 

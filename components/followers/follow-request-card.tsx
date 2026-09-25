@@ -1,17 +1,17 @@
 "use client";
 
+import { UserCheck, UserX } from "lucide-react";
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { UserCheck, UserX } from "lucide-react";
-import { getInitials } from "@/lib/functions";
-import { formatDate } from "@/lib/utils";
-import Link from "next/link";
-import { FollowRequestInterface } from "@/types/FollowerUserInterface";
 import { useAcceptFollowRequest, useRejectFollowRequest } from "@/hooks/use-follower";
-import { toast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "@/hooks/use-toast";
+import { getInitials } from "@/lib/functions";
 import TelegramLog from "@/lib/telegram-logger";
+import { formatDate } from "@/lib/utils";
+import { FollowRequestInterface } from "@/types/FollowerUserInterface";
 
 interface FollowRequestCardProps {
 	request: FollowRequestInterface;

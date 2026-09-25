@@ -1,12 +1,10 @@
 "use client";
 
-import type React from "react";
-
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import LoadingScreen from "./loading-screen";
-import ProgressBar from "./pogress-bar";
 
 interface AuthCheckProps {
 	children: React.ReactNode;
@@ -26,9 +24,6 @@ export function AuthCheck({ children }: AuthCheckProps) {
 	}, [status, router]);
 
 	if (isLoading || status === "loading") {
-		// return (
-		//   <LoadingScreen />
-		// )
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<LoadingScreen />

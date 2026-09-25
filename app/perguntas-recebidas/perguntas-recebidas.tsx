@@ -40,12 +40,6 @@ export default function PerguntasRecebidasPage() {
 	const [reportReason, setReportReason] = useState("");
 	const [pendingAnswer, setPendingAnswer] = useState("");
 
-	const [loadingStates, setLoadingStates] = useState({
-		answering: "",
-		declining: "",
-		deleting: "",
-	});
-
 	useEffect(() => {
 		if (status !== "loading" && !session) {
 			router.push("/entrar");
@@ -63,8 +57,6 @@ export default function PerguntasRecebidasPage() {
 
 	const handleConfirmAnswer = async () => {
 		if (!selectedQuestion || !session?.user?.nickname) return;
-
-		setLoadingStates((prev) => ({ ...prev, answering: selectedQuestion.id }));
 
 		try {
 			await answerMutation.mutateAsync({
@@ -93,7 +85,6 @@ export default function PerguntasRecebidasPage() {
 				variant: "error",
 			});
 		} finally {
-			setLoadingStates((prev) => ({ ...prev, answering: "" }));
 			setIsAnswerModalOpen(false);
 			setSelectedQuestion(null);
 			setPendingAnswer("");
@@ -110,8 +101,6 @@ export default function PerguntasRecebidasPage() {
 
 	const handleConfirmDecline = async () => {
 		if (!selectedQuestion || !session?.user?.nickname) return;
-
-		setLoadingStates((prev) => ({ ...prev, declining: selectedQuestion.id }));
 
 		try {
 			await declineMutation.mutateAsync({
@@ -138,7 +127,6 @@ export default function PerguntasRecebidasPage() {
 				variant: "error",
 			});
 		} finally {
-			setLoadingStates((prev) => ({ ...prev, declining: "" }));
 			setIsDeclineModalOpen(false);
 			setSelectedQuestion(null);
 		}
@@ -155,8 +143,6 @@ export default function PerguntasRecebidasPage() {
 	const handleConfirmDelete = async () => {
 		if (!selectedQuestion || !session?.user?.nickname) return;
 
-		setLoadingStates((prev) => ({ ...prev, deleting: selectedQuestion.id }));
-
 		try {
 			await deleteMutation.mutateAsync({
 				questionId: selectedQuestion.id,
@@ -171,7 +157,6 @@ export default function PerguntasRecebidasPage() {
 				variant: "error",
 			});
 		} finally {
-			setLoadingStates((prev) => ({ ...prev, deleting: "" }));
 			setIsDeleteModalOpen(false);
 			setSelectedQuestion(null);
 		}

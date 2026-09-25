@@ -1,17 +1,16 @@
 import { faker } from "@faker-js/faker/locale/pt_BR";
 import { hash } from "bcryptjs";
 import slugify from "slugify";
-import { SeedUniqueTracker } from "../helpers/seed-unique-tracker.helper";
+import TelegramLog from "@/lib/telegram-logger";
 import { SeedHelpers } from "../helpers/seed-helpers.helper";
 import { SeedUserInterface } from "../helpers/seed-interfaces.helper";
-import TelegramLog from "@/lib/telegram-logger";
+import { SeedUniqueTracker } from "../helpers/seed-unique-tracker.helper";
 
 function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function isValidLatinName(name: string): boolean {
-	// Verifica se o nome só possui letras e espaços
 	return /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(name);
 }
 
@@ -24,7 +23,6 @@ export class SeedUserFactory {
 	constructor(private readonly uniqueTracker: SeedUniqueTracker) {}
 
 	async createAdminUser(): Promise<Omit<SeedUserInterface, "id">> {
-		// (sem alterações)
 		return {
 			is_admin: true,
 			is_seed: true,
@@ -61,7 +59,6 @@ export class SeedUserFactory {
 	}
 
 	async createOfficialUser(): Promise<Omit<SeedUserInterface, "id">> {
-		// (sem alterações)
 		return {
 			name: "RespondeAê Perfil Oficial",
 			is_seed: true,

@@ -59,6 +59,7 @@ export default function BlockedUsersCard() {
 	return (
 		<div className="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
 			<button
+				type="button"
 				onClick={() => setIsOpen(!isOpen)}
 				className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
 				aria-expanded={isOpen}
@@ -70,6 +71,7 @@ export default function BlockedUsersCard() {
 					</span>
 				</div>
 				<svg
+					aria-hidden="true"
 					className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
 					fill="none"
 					stroke="currentColor"
@@ -84,6 +86,7 @@ export default function BlockedUsersCard() {
 					{blockedUsers.length === 0 ? (
 						<div className="px-4 py-6 text-center text-gray-500">
 							<svg
+								aria-hidden="true"
 								className="w-12 h-12 mx-auto mb-3 text-gray-300"
 								fill="none"
 								stroke="currentColor"
@@ -126,13 +129,18 @@ export default function BlockedUsersCard() {
 									</div>
 
 									<button
+										type="button"
 										onClick={() => handleUnblockUser(user?.blocked?.nickname, user?.blocked?.id)}
 										disabled={unblockingUsers.has(user?.blocked?.id)}
 										className="px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 									>
 										{unblockingUsers.has(user?.blocked?.id) ? (
 											<div className="flex items-center gap-1">
-												<svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24">
+												<svg
+													aria-hidden="true"
+													className="w-3 h-3 animate-spin"
+													viewBox="0 0 24 24"
+												>
 													<circle
 														className="opacity-25"
 														cx="12"

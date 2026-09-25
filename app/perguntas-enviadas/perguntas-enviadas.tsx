@@ -22,17 +22,14 @@ export default function PerguntasEnviadasPage() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const questionsPerPage = 10;
 
-	// Modal states
 	const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 	const [selectedQuestion, setSelectedQuestion] = useState<SentQuestionInterface | null>(null);
 	const [reportReason, setReportReason] = useState("");
 
-	// User interactions state
 	const [userInteractions, setUserInteractions] = useState<{
 		[questionId: string]: { liked: boolean; disliked: boolean };
 	}>({});
 
-	// Loading states
 	const [loadingStates, setLoadingStates] = useState({
 		reporting: "",
 	});
@@ -92,7 +89,6 @@ export default function PerguntasEnviadasPage() {
 		const wasLiked = currentInteraction.liked;
 		const wasDisliked = currentInteraction.disliked;
 
-		// Update local state immediately for responsiveness
 		setUserInteractions((prev) => ({
 			...prev,
 			[questionId]: {
@@ -145,7 +141,6 @@ export default function PerguntasEnviadasPage() {
 		const wasLiked = currentInteraction.liked;
 		const wasDisliked = currentInteraction.disliked;
 
-		// Update local state immediately for responsiveness
 		setUserInteractions((prev) => ({
 			...prev,
 			[questionId]: {

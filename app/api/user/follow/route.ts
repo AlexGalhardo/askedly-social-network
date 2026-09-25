@@ -29,7 +29,6 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "Você não pode seguir a si mesmo" }, { status: 400 });
 		}
 
-		// Verificar se já está seguindo
 		const existingFollow = await prisma.follower.findUnique({
 			where: {
 				followerId_followingId: {
@@ -39,7 +38,6 @@ export async function POST(request: NextRequest) {
 			},
 		});
 
-		// Verificar se já existe uma solicitação pendente
 		const existingRequest = await prisma.followRequest.findUnique({
 			where: {
 				senderId_receiverId: {
@@ -53,7 +51,6 @@ export async function POST(request: NextRequest) {
 		let hasPendingRequest = !!existingRequest;
 		let message: string;
 
-		// Se já está seguindo, desseguir
 		if (existingFollow) {
 			await prisma.follower.delete({
 				where: {
@@ -62,9 +59,7 @@ export async function POST(request: NextRequest) {
 			});
 			isFollowing = false;
 			message = "Usuário desseguido com sucesso";
-		}
-		// Se tem solicitação pendente, cancelar
-		else if (existingRequest) {
+		} else if (existingRequest) {
 			await prisma.followRequest.delete({
 				where: {
 					id: existingRequest.id,
@@ -72,10 +67,7 @@ export async function POST(request: NextRequest) {
 			});
 			hasPendingRequest = false;
 			message = "Solicitação de seguir cancelada";
-		}
-		// Se não está seguindo nem tem solicitação pendente
-		else {
-			// Se o perfil é privado, criar solicitação
+		} else {
 			if (followingUser.privacy_is_private_profile) {
 				await prisma.followRequest.create({
 					data: {
@@ -85,9 +77,7 @@ export async function POST(request: NextRequest) {
 				});
 				hasPendingRequest = true;
 				message = "Solicitação para seguir enviada";
-			}
-			// Se o perfil é público, seguir diretamente
-			else {
+			} else {
 				await prisma.follower.create({
 					data: {
 						followerId,

@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { CheckCircle, Clock, DollarSign, Flag, HelpCircle, Lock, Trash2, UserX, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FaMoneyBillWave } from "react-icons/fa6";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { QuestionInterface } from "@/types/QuestionInterface";
-import { getQuestionStatus, getTimeRemaining } from "@/lib/utils/question-utils";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Clock, UserX, HelpCircle, Lock, DollarSign, CheckCircle, XCircle, Flag, Trash2 } from "lucide-react";
-import { FaMoneyBillWave } from "react-icons/fa6";
+import { getQuestionStatus, getTimeRemaining } from "@/lib/utils/question-utils";
+import { QuestionInterface } from "@/types/QuestionInterface";
 
 interface QuestionCardProps {
 	question: QuestionInterface;

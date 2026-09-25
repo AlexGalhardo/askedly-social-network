@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { signIn, useSession } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,7 +39,7 @@ export default function EntrarClient() {
 		if (session?.user?.nickname) {
 			router.push(`/${session?.user?.nickname}`);
 		}
-	}, [session]);
+	}, [session, router]);
 
 	useEffect(() => {
 		setPasswordCriteria({
@@ -123,9 +123,12 @@ export default function EntrarClient() {
 		setTurnstileReady(true);
 	};
 
+	// Sempre a versão atual de renderTurnstile, sem re-executar o efeito a cada render.
+	const onTurnstileReady = useEffectEvent(() => renderTurnstile());
+
 	useEffect(() => {
 		if (turnstileReady) {
-			renderTurnstile();
+			onTurnstileReady();
 		}
 	}, [turnstileReady]);
 
@@ -173,7 +176,7 @@ export default function EntrarClient() {
 							className="w-full hover:bg-red-500 hover:bg-text-white hover:font-bold dark:bg-white dark:text-black dark:hover:bg-gray-100"
 							type="button"
 						>
-							<svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+							<svg aria-hidden="true" className="w-5 h-5 mr-3" viewBox="0 0 24 24">
 								<path
 									fill="currentColor"
 									d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

@@ -1,17 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Flag, HelpCircle, Lock, UserX } from "lucide-react";
+import Link from "next/link";
+import { FaMoneyBillWave } from "react-icons/fa6";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SentQuestionInterface } from "@/types/SentQuestion";
-import { getSentQuestionStatus } from "@/lib/utils/sent-question-utils";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { getInitials } from "@/lib/functions";
-import { UserX, Flag, HelpCircle, Lock, Heart, ThumbsDown } from "lucide-react";
-import { FaMoneyBillWave } from "react-icons/fa6";
-import Link from "next/link";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { getSentQuestionStatus } from "@/lib/utils/sent-question-utils";
+import { SentQuestionInterface } from "@/types/SentQuestion";
 
 interface SentQuestionCardProps {
 	question: SentQuestionInterface;
@@ -33,7 +32,6 @@ export function SentQuestionCard({
 	isReporting = false,
 }: SentQuestionCardProps) {
 	const status = getSentQuestionStatus(question);
-	const interaction = userInteractions[question.id] || { liked: false, disliked: false };
 
 	const getStatusBadge = () => {
 		switch (status) {

@@ -1,10 +1,10 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { filterQuestionsByStatus, paginateQuestions } from "@/lib/utils/question-utils";
 import { QuestionInterface } from "@/types/QuestionInterface";
 import { QuestionsList } from "./questions-list";
 import { QuestionsPagination } from "./questions-pagination";
-import { filterQuestionsByStatus, paginateQuestions } from "@/lib/utils/question-utils";
 
 interface QuestionsTabsProps {
 	questions: QuestionInterface[];

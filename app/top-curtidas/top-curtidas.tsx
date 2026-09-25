@@ -10,8 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
 import { useDislikeQuestion, useLikeQuestion } from "@/hooks/use-profile-queries";
+import { useToast } from "@/hooks/use-toast";
 import { getInitials } from "@/lib/functions";
 import { QuestionInterface } from "@/lib/interfaces";
 import TelegramLog from "@/lib/telegram-logger";
@@ -23,6 +23,14 @@ interface TopCurtidasProps {
 	month: QuestionInterface[];
 	year: QuestionInterface[];
 	allTime: QuestionInterface[];
+}
+
+function sortQuestionsByLikes(questions: QuestionInterface[]): QuestionInterface[] {
+	return questions.sort((a, b) => {
+		const likesA = JSON.parse(a.liked_by_users || "[]").length;
+		const likesB = JSON.parse(b.liked_by_users || "[]").length;
+		return likesB - likesA;
+	});
 }
 
 export default function TopCurtidasClient({ today, week, month, year, allTime }: TopCurtidasProps) {
@@ -44,14 +52,6 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 	const [allTimeQuestions, setAllTimeQuestions] = useState<QuestionInterface[]>(allTime);
 
 	const questionsPerLoad = 10;
-
-	const sortQuestionsByLikes = (questions: QuestionInterface[]) => {
-		return questions.sort((a, b) => {
-			const likesA = JSON.parse(a.liked_by_users || "[]").length;
-			const likesB = JSON.parse(b.liked_by_users || "[]").length;
-			return likesB - likesA;
-		});
-	};
 
 	const updateQuestionInAllStates = (updatedQuestion: QuestionInterface) => {
 		const updateQuestion = (questions: QuestionInterface[]) =>
@@ -126,19 +126,6 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, [loadMoreQuestions]);
 
-	const [isMobile, setIsMobile] = useState(false);
-
-	useEffect(() => {
-		const checkMobile = () => {
-			setIsMobile(window.innerWidth < 768);
-		};
-
-		checkMobile();
-		window.addEventListener("resize", checkMobile);
-
-		return () => window.removeEventListener("resize", checkMobile);
-	}, []);
-
 	const hasUserLiked = (question: QuestionInterface) => {
 		if (!session?.user?.nickname) return false;
 		const likedUsers = JSON.parse(question.liked_by_users || "[]");
@@ -181,7 +168,7 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 			};
 
 			updateQuestionInAllStates(updatedQuestion);
-		} catch (error: any) {
+		} catch {
 			toast({
 				title: "Erro ao curtir pergunta!",
 				description: "Tente novamente mais tarde",

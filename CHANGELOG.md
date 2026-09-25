@@ -5,6 +5,18 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.5.5] - 2026-09-25
+
+### Changed
+
+- Clear every Biome lint error and make lint blocking in CI
+- Remove redundant comments and commented-out code
+- Stop sending the acting nickname from question hooks
+
+### Security
+
+- Patch transitive vulnerabilities and make the audit gate blocking
+
 ## [0.5.4] - 2026-09-25
 
 ### Changed

@@ -17,6 +17,7 @@ export const FeedTabs = ({ activeTab, onTabChange, isLoggedIn, className }: Feed
 	return (
 		<div className={cn("flex space-x-1 bg-gray-100 p-1 rounded-lg mb-6", className)}>
 			<button
+				type="button"
 				onClick={() => onTabChange("community")}
 				className={cn(
 					"flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200",
@@ -29,6 +30,7 @@ export const FeedTabs = ({ activeTab, onTabChange, isLoggedIn, className }: Feed
 			</button>
 
 			<button
+				type="button"
 				onClick={() => onTabChange("following")}
 				className={cn(
 					"flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200",

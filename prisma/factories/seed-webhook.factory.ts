@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { SeedWebhookInterface } from "../helpers/seed-interfaces.helper";
 import { SeedHelpers } from "../helpers/seed-helpers.helper";
+import { SeedWebhookInterface } from "../helpers/seed-interfaces.helper";
 
 export class SeedWebhookFactory {
 	static create(pixId: string, amount: number): Omit<SeedWebhookInterface, "created_at" | "updated_at"> {

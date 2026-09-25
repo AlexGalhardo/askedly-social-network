@@ -1,8 +1,8 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PaymentTabContent } from "./payment-tab-content";
 import { PaymentData, PaymentTab } from "@/types/PaymentInterface";
+import { PaymentTabContent } from "./payment-tab-content";
 
 interface PaymentTabsProps {
 	answeredData: PaymentData | null;

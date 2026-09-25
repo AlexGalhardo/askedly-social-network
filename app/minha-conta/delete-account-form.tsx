@@ -1,4 +1,3 @@
-// components/account/delete-account-form.tsx
 "use client";
 
 import { Loader2 } from "lucide-react";

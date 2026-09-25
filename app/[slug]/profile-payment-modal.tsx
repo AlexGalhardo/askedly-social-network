@@ -1,8 +1,7 @@
-// /app/[slug]/profile-question-modal.tsx
 "use client";
 
 import { Check, Clock, Copy, Loader } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -51,6 +50,10 @@ export function ProfilePaymentModal({
 	const [canClose, setCanClose] = useState(false);
 	const [countdownSeconds, setCountdownSeconds] = useState<number>(10);
 
+	// Lidos dentro dos timers abaixo: sempre a versão mais recente, sem reiniciar os intervalos a cada render.
+	const onPaymentSuccess = useEffectEvent(() => handlePaymentSuccess());
+	const onCloseModal = useEffectEvent(() => closeModal());
+
 	useEffect(() => {
 		if (!pixData || currentStep !== "pix") return;
 
@@ -85,7 +88,7 @@ export function ProfilePaymentModal({
 					clearInterval(timer);
 					clearInterval(statusInterval);
 					setTimeout(() => {
-						handlePaymentSuccess();
+						onPaymentSuccess();
 					}, 10000);
 				} else if (status === "EXPIRED" || status === "CANCELLED") {
 					clearInterval(timer);
@@ -142,7 +145,7 @@ export function ProfilePaymentModal({
 			const closeTimer = setTimeout(async () => {
 				clearInterval(countdownTimer);
 				setCanClose(true);
-				closeModal();
+				onCloseModal();
 				await update();
 			}, 10000);
 

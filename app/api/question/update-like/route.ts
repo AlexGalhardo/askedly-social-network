@@ -30,12 +30,9 @@ export async function POST(request: NextRequest) {
 		const userAlreadyLiked = likedUsers.some((slug: string) => slug === nickname);
 
 		if (userAlreadyLiked) {
-			// Remove o like se já curtiu (toggle)
 			likedUsers = likedUsers.filter((slug: string) => slug !== nickname);
 		} else {
-			// Adiciona o like
 			likedUsers.push(nickname);
-			// Remove do dislike se estava lá
 			dislikedUsers = dislikedUsers.filter((slug: string) => slug !== nickname);
 		}
 

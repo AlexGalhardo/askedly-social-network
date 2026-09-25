@@ -1,5 +1,3 @@
-// app/api/question/report-question/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
@@ -67,7 +65,6 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "Você já reportou esta pergunta como inapropriada." }, { status: 400 });
 		}
 
-		// --- Atualização dos Campos Booleanos ---
 		const updateData: {
 			owner_reported_offensive_question?: boolean;
 			onwer_reported_inadequate_question?: boolean;

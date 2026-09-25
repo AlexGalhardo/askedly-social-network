@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { contactSchema } from "@/app/api/send-contact-email/route";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -162,9 +162,12 @@ export default function ContatoClient() {
 		setTurnstileReady(true);
 	};
 
+	// Sempre a versão atual de renderTurnstile, sem re-executar o efeito a cada render.
+	const onTurnstileReady = useEffectEvent(() => renderTurnstile());
+
 	useEffect(() => {
 		if (turnstileReady) {
-			renderTurnstile();
+			onTurnstileReady();
 		}
 	}, [turnstileReady]);
 

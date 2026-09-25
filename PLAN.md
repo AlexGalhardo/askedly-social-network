@@ -37,14 +37,13 @@
 - [x] Rodar `bun install`, `bun run build` (com Postgres descartável via Docker) e validar que nada quebrou
 - [x] Commit (`chore(deps): pin all dependencies to exact latest stable versions`)
 
-### ⚠️ Upgrades major pendentes (requerem seu aval antes de aplicar — risco real de quebra)
+### Upgrades major (aplicados com aval do usuário)
 
-- **`@prisma/client` / `prisma`**: atual `6.19.3`. `@prisma/client` tem major estável `7.10.0` disponível; já o CLI `prisma` aponta "latest" para `8.0.0-rc.15` (release candidate — **não deve ser usado** pela sua regra de nunca usar pre-release). Migrar exigiria revisar o guia oficial de major upgrade do Prisma e provavelmente adotar `prisma.config.ts` (o `package.json#prisma.seed` já está deprecated a partir do Prisma 7).
-- **`@react-email/components`**: atual `0.0.41` (pré-1.0). Major estável `1.0.12` disponível — API pode ter mudado significativamente vindo de uma versão 0.0.x.
-- **`framer-motion`**: atual `12.43.0` (já atualizado dentro da v12). Major `13.4.2` disponível.
-- **`typescript`**: atual `6.0.3`. Major `7.0.2` disponível — impacto potencial em todo o typecheck do projeto.
-
-Decisão: pausar aqui e perguntar ao usuário se quer que eu tente esses 4 upgrades agora (um de cada vez, com build+testes validando cada um) ou se ficam para depois.
+- [x] Prisma 6 → 7.10.0 (driver adapters, `prisma.config.ts`, client gerado em `prisma/generated/`, instância única). SQLite local usa `@prisma/adapter-libsql` porque `better-sqlite3` não roda no Bun.
+- [x] `@react-email/components` 0.0.41 → 1.0.12 (os dois templates renderizam igual).
+- [x] `framer-motion`: removido em vez de atualizado. Só girava um ícone que já tinha `animate-spin`.
+- [x] TypeScript mantido na 6.x (6.0.3, a mais recente) por decisão do usuário.
+- [~] SQLite nativo do Bun (`bun:sqlite`): o usuário pediu. O único adapter Prisma para ele é comunitário (`prisma-adapter-bun-sqlite@0.8.0`, mantenedor individual), e a instalação foi bloqueada pelo classificador de segurança do Claude Code. Além disso, `bun:sqlite` só existe no runtime Bun, e o Next roda em Node. Depende de decisão do usuário (ver resumo da sessão).
 
 ## Fase 3 — AGENTS.md e CLAUDE.md (raiz)
 
@@ -98,9 +97,9 @@ Decisão: pausar aqui e perguntar ao usuário se quer que eu tente esses 4 upgra
 - [x] E2E com Playwright (`tests/e2e/homepage.spec.ts`, `tests/e2e/signup.spec.ts`; fluxo de pagamento PIX/responder pergunta ficou de fora por tempo — considerar expandir depois)
 - [x] Scripts `test`, `test:unit`, `test:integration`, `test:smoke`, `test:e2e` no `package.json`
 - [x] Commits por tipo de teste
-- [~] `tests/e2e/signup.spec.ts` está com `test.fixme` — bloqueado pelo bug do Zod `.errors` (ver Fase 11)
+- [x] `tests/e2e/signup.spec.ts` reativado (o `test.fixme` saiu com a correção do Zod na Fase 11)
 
-### 🐛 Bugs críticos encontrados escrevendo os testes (novos itens para a Fase 11)
+### 🐛 Bugs críticos encontrados escrevendo os testes (corrigidos na Fase 11)
 
 - **`app/layout.tsx` renderiza `{children}` duas vezes** (`lg:hidden` + `hidden lg:block`) — duplica toda página no DOM (IDs duplicados, hooks/efeitos/chamadas de API em dobro). Afeta TODAS as páginas. Ver `CHANGELOG.md`.
 - **`ZodError.errors` não existe na versão do Zod instalada** (é `.issues`) — quebra o tratamento de erro de validação em `handleSignup` (`app/criar-conta/criar-conta.tsx`) e provavelmente em todo formulário/rota que usa esse padrão (ver lista de erros de `bunx tsc --noEmit`: `app/api/send-contact-email`, `app/api/user/delete-account`, `app/api/user/update-password`, `app/api/user/update-personal-info`, `app/api/user/update-social-medias`, `app/contato/contato.tsx`).
@@ -123,13 +122,34 @@ Decisão: pausar aqui e perguntar ao usuário se quer que eu tente esses 4 upgra
 - [x] Commit (`ci: add github actions for lint, test, build and deploy`)
 - [~] Depende de você: criar o environment `production` no GitHub com `VERCEL_TOKEN`/`VERCEL_ORG_ID`/`VERCEL_PROJECT_ID`, e decidir entre este `deploy.yml` ou a integração Git da Vercel (os dois juntos = deploy duplicado). Ver `docs/deployment.md`.
 
-## Fase 11 — [CHECKPOINT: parar e pedir revisão do usuário antes de iniciar]
+## Fase 11 — Revisão de lógica, segurança e qualidade (concluída; ver `CHANGELOG.md`)
 
-- [ ] Revisão de lógica de negócio (OWASP Top 10 2025, clean architecture, DRY/KISS) — skills: `security-and-hardening`, `code-simplification`, `ponytail-audit`, `graphify` (mapa do código antes de mexer)
-- [ ] Triar as 10 vulnerabilidades restantes de `bun audit` (`brace-expansion`, `minimatch`, `effect`, `deepmerge-ts`, `baseline-browser-mapping` — todas transitivas) e tornar o job `security-audit` bloqueante
-- [ ] Zerar erros de `tsc --noEmit`, remover `typescript.ignoreBuildErrors` do `next.config.mjs` e tornar o job `typecheck` bloqueante
-- [ ] Remover comentários redundantes, manter só os que explicam edge cases/decisões
-- [ ] Aplicar design patterns onde fizer sentido, sem over-engineering
+Executada com as skills `graphify` (mapa do código), `security-and-hardening`, `test-driven-development`, `debugging-and-error-recovery`, `ponytail`, `code-simplification` e `git-workflow-and-versioning`.
+
+- [x] Bugs críticos: layout renderizando páginas 2×; `ZodError.errors` (Zod 4); redirect concorrente no cadastro; e2e de cadastro reativado
+- [x] Controle de acesso (OWASP A01): saque, criação/resposta/exclusão/recusa/report/like/expiração de pergunta, seguir, aceitar/rejeitar seguidor, dados de pagamento. Identidade sempre via `lib/session.ts`
+- [x] Integridade de dinheiro: valor da pergunta vem do webhook; repasse calculado no servidor; saque e expiração atômicos (testes de integração, inclusive concorrência)
+- [x] Segredos: chave e webhook da AbacatePay server-only (confirmado com build + sentinela no bundle); `simulate-payment` só em modo teste; cron com `CRON_SECRET`; Turnstile consertado
+- [x] `bun audit` 26 → 1 (a restante está ignorada com justificativa no CI); jobs `lint`, `typecheck` e `security-audit` bloqueantes
+- [x] `tsc` 0 erros e `ignoreBuildErrors` removido; lint 0 erros em todo o código
+- [x] Código morto: 30 componentes shadcn, 28 dependências, actions/rotas/arquivos sem uso; comentários redundantes removidos
+- [x] Toasts de 5 telas que nunca apareciam (store duplicado)
+
+### Pendências que dependem de decisão do usuário
+
+- [ ] **Troca de senha sem pedir a senha atual** (A07): exige mudança de UI e tratar contas Google, que não têm senha
+- [ ] **Rate limit** em login/cadastro/contato: um limitador em memória não funciona em serverless. Precisa de um store compartilhado (ex.: Upstash Redis via Vercel Marketplace)
+- [ ] **Funcionalidades quebradas**: "reportar resposta" (rota era arquivo vazio) e "sacar perguntas não respondidas" (`/api/withdraw/unanswered` nunca existiu). Implementar ou remover da UI?
+- [ ] **Vercel**: a conta conectada (time "Fitness Projects") não tem projeto do RespondeAê; falta decidir conta/projeto e configurar `VERCEL_*`, `ABACATEPAY_*`, `CRON_SECRET`, `CLOUDFLARE_TURNSTILE_SECRET`, `DATABASE_URL` de produção. **Rotacionar a chave da AbacatePay**, que ficou exposta
+
+### Pendências técnicas menores
+
+- [ ] Seed não roda no SQLite (`createMany({ skipDuplicates })`)
+- [ ] Erro de hidratação no botão de tema (`Moon`/`Sun` dependem do tema, que só é conhecido no client)
+- [ ] Páginas que têm `<main>` próprio dentro do `<main>` do layout (landmark duplicado, a11y)
+- [ ] Campo de nickname aceita só `a-z`, mas o schema aceita dígitos e `_`: alinhar
+- [ ] O callback `session` do NextAuth carrega o usuário com todas as perguntas a cada leitura de sessão (performance)
+- [ ] 61 warnings do Biome (não bloqueiam)
 
 ## Fase 12 — README.md final
 

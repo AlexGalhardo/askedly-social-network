@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ message: "Nickname do usuário é obrigatório" }, { status: 400 });
 		}
 
-		// Verificar se o usuário alvo existe
 		const targetUser = await prisma.user.findUnique({
 			where: { nickname: targetUserNickname },
 			select: { id: true, nickname: true },
@@ -29,12 +28,10 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ message: "Usuário não encontrado" }, { status: 404 });
 		}
 
-		// Verificar se não está tentando bloquear a si mesmo
 		if (session.user.id === targetUser.id) {
 			return NextResponse.json({ message: "Você não pode bloquear a si mesmo" }, { status: 400 });
 		}
 
-		// Verificar se já não bloqueou esse usuário
 		const existingBlock = await prisma.userBlock.findUnique({
 			where: {
 				blocker_id_blocked_id: {
@@ -48,7 +45,6 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ message: "Usuário já está bloqueado" }, { status: 400 });
 		}
 
-		// Criar o bloqueio
 		await prisma.userBlock.create({
 			data: {
 				blocker_id: session.user.id,
@@ -56,7 +52,6 @@ export async function POST(request: NextRequest) {
 			},
 		});
 
-		// Opcional: Remover seguidor/seguindo se existir
 		await prisma.follower.deleteMany({
 			where: {
 				OR: [

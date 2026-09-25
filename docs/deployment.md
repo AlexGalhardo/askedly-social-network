@@ -4,7 +4,10 @@
 
 - `vercel.json` define um cron (`/api/cronjob`, todo dia às 3h) que reseta os limites diários de perguntas e apaga contas excluídas há mais de 30 dias ou inativas há mais de 2 anos. A rota exige `Authorization: Bearer $CRON_SECRET`, que a Vercel envia sozinha quando a variável `CRON_SECRET` existe no projeto.
 - `@vercel/speed-insights` já integrado em `app/layout.tsx`.
-- Variáveis de ambiente de produção são configuradas direto no dashboard da Vercel (nunca commitar `.env`; usar `.env.example` como referência do que precisa existir).
+- Variáveis de ambiente de produção são configuradas direto no dashboard da Vercel (nunca commitar `.env`; usar `.env.example` como referência do que precisa existir). Além das já existentes, a Fase 11 passou a exigir:
+  - `ABACATEPAY_API_KEY` e `ABACATEPAY_WEBHOOK_SECRET` (substituem as antigas `NEXT_PUBLIC_*`; **rotacione a chave**, que ficou exposta no bundle);
+  - `CRON_SECRET` (sem ela o cron diário passa a receber 401);
+  - `CLOUDFLARE_TURNSTILE_SECRET` (o nome que o código lê agora).
 
 ## CI/CD (GitHub Actions, `.github/workflows/`)
 

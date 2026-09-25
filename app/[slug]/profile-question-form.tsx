@@ -1,4 +1,3 @@
-// /app/[slug]/profile-question-form.tsx
 "use client";
 
 import { Eye, EyeOff } from "lucide-react";

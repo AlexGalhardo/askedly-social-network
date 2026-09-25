@@ -1,16 +1,16 @@
 "use client";
 
+import { UserMinus } from "lucide-react";
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { UserMinus } from "lucide-react";
-import { getInitials } from "@/lib/functions";
-import Link from "next/link";
 import { useRemoveFollower } from "@/hooks/use-follower";
-import { FollowerUserInterface } from "@/types/FollowerUserInterface";
-import { toast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "@/hooks/use-toast";
+import { getInitials } from "@/lib/functions";
 import TelegramLog from "@/lib/telegram-logger";
+import { FollowerUserInterface } from "@/types/FollowerUserInterface";
 
 interface FollowerCardProps {
 	follower: FollowerUserInterface;

@@ -1,9 +1,9 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FollowersList } from "./followers-list";
-import { FollowRequestsList } from "./follow-requests-list";
 import { FollowerUserInterface, FollowRequestInterface } from "@/types/FollowerUserInterface";
+import { FollowRequestsList } from "./follow-requests-list";
+import { FollowersList } from "./followers-list";
 
 interface FollowersTabsProps {
 	followers: FollowerUserInterface[];

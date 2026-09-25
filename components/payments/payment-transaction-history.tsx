@@ -1,8 +1,8 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { WithdrawHistory } from "@/types/PaymentInterface";
 import { formatCurrency, formatDate } from "@/lib/utils/payment-utils";
+import { WithdrawHistory } from "@/types/PaymentInterface";
 
 interface TransactionHistoryProps {
 	transactions: WithdrawHistory[];

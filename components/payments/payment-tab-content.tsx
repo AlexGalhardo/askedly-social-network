@@ -1,11 +1,11 @@
 "use client";
 
-import { PaymentCard } from "./payment-card";
-import { WithdrawButton } from "./payment-withdraw-button";
-import { TransactionHistory } from "./payment-transaction-history";
-import { PaymentData } from "@/types/PaymentInterface";
+import { Clock, DollarSign } from "lucide-react";
 import { canWithdraw, getMinimumWithdrawMessage } from "@/lib/utils/payment-utils";
-import { DollarSign, Clock } from "lucide-react";
+import { PaymentData } from "@/types/PaymentInterface";
+import { PaymentCard } from "./payment-card";
+import { TransactionHistory } from "./payment-transaction-history";
+import { WithdrawButton } from "./payment-withdraw-button";
 
 interface PaymentTabContentProps {
 	data: PaymentData;

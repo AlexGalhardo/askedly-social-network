@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { SeedQuestionInterface, SeedQuestionStateType, SeedUserInterface } from "../helpers/seed-interfaces.helper";
 import { SeedHelpers } from "../helpers/seed-helpers.helper";
+import { SeedQuestionInterface, SeedQuestionStateType, SeedUserInterface } from "../helpers/seed-interfaces.helper";
 import { arrayQuestions } from "./seed-array-questions-anwers";
 
 export class SeedQuestionFactory {
