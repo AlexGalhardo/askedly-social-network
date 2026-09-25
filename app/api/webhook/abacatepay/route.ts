@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ABACATEPAY_WEBHOOK_SECRET } from "@/lib/abacatepay";
 import TelegramLog from "@/lib/telegram-logger";
 import { formatCurrency } from "@/lib/utils";
 import { prisma } from "@/prisma/prisma-client";
@@ -7,7 +8,7 @@ export async function POST(req: NextRequest) {
 	const { searchParams } = new URL(req.url);
 	const webhookSecret = searchParams.get("webhookSecret");
 
-	if (webhookSecret !== process.env.NEXT_PUBLIC_ABACATEPAY_WEBHOOK_SECRET)
+	if (!ABACATEPAY_WEBHOOK_SECRET || webhookSecret !== ABACATEPAY_WEBHOOK_SECRET)
 		return NextResponse.json({ error: "Invalid webhook secret" }, { status: 401 });
 
 	try {

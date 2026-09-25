@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(request: NextRequest) {
 	try {
+		const user = await getSessionUser();
+		if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+
 		const body = await request.json();
-		const { questionId, nickname, answerText } = body;
+		const { nickname } = user;
+		const { questionId, answerText } = body;
 
 		if (!questionId) {
 			await TelegramLog.error("Question Answer: ❌ ID da pergunta é obrigatório.");
 			return NextResponse.json({ error: "ID da pergunta é obrigatório" }, { status: 400 });
-		}
-
-		if (!nickname) {
-			await TelegramLog.error("Question Answer: ❌ Nickname do usuário é obrigatório.");
-			return NextResponse.json({ error: "Nickname do usuário é obrigatório" }, { status: 400 });
 		}
 
 		if (!answerText || answerText.trim().length < 32 || answerText.trim().length > 512) {

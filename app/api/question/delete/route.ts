@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(request: NextRequest) {
 	try {
+		const user = await getSessionUser();
+		if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+
 		const body = await request.json();
-		const { questionId, nickname } = body;
+		const { nickname } = user;
+		const { questionId } = body;
 
 		if (!questionId) {
 			await TelegramLog.error("Question Delete: ❌ ID da pergunta é obrigatório");
 			return NextResponse.json({ error: "ID da pergunta é obrigatório" }, { status: 400 });
-		}
-
-		if (!nickname) {
-			await TelegramLog.error("Question Delete: ❌ ID do usuário é obrigatório");
-			return NextResponse.json({ error: "ID do usuário é obrigatório" }, { status: 400 });
 		}
 
 		const questionToDelete = await prisma.question.findUnique({

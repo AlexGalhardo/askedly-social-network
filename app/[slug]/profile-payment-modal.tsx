@@ -11,7 +11,6 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import TelegramLog from "@/lib/telegram-logger";
 import { formatCurrency } from "@/lib/utils";
-import { ABACATEPAY_API_KEY } from "../api/pix/create/route";
 
 const PRESET_AMOUNTS = [2, 5, 10, 20, 50];
 
@@ -111,10 +110,7 @@ export function ProfilePaymentModal({
 			setTimeout(() => {
 				fetch(`/api/pix/simulate-payment`, {
 					method: "POST",
-					headers: {
-						Authorization: `Bearer ${ABACATEPAY_API_KEY}`,
-						"Content-Type": "application/json",
-					},
+					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ pixId: pixData.id }),
 				})
 					.then((res) => {

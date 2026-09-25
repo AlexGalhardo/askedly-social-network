@@ -42,11 +42,7 @@ export default function PagamentosPage() {
 
 		try {
 			await withdrawMutation.mutateAsync({
-				userId: session.user.id,
-				nickname: session.user.nickname as string,
-				amount: currentData.paymentToWithdraw,
-				sentToPixKey: session.user.pix_key || "",
-				questions: currentData.questionsToPayAmount,
+				questionIds: currentData.questionsToPayAmount.map((question) => question.id),
 			});
 
 			setIsWithdrawModalOpen(false);

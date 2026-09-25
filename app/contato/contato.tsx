@@ -72,7 +72,7 @@ export default function ContatoClient() {
 
 		let token = null;
 
-		if (process.env.NEXT_PUBLIC_NODE_ENV === "production") {
+		if (process.env.NODE_ENV === "production") {
 			token = (window as any).turnstile?.getResponse?.();
 
 			if (!token) {

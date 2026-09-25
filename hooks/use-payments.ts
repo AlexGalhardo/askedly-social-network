@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { getAnsweredPaymentDetails, getSentPaymentDetails, processWithdraw } from "@/actions/payment-actions";
 import { toast } from "@/hooks/use-toast";
@@ -14,7 +14,7 @@ export function useAnsweredPaymentDetails() {
 			if (!session?.user?.nickname) {
 				throw new Error("Usuário não autenticado");
 			}
-			const result = await getAnsweredPaymentDetails(session.user.nickname);
+			const result = await getAnsweredPaymentDetails();
 			return result.data;
 		},
 		enabled: !!session?.user?.nickname,
@@ -34,7 +34,7 @@ export function useSentPaymentDetails() {
 			if (!session?.user?.nickname) {
 				throw new Error("Usuário não autenticado");
 			}
-			const result = await getSentPaymentDetails(session.user.nickname);
+			const result = await getSentPaymentDetails();
 			return result.data;
 		},
 		enabled: !!session?.user?.nickname,
@@ -51,10 +51,10 @@ export function useProcessWithdraw() {
 
 	return useMutation({
 		mutationFn: processWithdraw,
-		onSuccess: (data, variables) => {
+		onSuccess: (data) => {
 			toast({
 				title: "Saque realizado com sucesso",
-				description: `Valor de R$ ${(variables.amount / 100).toFixed(2)} será enviado para a conta associada a essa chave PIX em breve.`,
+				description: `Valor de R$ ${(data.amount / 100).toFixed(2)} será enviado para a conta associada a essa chave PIX em breve.`,
 				variant: "success",
 			});
 

@@ -5,6 +5,18 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.5.2] - 2026-09-25
+
+### Fixed
+
+- Make the Turnstile captcha work for password login in production
+
+### Security
+
+- Derive withdraw owner, amount and PIX key on the server
+- Take the acting user from the session in question and follow routes
+- Keep AbacatePay secrets out of the browser bundle
+
 ## [0.5.1] - 2026-09-25
 
 ### Fixed

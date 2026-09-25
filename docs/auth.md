@@ -18,9 +18,9 @@ NextAuth v4 (`next-auth`), configurado em `lib/auth.ts` e exposto em `app/api/au
 
 `hooks/use-session-verification.ts` + `app/api/auth/verify-session/route.ts` fazem polling/validação de sessão ativa no client (ex: detectar logout em outra aba, banimento).
 
-## ⚠️ Bug conhecido — variável do Turnstile não bate
+## Captcha (Cloudflare Turnstile)
 
-`lib/auth.ts` lê `process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY`, mas `.env.example`/deploy usam `CLOUDFLARE_TURNSTILE_SECRET`. Em produção isso manda uma secret vazia pro Cloudflare, que responde `success: false`, e **todo login por credenciais falha silenciosamente** (só o login por Google funciona). Corrigir isso é uma mudança de comportamento de autenticação — fica registrado como achado crítico para a Fase 11 (checkpoint) em vez de corrigido aqui de forma isolada.
+O captcha só é exigido quando `NODE_ENV === "production"`, e essa mesma condição decide, no client (`entrar`, `criar-conta`, `contato`), se o token é enviado. Antes, o servidor lia `CLOUDFLARE_TURNSTILE_SECRET_KEY` (variável que não existia) e o client dependia de um `NEXT_PUBLIC_NODE_ENV` nunca definido, então todo login por senha falhava em produção.
 
 ## Erros e logging
 

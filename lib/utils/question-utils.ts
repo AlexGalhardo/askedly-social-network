@@ -1,10 +1,12 @@
 import { QuestionInterface, QuestionStatus } from "@/types/QuestionInterface";
 
+export const QUESTION_ANSWER_WINDOW_HOURS = 7 * 24;
+
 export function isQuestionExpired(createdAt: string | Date): boolean {
 	const created = new Date(createdAt);
 	const now = new Date();
 	const diffInHours = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
-	return diffInHours >= 168; // 7 dias em horas
+	return diffInHours >= QUESTION_ANSWER_WINDOW_HOURS;
 }
 
 export function getTimeRemaining(createdAt: string | Date): {

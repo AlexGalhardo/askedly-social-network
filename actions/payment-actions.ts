@@ -1,76 +1,39 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import {
 	getUserQuestionsAnsweredPaymentDetails,
 	getUserQuestionsSentPaymentDetails,
 } from "@/lib/repositories/questions.repository";
+import { WithdrawError, withdrawBalance } from "@/lib/services/withdraw.service";
 import TelegramLog from "@/lib/telegram-logger";
 
-export async function getAnsweredPaymentDetails(nickname: string) {
-	try {
-		const data = await getUserQuestionsAnsweredPaymentDetails(nickname);
-		return { success: true, data };
-	} catch (error: any) {
-		await TelegramLog.error(`Erro payment-actions.ts getAnsweredPaymentDetails: ${error?.message}`);
-		throw new Error(error?.messsage);
-	}
+// Server Actions são endpoints públicos: a identidade vem sempre da sessão, nunca dos argumentos.
+async function requireSessionUser(): Promise<{ id: string; nickname: string }> {
+	const session = await getServerSession(authOptions);
+	if (!session?.user?.id || !session.user.nickname) throw new Error("Usuário não autenticado");
+	return { id: session.user.id, nickname: session.user.nickname };
 }
 
-export async function getSentPaymentDetails(nickname: string) {
-	try {
-		const data = await getUserQuestionsSentPaymentDetails(nickname);
-		return { success: true, data };
-	} catch (error: any) {
-		await TelegramLog.error(`Catch Error payment-actions.ts getSentPaymentDetails: ${error?.message}`);
-		throw new Error(error?.messsage);
-	}
+export async function getAnsweredPaymentDetails() {
+	const { nickname } = await requireSessionUser();
+	return { success: true, data: await getUserQuestionsAnsweredPaymentDetails(nickname) };
 }
 
-export async function processWithdraw(params: {
-	userId: string;
-	nickname: string;
-	amount: number;
-	sentToPixKey: string;
-	questions: any[];
-}) {
+export async function getSentPaymentDetails() {
+	const { nickname } = await requireSessionUser();
+	return { success: true, data: await getUserQuestionsSentPaymentDetails(nickname) };
+}
+
+export async function processWithdraw({ questionIds }: { questionIds: string[] }) {
+	const { id } = await requireSessionUser();
+
 	try {
-		const session = await getServerSession(authOptions);
-
-		if (!session?.user?.id) {
-			TelegramLog.error(`Error payment-actions.ts usuário não autenticado`);
-			throw new Error("Usuário não autenticado");
-		}
-
-		const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/payments/withdraw`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(params),
-		});
-
-		if (!response.ok) {
-			const errorData = await response.json();
-			TelegramLog.error(`Error payment-actions.ts processWithdraw: ${errorData.error}`);
-			throw new Error(errorData.error || "Erro ao processar saque");
-		}
-
-		const result = await response.json();
-
-		if (!result.success) {
-			TelegramLog.error(`Error payment-actions.ts processWithdraw: ${result.error}`);
-			throw new Error(result.error || "Erro desconhecido");
-		}
-
-		revalidateTag("user-session");
-		revalidateTag(`payment-data-${params.nickname}`);
-
-		return { success: true, data: result };
-	} catch (error: any) {
-		await TelegramLog.error(`Catch Error payment-actions.ts processWithdraw: ${error?.message}`);
-		throw new Error(error?.message);
+		return await withdrawBalance(id, questionIds);
+	} catch (error: unknown) {
+		if (error instanceof WithdrawError) throw error;
+		await TelegramLog.error(`Catch Error payment-actions.ts processWithdraw: ${(error as Error)?.message}`);
+		throw new Error("Erro ao processar saque. Tente novamente.");
 	}
 }

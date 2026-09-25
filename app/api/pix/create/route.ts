@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
+import { ABACATEPAY_API_KEY } from "@/lib/abacatepay";
 import TelegramLog from "@/lib/telegram-logger";
-
-export const ABACATEPAY_API_KEY =
-	process.env.NEXT_PUBLIC_TEST_MODE === "false"
-		? process.env.NEXT_PUBLIC_TEST_ABACATEPAY_API_KEY_PROD
-		: process.env.NEXT_PUBLIC_ABACATEPAY_API_KEY_DEV;
 
 export async function POST(request: Request) {
 	try {

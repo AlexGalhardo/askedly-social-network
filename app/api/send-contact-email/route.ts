@@ -51,7 +51,7 @@ export async function POST(request: Request) {
 		}
 
 		if (process.env.NODE_ENV === "production") {
-			const turnstileSecret = process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
+			const turnstileSecret = process.env.CLOUDFLARE_TURNSTILE_SECRET;
 			const verifyUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
 			try {

@@ -1,11 +1,11 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { reportAnswer, likeAnswer, dislikeAnswer, withdrawUnanswered } from "@/actions/sent-question-actions";
-import { SentQuestionInterface } from "@/types/SentQuestion";
-import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { dislikeAnswer, likeAnswer, reportAnswer, withdrawUnanswered } from "@/actions/sent-question-actions";
+import { SentQuestionInterface } from "@/types/SentQuestion";
 
 export function useSentQuestions() {
 	const { data: session } = useSession();
@@ -50,8 +50,8 @@ export function useReportAnswer() {
 
 export function useLikeAnswer() {
 	return useMutation({
-		mutationFn: async ({ questionId, nickname }: { questionId: string; nickname: string }) => {
-			await likeAnswer(questionId, nickname);
+		mutationFn: async ({ questionId }: { questionId: string }) => {
+			await likeAnswer(questionId);
 			return { questionId };
 		},
 		onError: (error) => {
@@ -62,8 +62,8 @@ export function useLikeAnswer() {
 
 export function useDislikeAnswer() {
 	return useMutation({
-		mutationFn: async ({ questionId, nickname }: { questionId: string; nickname: string }) => {
-			await dislikeAnswer(questionId, nickname);
+		mutationFn: async ({ questionId }: { questionId: string }) => {
+			await dislikeAnswer(questionId);
 			return { questionId };
 		},
 		onError: (error) => {

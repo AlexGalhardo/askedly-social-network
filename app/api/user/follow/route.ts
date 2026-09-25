@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(request: NextRequest) {
 	try {
-		const body = await request.json();
-		const { followingId, followerId } = body;
+		const user = await getSessionUser();
+		if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
-		if (!followingId || !followerId) {
+		const body = await request.json();
+		const { followingId } = body;
+		const followerId = user.id;
+
+		if (!followingId) {
 			return NextResponse.json({ error: "IDs do seguidor e seguido são obrigatórios" }, { status: 400 });
 		}
 

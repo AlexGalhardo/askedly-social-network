@@ -115,10 +115,7 @@ export default function PerguntasEnviadasPage() {
 		);
 
 		try {
-			await likeMutation.mutateAsync({
-				questionId,
-				nickname: session.user.nickname,
-			});
+			await likeMutation.mutateAsync({ questionId });
 		} catch (error: any) {
 			await TelegramLog.error(`Error perguntas-enviadas.ts handleLike: ${error?.message}`);
 			setUserInteractions((prev) => ({
@@ -171,10 +168,7 @@ export default function PerguntasEnviadasPage() {
 		);
 
 		try {
-			await dislikeMutation.mutateAsync({
-				questionId,
-				nickname: session.user.nickname,
-			});
+			await dislikeMutation.mutateAsync({ questionId });
 		} catch (error: any) {
 			await TelegramLog.error(`Error perguntas-enviadas.ts handleDislike: ${error?.message}`);
 			setUserInteractions((prev) => ({

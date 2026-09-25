@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
+import { ABACATEPAY_API_KEY } from "@/lib/abacatepay";
 import TelegramLog from "@/lib/telegram-logger";
-import { ABACATEPAY_API_KEY } from "../create/route";
 
 export async function POST(request: Request) {
+	// Simular pagamento só existe no modo de teste; em produção marcaria um PIX como pago sem dinheiro.
+	if (process.env.NEXT_PUBLIC_TEST_MODE !== "true") return NextResponse.json({ error: "Not found" }, { status: 404 });
+
 	try {
 		const { pixId } = await request.json();
 

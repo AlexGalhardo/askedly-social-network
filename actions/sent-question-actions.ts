@@ -1,9 +1,15 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
+import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import TelegramLog from "@/lib/telegram-logger";
+
+// A chamada servidor→servidor não herda os cookies do navegador; sem repassá-los a rota não enxerga a sessão.
+async function forwardedHeaders(): Promise<HeadersInit> {
+	return { "Content-Type": "application/json", cookie: (await headers()).get("cookie") ?? "" };
+}
 
 export async function reportAnswer(questionId: string, reason: "offensive" | "inappropriate") {
 	try {
@@ -15,9 +21,7 @@ export async function reportAnswer(questionId: string, reason: "offensive" | "in
 
 		const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/question/report-answer`, {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
+			headers: await forwardedHeaders(),
 			body: JSON.stringify({
 				questionId,
 				reason,
@@ -38,7 +42,7 @@ export async function reportAnswer(questionId: string, reason: "offensive" | "in
 	}
 }
 
-export async function likeAnswer(questionId: string, nickname: string) {
+export async function likeAnswer(questionId: string) {
 	try {
 		const session = await getServerSession(authOptions);
 
@@ -48,13 +52,8 @@ export async function likeAnswer(questionId: string, nickname: string) {
 
 		const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/question/update-like`, {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				questionId,
-				nickname,
-			}),
+			headers: await forwardedHeaders(),
+			body: JSON.stringify({ questionId }),
 		});
 
 		if (!response.ok) {
@@ -71,7 +70,7 @@ export async function likeAnswer(questionId: string, nickname: string) {
 	}
 }
 
-export async function dislikeAnswer(questionId: string, nickname: string) {
+export async function dislikeAnswer(questionId: string) {
 	try {
 		const session = await getServerSession(authOptions);
 
@@ -81,13 +80,8 @@ export async function dislikeAnswer(questionId: string, nickname: string) {
 
 		const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/question/update-deslike`, {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				questionId,
-				nickname,
-			}),
+			headers: await forwardedHeaders(),
+			body: JSON.stringify({ questionId }),
 		});
 
 		if (!response.ok) {
@@ -114,9 +108,7 @@ export async function withdrawUnanswered() {
 
 		const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/withdraw/unanswered`, {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
+			headers: await forwardedHeaders(),
 		});
 
 		if (!response.ok) {

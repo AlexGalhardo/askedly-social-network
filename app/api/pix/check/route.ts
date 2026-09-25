@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
+import { ABACATEPAY_API_KEY } from "@/lib/abacatepay";
 import TelegramLog from "@/lib/telegram-logger";
-import { ABACATEPAY_API_KEY } from "../create/route";
 
 export async function GET(request: Request) {
 	try {

@@ -1,17 +1,17 @@
 import type { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import slugify from "slugify";
+import { QuestionInterface } from "./interfaces";
 import {
-	verifyCredentials,
 	createUser,
 	getUserByEmail,
 	reactiveDeletedAccount,
 	updateLastLoginAt,
+	verifyCredentials,
 } from "./repositories/users.repository";
-import slugify from "slugify";
-import { QuestionInterface } from "./interfaces";
-import { isQuestionExpired } from "./utils/question-utils";
 import TelegramLog from "./telegram-logger";
+import { isQuestionExpired } from "./utils/question-utils";
 
 interface ExtendedUser {
 	id: string;
@@ -155,7 +155,7 @@ export const authOptions: NextAuthOptions = {
 				if (process.env.NODE_ENV === "production") {
 					if (!credentials?.captchaToken) return null;
 
-					const turnstileSecret = process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
+					const turnstileSecret = process.env.CLOUDFLARE_TURNSTILE_SECRET;
 					const verifyUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
 					try {
