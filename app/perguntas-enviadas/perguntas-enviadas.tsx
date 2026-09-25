@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
 import { ReportModal } from "@/components/sent-questions/report-modal";
 import { SentQuestionsTabs } from "@/components/sent-questions/sent-questions-tabs";
-import { useDislikeAnswer, useLikeAnswer, useReportAnswer, useSentQuestions } from "@/hooks/use-sent-questions";
+import { useReportAnswer, useSentQuestions } from "@/hooks/use-sent-questions";
 import TelegramLog from "@/lib/telegram-logger";
 import { SentQuestionInterface } from "@/types/SentQuestion";
 
@@ -16,8 +16,6 @@ export default function PerguntasEnviadasPage() {
 	const { data: questions, setData: setQuestions } = useSentQuestions();
 
 	const reportMutation = useReportAnswer();
-	const likeMutation = useLikeAnswer();
-	const dislikeMutation = useDislikeAnswer();
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const questionsPerPage = 10;
@@ -25,10 +23,6 @@ export default function PerguntasEnviadasPage() {
 	const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 	const [selectedQuestion, setSelectedQuestion] = useState<SentQuestionInterface | null>(null);
 	const [reportReason, setReportReason] = useState("");
-
-	const [userInteractions, setUserInteractions] = useState<{
-		[questionId: string]: { liked: boolean; disliked: boolean };
-	}>({});
 
 	const [loadingStates, setLoadingStates] = useState({
 		reporting: "",
@@ -82,110 +76,6 @@ export default function PerguntasEnviadasPage() {
 		}
 	};
 
-	const handleLike = async (questionId: string) => {
-		if (!session?.user?.nickname) return;
-
-		const currentInteraction = userInteractions[questionId] || { liked: false, disliked: false };
-		const wasLiked = currentInteraction.liked;
-		const wasDisliked = currentInteraction.disliked;
-
-		setUserInteractions((prev) => ({
-			...prev,
-			[questionId]: {
-				liked: !wasLiked,
-				disliked: false,
-			},
-		}));
-
-		setQuestions((prev) =>
-			prev.map((q) => {
-				if (q.id === questionId) {
-					return {
-						...q,
-						total_likes: wasLiked ? (q.total_likes || 0) - 1 : (q.total_likes || 0) + 1,
-						total_dislikes: wasDisliked ? (q.total_dislikes || 0) - 1 : q.total_dislikes || 0,
-					};
-				}
-				return q;
-			}),
-		);
-
-		try {
-			await likeMutation.mutateAsync({ questionId });
-		} catch (error: any) {
-			await TelegramLog.error(`Error perguntas-enviadas.ts handleLike: ${error?.message}`);
-			setUserInteractions((prev) => ({
-				...prev,
-				[questionId]: currentInteraction,
-			}));
-
-			setQuestions((prev) =>
-				prev.map((q) => {
-					if (q.id === questionId) {
-						return {
-							...q,
-							total_likes: q.total_likes,
-							total_dislikes: q.total_dislikes,
-						};
-					}
-					return q;
-				}),
-			);
-		}
-	};
-
-	const handleDislike = async (questionId: string) => {
-		if (!session?.user?.nickname) return;
-
-		const currentInteraction = userInteractions[questionId] || { liked: false, disliked: false };
-		const wasLiked = currentInteraction.liked;
-		const wasDisliked = currentInteraction.disliked;
-
-		setUserInteractions((prev) => ({
-			...prev,
-			[questionId]: {
-				liked: false,
-				disliked: !wasDisliked,
-			},
-		}));
-
-		setQuestions((prev) =>
-			prev.map((q) => {
-				if (q.id === questionId) {
-					return {
-						...q,
-						total_likes: wasLiked ? (q.total_likes || 0) - 1 : q.total_likes || 0,
-						total_dislikes: wasDisliked ? (q.total_dislikes || 0) - 1 : (q.total_dislikes || 0) + 1,
-					};
-				}
-				return q;
-			}),
-		);
-
-		try {
-			await dislikeMutation.mutateAsync({ questionId });
-		} catch (error: any) {
-			await TelegramLog.error(`Error perguntas-enviadas.ts handleDislike: ${error?.message}`);
-			setUserInteractions((prev) => ({
-				...prev,
-				[questionId]: currentInteraction,
-			}));
-
-			setQuestions((prev) =>
-				prev.map((q) => {
-					if (q.id === questionId) {
-						return {
-							...q,
-							total_likes: q.total_likes,
-							total_dislikes: q.total_dislikes,
-						};
-					}
-					return q;
-				}),
-			);
-		}
-	};
-
 	if (status === "loading") return <LoadingScreen />;
 
 	if (!session) {
@@ -209,9 +99,6 @@ export default function PerguntasEnviadasPage() {
 				questionsPerPage={questionsPerPage}
 				onPageChange={setCurrentPage}
 				onReport={handleReport}
-				onLike={handleLike}
-				onDislike={handleDislike}
-				userInteractions={userInteractions}
 				loadingStates={loadingStates}
 			/>
 

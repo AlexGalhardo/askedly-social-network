@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "@/hooks/use-toast";
 import TelegramLog from "@/lib/telegram-logger";
 
@@ -109,19 +110,15 @@ export default function BlockedUsersCard() {
 									className="px-4 py-3 flex items-center justify-between hover:bg-gray-50"
 								>
 									<div className="flex items-center gap-3">
-										<div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-											{user?.blocked?.avatar_url ? (
-												<img
-													src={user?.blocked?.avatar_url}
-													alt={`Avatar de ${user?.blocked?.name}`}
-													className="w-full h-full object-cover"
-												/>
-											) : (
-												<span className="text-gray-500 text-sm font-medium">
-													{user?.blocked?.name?.charAt(0).toUpperCase()}
-												</span>
-											)}
-										</div>
+										<Avatar className="w-10 h-10">
+											<AvatarImage
+												src={user?.blocked?.avatar_url ?? undefined}
+												alt={`Avatar de ${user?.blocked?.name}`}
+											/>
+											<AvatarFallback className="bg-gray-200 text-gray-500 text-sm font-medium">
+												{user?.blocked?.name?.charAt(0).toUpperCase()}
+											</AvatarFallback>
+										</Avatar>
 										<div>
 											<p className="font-medium text-gray-900 text-sm">{user.blocked?.name}</p>
 											<p className="text-gray-500 text-xs">@{user.blocked?.nickname}</p>

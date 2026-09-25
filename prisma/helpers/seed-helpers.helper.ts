@@ -1,16 +1,16 @@
+import crypto from "node:crypto";
 import { faker } from "@faker-js/faker";
-import crypto from "crypto";
 
-export class SeedHelpers {
-	static generatePixId(): string {
+export const SeedHelpers = {
+	generatePixId(): string {
 		return `pix_char_${crypto.randomUUID().replace(/-/g, "")}`;
-	}
+	},
 
-	static generateApiKey(): string {
+	generateApiKey(): string {
 		return `api_key_askedly_${faker.string.alphanumeric(16)}`;
-	}
+	},
 
-	static generateCreatedAt(): Date {
+	generateCreatedAt(): Date {
 		const rand = Math.random() * 100;
 
 		if (rand < 0.33) {
@@ -20,24 +20,24 @@ export class SeedHelpers {
 		} else {
 			return faker.date.past();
 		}
-	}
+	},
 
-	static generateAnsweredAtAfter(createdAt: Date): Date {
+	generateAnsweredAtAfter(createdAt: Date): Date {
 		const min = 1 * 60 * 1000;
 		const max = 6 * 24 * 60 * 60 * 1000;
 		const offset = faker.number.int({ min, max });
 		return new Date(createdAt.getTime() + offset);
-	}
+	},
 
-	static generateRandomAmount(): number {
+	generateRandomAmount(): number {
 		return faker.number.int({ min: 2, max: 50 }) * 100;
-	}
+	},
 
-	static calculateFee(amount: number): number {
+	calculateFee(amount: number): number {
 		return Math.floor(amount * 0.5);
-	}
+	},
 
-	static generateSocialMediaUrl(platform: string, nickname: string): string | null {
+	generateSocialMediaUrl(platform: string, nickname: string): string | null {
 		if (!faker.datatype.boolean({ probability: 0 })) return null;
 
 		const urls = {
@@ -52,13 +52,13 @@ export class SeedHelpers {
 		};
 
 		return urls[platform as keyof typeof urls] || null;
-	}
+	},
 
-	static shouldDelete(): boolean {
+	shouldDelete(): boolean {
 		return faker.datatype.boolean({ probability: 0.05 });
-	}
+	},
 
-	static shouldBan(): boolean {
+	shouldBan(): boolean {
 		return faker.datatype.boolean({ probability: 0.01 });
-	}
-}
+	},
+};

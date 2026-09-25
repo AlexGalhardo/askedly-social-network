@@ -20,6 +20,9 @@ env:
   ABACATEPAY_API_KEY: "ci-dummy"
   UPLOADTHING_TOKEN: "ci-dummy"
   NEXT_PUBLIC_TEST_MODE: "true"
+  # Chaves de teste oficiais da Cloudflare: o captcha sempre passa (o e2e roda com `next start`, em produção).
+  NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY: "1x00000000000000000000AA"
+  CLOUDFLARE_TURNSTILE_SECRET: "1x0000000000000000000000000000000AA"
   DANGER_MODE: "false"
   CI: "true"
 
@@ -49,6 +52,7 @@ jobs:
       - run: bun run prisma:generate
       - run: bunx prisma migrate deploy
       - run: bunx playwright install --with-deps chromium
+      - run: bun run build
       - run: bun run test:e2e
       - uses: actions/upload-artifact@v4
         if: failure()

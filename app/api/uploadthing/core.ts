@@ -6,7 +6,7 @@ import { prisma } from "@/prisma/prisma-client";
 
 const f = createUploadthing();
 
-const auth = async (req: Request) => {
+const auth = async (_req: Request) => {
 	const session = await getServerSession(authOptions);
 	return session?.user ?? null;
 };
@@ -21,7 +21,7 @@ export const ourFileRouter = {
 		.middleware(async ({ req }) => {
 			const user = await auth(req);
 
-			if (!user || !user.id) {
+			if (!user?.id) {
 				throw new UploadThingError("Unauthorized");
 			}
 

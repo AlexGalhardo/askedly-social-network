@@ -130,7 +130,7 @@ const mapUserToSession = (dbUser: any): Partial<ExtendedUser> => ({
 	deleted_at: dbUser?.deleted_at,
 });
 
-const generateUniqueNickname = (name: string, email: string): string => {
+const generateUniqueNickname = (_name: string, email: string): string => {
 	const emailPrefix = slugify(email.split("@")[0], { lower: true, strict: true }).replace(/-/g, "");
 	return `${emailPrefix}`;
 };
@@ -291,10 +291,8 @@ export const authOptions: NextAuthOptions = {
 
 					Object.assign(token, mapUserToSession(dbUser));
 
-					token.followers =
-						dbUser && dbUser.followers ? dbUser.followers.map((f: any) => f.follower?.nickname) : [];
-					token.following =
-						dbUser && dbUser.following ? dbUser.following.map((f: any) => f.following?.nickname) : [];
+					token.followers = dbUser?.followers ? dbUser.followers.map((f: any) => f.follower?.nickname) : [];
+					token.following = dbUser?.following ? dbUser.following.map((f: any) => f.following?.nickname) : [];
 
 					if (!token.avatar_url && (profile as any)?.picture) {
 						token.avatar_url = (profile as any).picture;
@@ -309,7 +307,7 @@ export const authOptions: NextAuthOptions = {
 		},
 	},
 	events: {
-		async signIn({ user, account, profile }) {
+		async signIn({ user, account }) {
 			console.log(`User signed in: ${user.email} via ${account?.provider}`);
 		},
 		async signOut({ token }) {

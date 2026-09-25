@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { dislikeAnswer, likeAnswer, reportAnswer, withdrawUnanswered } from "@/actions/sent-question-actions";
+import { reportAnswer, withdrawUnanswered } from "@/actions/sent-question-actions";
 import { SentQuestionInterface } from "@/types/SentQuestion";
 
 export function useSentQuestions() {
@@ -44,30 +44,6 @@ export function useReportAnswer() {
 		},
 		onSuccess: () => {
 			toast.success("Resposta reportada com sucesso");
-		},
-	});
-}
-
-export function useLikeAnswer() {
-	return useMutation({
-		mutationFn: async ({ questionId }: { questionId: string }) => {
-			await likeAnswer(questionId);
-			return { questionId };
-		},
-		onError: (error) => {
-			toast.error(error instanceof Error ? error.message : "Erro ao curtir resposta");
-		},
-	});
-}
-
-export function useDislikeAnswer() {
-	return useMutation({
-		mutationFn: async ({ questionId }: { questionId: string }) => {
-			await dislikeAnswer(questionId);
-			return { questionId };
-		},
-		onError: (error) => {
-			toast.error(error instanceof Error ? error.message : "Erro ao descurtir resposta");
 		},
 	});
 }

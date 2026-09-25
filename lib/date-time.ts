@@ -24,17 +24,17 @@ export class DateTime {
 		if (match) {
 			const [, day, month, year, hour = "0", minute = "0", second = "0"] = match;
 			return new Date(
-				parseInt(year),
-				parseInt(month) - 1,
-				parseInt(day),
-				parseInt(hour),
-				parseInt(minute),
-				parseInt(second),
+				parseInt(year, 10),
+				parseInt(month, 10) - 1,
+				parseInt(day, 10),
+				parseInt(hour, 10),
+				parseInt(minute, 10),
+				parseInt(second, 10),
 			);
 		}
 
 		const parsedDate = new Date(dateString);
-		if (isNaN(parsedDate.getTime())) {
+		if (Number.isNaN(parsedDate.getTime())) {
 			throw new Error("Formato de data inválido. Use dd/mm/yyyy ou dd/mm/yyyy hh:mm:ss");
 		}
 		return parsedDate;

@@ -42,62 +42,6 @@ export async function reportAnswer(questionId: string, reason: "offensive" | "in
 	}
 }
 
-export async function likeAnswer(questionId: string) {
-	try {
-		const session = await getServerSession(authOptions);
-
-		if (!session?.user?.id) {
-			throw new Error("Usuário não autenticado");
-		}
-
-		const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/question/update-like`, {
-			method: "POST",
-			headers: await forwardedHeaders(),
-			body: JSON.stringify({ questionId }),
-		});
-
-		if (!response.ok) {
-			const errorData = await response.json();
-			throw new Error(errorData.error || "Erro ao curtir resposta");
-		}
-
-		updateTag("user-session");
-
-		return { success: true };
-	} catch (error: any) {
-		await TelegramLog.error(`Catch Error file sent-question-actions.ts likeAnswer: ${error?.message}`);
-		throw new Error(error?.message);
-	}
-}
-
-export async function dislikeAnswer(questionId: string) {
-	try {
-		const session = await getServerSession(authOptions);
-
-		if (!session?.user?.id) {
-			throw new Error("Usuário não autenticado");
-		}
-
-		const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/question/update-deslike`, {
-			method: "POST",
-			headers: await forwardedHeaders(),
-			body: JSON.stringify({ questionId }),
-		});
-
-		if (!response.ok) {
-			const errorData = await response.json();
-			throw new Error(errorData.error || "Erro ao descurtir resposta");
-		}
-
-		updateTag("user-session");
-
-		return { success: true };
-	} catch (error: any) {
-		await TelegramLog.error(`Catch Error file sent-question-actions.ts dislikeAnswer: ${error?.message}`);
-		throw new Error(error?.message);
-	}
-}
-
 export async function withdrawUnanswered() {
 	try {
 		const session = await getServerSession(authOptions);

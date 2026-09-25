@@ -9,7 +9,7 @@ export class SeedUserService {
 
 	constructor(
 		private readonly prisma: PrismaClient,
-		private readonly uniqueTracker: SeedUniqueTracker,
+		uniqueTracker: SeedUniqueTracker,
 	) {
 		this.userFactory = new SeedUserFactory(uniqueTracker);
 	}

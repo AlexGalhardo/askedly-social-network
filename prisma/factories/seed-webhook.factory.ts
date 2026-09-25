@@ -2,8 +2,8 @@ import { faker } from "@faker-js/faker";
 import { SeedHelpers } from "../helpers/seed-helpers.helper";
 import { SeedWebhookInterface } from "../helpers/seed-interfaces.helper";
 
-export class SeedWebhookFactory {
-	static create(pixId: string, amount: number): Omit<SeedWebhookInterface, "created_at" | "updated_at"> {
+export const SeedWebhookFactory = {
+	create(pixId: string, amount: number): Omit<SeedWebhookInterface, "created_at" | "updated_at"> {
 		return {
 			id: faker.string.uuid(),
 			pix_id: pixId,
@@ -25,5 +25,5 @@ export class SeedWebhookFactory {
 			}),
 			is_seed: true,
 		};
-	}
-}
+	},
+};

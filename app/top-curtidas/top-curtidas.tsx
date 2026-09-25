@@ -220,7 +220,7 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 
 	if (status === "loading") return <LoadingScreen />;
 
-	const renderQuestionCard = (question: PublicQuestion, index: number) => (
+	const renderQuestionCard = (question: PublicQuestion, _index: number) => (
 		<Card key={question.id} className="border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800">
 			<CardContent className="p-4 sm:p-6">
 				<div className="flex items-start gap-3 mb-4">

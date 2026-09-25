@@ -149,7 +149,7 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 - [ ] Páginas que têm `<main>` próprio dentro do `<main>` do layout (landmark duplicado, a11y)
 - [x] Campo de nickname aceita só `a-z`, mas o schema aceita dígitos e `_`: alinhar
 - [ ] O callback `session` do NextAuth carrega o usuário com todas as perguntas a cada leitura de sessão (performance)
-- [ ] 61 warnings do Biome (não bloqueiam)
+- [x] 61 warnings do Biome: zerados, e `lint:ci` agora usa `--error-on-warnings`
 
 ## Fase 12 — README.md final
 

@@ -3,28 +3,28 @@ import { SeedHelpers } from "../helpers/seed-helpers.helper";
 import { SeedQuestionInterface, SeedQuestionStateType, SeedUserInterface } from "../helpers/seed-interfaces.helper";
 import { arrayQuestions } from "./seed-array-questions-anwers";
 
-export class SeedQuestionFactory {
-	private static selectedQuestion: { question: string; answer: string } | null = null;
+export const SeedQuestionFactory = {
+	selectedQuestion: null as { question: string; answer: string } | null,
 
-	private static getRandomQuestionPair(): { question: string; answer: string } {
+	getRandomQuestionPair(): { question: string; answer: string } {
 		return faker.helpers.arrayElement(arrayQuestions);
-	}
+	},
 
-	private static getQuestionText(): string {
-		if (!this.selectedQuestion) {
-			this.selectedQuestion = this.getRandomQuestionPair();
+	getQuestionText(): string {
+		if (!SeedQuestionFactory.selectedQuestion) {
+			SeedQuestionFactory.selectedQuestion = SeedQuestionFactory.getRandomQuestionPair();
 		}
-		return this.selectedQuestion.question;
-	}
+		return SeedQuestionFactory.selectedQuestion.question;
+	},
 
-	private static getAnswerText(): string {
-		if (!this.selectedQuestion) {
-			this.selectedQuestion = this.getRandomQuestionPair();
+	getAnswerText(): string {
+		if (!SeedQuestionFactory.selectedQuestion) {
+			SeedQuestionFactory.selectedQuestion = SeedQuestionFactory.getRandomQuestionPair();
 		}
-		return this.selectedQuestion.answer;
-	}
+		return SeedQuestionFactory.selectedQuestion.answer;
+	},
 
-	private static generateUserInteractions(users: SeedUserInterface[]): {
+	generateUserInteractions(users: SeedUserInterface[]): {
 		likedByUsers: string[];
 		dislikedByUsers: string[];
 	} {
@@ -42,9 +42,9 @@ export class SeedQuestionFactory {
 		const dislikedByUsers = remainingUsers.slice(0, maxDislikes).map((user) => user.nickname);
 
 		return { likedByUsers, dislikedByUsers };
-	}
+	},
 
-	static create(
+	create(
 		ownerUser: SeedUserInterface,
 		askerUser: SeedUserInterface,
 		webhookId: string,
@@ -52,22 +52,22 @@ export class SeedQuestionFactory {
 		state: SeedQuestionStateType,
 		users: SeedUserInterface[],
 	): Omit<SeedQuestionInterface, "id"> {
-		this.selectedQuestion = null;
+		SeedQuestionFactory.selectedQuestion = null;
 
 		const isAnswered = state === "answered";
 		const isWaiting = state === "waiting";
 		const isRefused = state === "refused";
 		const isExpired = state === "expired";
 
-		const { likedByUsers, dislikedByUsers } = this.generateUserInteractions(users);
+		const { likedByUsers, dislikedByUsers } = SeedQuestionFactory.generateUserInteractions(users);
 
 		const createdAt = SeedHelpers.generateCreatedAt();
 		const answeredAt = isAnswered ? SeedHelpers.generateAnsweredAtAfter(createdAt) : null;
 
 		return {
 			is_seed: true,
-			question_text: this.getQuestionText(),
-			answer_text: isAnswered ? this.getAnswerText() : null,
+			question_text: SeedQuestionFactory.getQuestionText(),
+			answer_text: isAnswered ? SeedQuestionFactory.getAnswerText() : null,
 			answered_at: answeredAt,
 			amount_paid: amount,
 			asker_want_answer_to_be_private: faker.datatype.boolean({ probability: 0.2 }),
@@ -84,5 +84,5 @@ export class SeedQuestionFactory {
 			created_at: createdAt,
 			deleted_at: isAnswered && SeedHelpers.shouldDelete() ? faker.date.recent() : null,
 		};
-	}
-}
+	},
+};

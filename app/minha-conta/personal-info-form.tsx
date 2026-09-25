@@ -2,6 +2,7 @@
 
 import { Loader2, Upload } from "lucide-react";
 import { useState, useTransition } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -40,13 +41,12 @@ export function PersonalInfoForm({ user }: any) {
 					<div className="space-y-2">
 						<Label htmlFor="avatar">Avatar</Label>
 						<div className="flex items-center gap-4">
-							<div className="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-								{avatarUrl ? (
-									<img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-								) : (
+							<Avatar className="h-16 w-16">
+								<AvatarImage src={avatarUrl || undefined} alt="Avatar" />
+								<AvatarFallback className="bg-gray-200">
 									<Upload className="h-6 w-6 text-gray-500" />
-								)}
-							</div>
+								</AvatarFallback>
+							</Avatar>
 							<UploadButton
 								appearance={{
 									button: "ut-ready:bg-green-500 ut-uploading:cursor-not-allowed rounded-r-none bg-green-500 bg-none after:bg-orange-400",
@@ -62,7 +62,7 @@ export function PersonalInfoForm({ user }: any) {
 										variant: "success",
 									});
 								}}
-								onUploadError={(error: Error) => {
+								onUploadError={(_error: Error) => {
 									setErrorUploadAvatarUrl(
 										"Ocorreu um erro ao fazer o upload da imagem. Por favor, tente novamente.",
 									);

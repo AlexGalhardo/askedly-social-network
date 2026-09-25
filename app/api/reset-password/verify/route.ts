@@ -7,7 +7,7 @@ export async function GET(request: Request) {
 		const { searchParams } = new URL(request.url);
 		const token = searchParams.get("token");
 
-		if (!token || token.length !== 32) {
+		if (token?.length !== 32) {
 			return NextResponse.json({ error: "Token inválido" }, { status: 400 });
 		}
 

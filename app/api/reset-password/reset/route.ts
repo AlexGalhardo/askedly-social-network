@@ -7,7 +7,7 @@ export async function POST(request: Request) {
 	try {
 		const { token, password } = await request.json();
 
-		if (!token || token.length !== 32) {
+		if (token?.length !== 32) {
 			return NextResponse.json({ error: "Token inválido" }, { status: 400 });
 		}
 
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 			},
 		});
 
-		if (!user || !user.reset_password_token_expires_at || user.reset_password_token_expires_at < new Date()) {
+		if (!user?.reset_password_token_expires_at || user.reset_password_token_expires_at < new Date()) {
 			return NextResponse.json({ error: "Token inválido ou expirado" }, { status: 400 });
 		}
 

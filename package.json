@@ -1,6 +1,6 @@
 {
   "name": "respondeae.com.br",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "private": true,
   "license": "MIT",
   "packageManager": "bun@1.4.2",
@@ -14,7 +14,7 @@
     "start": "next start",
     "lint": "biome check app/ lib/ hooks/ contexts/ components/ prisma/ emails/ actions/ types/ tests/ providers/ *.ts *.json --fix",
     "lint:unsafe": "biome check app/ lib/ hooks/ contexts/ components/ prisma/ emails/ actions/ types/ tests/ providers/ *.ts *.json --fix --unsafe",
-    "lint:ci": "biome check app/ lib/ hooks/ contexts/ components/ prisma/ emails/ actions/ types/ tests/ providers/ *.ts *.json",
+    "lint:ci": "biome check --error-on-warnings app/ lib/ hooks/ contexts/ components/ prisma/ emails/ actions/ types/ tests/ providers/ *.ts *.json",
     "format": "biome format app/ lib/ hooks/ contexts/ components/ prisma/ emails/ actions/ types/ tests/ *.ts *.json --fix",
     "format:ci": "biome format app/ lib/ hooks/ contexts/ components/ prisma/ emails/ actions/ types/ tests/ *.ts *.json",
     "prepare": "husky",

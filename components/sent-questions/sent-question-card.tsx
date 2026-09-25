@@ -15,22 +15,10 @@ import { SentQuestionInterface } from "@/types/SentQuestion";
 interface SentQuestionCardProps {
 	question: SentQuestionInterface;
 	onReport?: (questionId: string) => void;
-	onLike?: (questionId: string) => void;
-	onDislike?: (questionId: string) => void;
-	userInteractions?: {
-		[questionId: string]: { liked: boolean; disliked: boolean };
-	};
 	isReporting?: boolean;
 }
 
-export function SentQuestionCard({
-	question,
-	onReport,
-	onLike,
-	onDislike,
-	userInteractions = {},
-	isReporting = false,
-}: SentQuestionCardProps) {
+export function SentQuestionCard({ question, onReport, isReporting = false }: SentQuestionCardProps) {
 	const status = getSentQuestionStatus(question);
 
 	const getStatusBadge = () => {

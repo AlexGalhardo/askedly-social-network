@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
 		console.log("session, session.user.id ->> ", session, session?.user?.id);
 
-		if (!session || !session.user?.id) {
+		if (!session?.user?.id) {
 			return NextResponse.json({ error: "Usuário não autenticado" }, { status: 401 });
 		}
 

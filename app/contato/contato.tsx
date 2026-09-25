@@ -146,126 +146,118 @@ export default function ContatoClient() {
 	};
 
 	return (
-		<>
-			<main className="p-4 lg:p-6">
-				<div className="max-w-6xl mx-auto">
-					<div className="text-center mb-8 dark:text-white p-8 rounded-lg">
-						<h2 className="text-3xl font-bold text-foreground mb-4">Contato</h2>
-						<p className="text-lg text-muted-foreground">
-							Tem alguma dúvida? Encontrou algum problema? Envie nos uma mensagem e retornaremos o mais
-							breve possível.
-						</p>
-					</div>
+		<main className="p-4 lg:p-6">
+			<div className="max-w-6xl mx-auto">
+				<div className="text-center mb-8 dark:text-white p-8 rounded-lg">
+					<h2 className="text-3xl font-bold text-foreground mb-4">Contato</h2>
+					<p className="text-lg text-muted-foreground">
+						Tem alguma dúvida? Encontrou algum problema? Envie nos uma mensagem e retornaremos o mais breve
+						possível.
+					</p>
+				</div>
 
-					<Card>
-						<CardContent className="p-6">
-							<form onSubmit={handleSubmit} className="space-y-6">
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-									<div className="space-y-2">
-										<Label htmlFor="name">Seu Nome</Label>
-										<Input
-											id="name"
-											name="name"
-											minLength={4}
-											maxLength={24}
-											placeholder="Digite seu nome"
-											value={formData.name}
-											onChange={handleChange}
-											className={`${errors.name ? "border-red-500" : ""}`}
-										/>
-										{errors.name && (
-											<p className="text-red-500 text-sm">
-												Nome deve ter entre 4 e 24 caracteres
-											</p>
-										)}
-									</div>
-
-									<div className="space-y-2">
-										<Label htmlFor="email">Seu Email</Label>
-										<Input
-											id="email"
-											name="email"
-											type="email"
-											minLength={12}
-											maxLength={48}
-											placeholder="seuemail@email.com"
-											value={formData.email}
-											onChange={handleChange}
-											className={`${errors.email ? "border-red-500" : ""}`}
-										/>
-										{errors.email && <p className="text-red-500 text-sm">Email inválido</p>}
-									</div>
-								</div>
-
+				<Card>
+					<CardContent className="p-6">
+						<form onSubmit={handleSubmit} className="space-y-6">
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div className="space-y-2">
-									<Label htmlFor="subject">Assunto</Label>
-									<Select value={formData.subject} onValueChange={handleSelectChange}>
-										<SelectTrigger className={`${errors.subject ? "border-red-500" : ""}`}>
-											<SelectValue placeholder="Selecione um tópico" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="Problemas Técnicos">Problemas Técnicos</SelectItem>
-											<SelectItem value="Problemas Com Pagamentos">
-												Problemas com Pagamentos
-											</SelectItem>
-											<SelectItem value="Problemas com Conta">Problemas com Conta</SelectItem>
-											<SelectItem value="Sugestões e Feedbacks">Sugestões & Feedbacks</SelectItem>
-											<SelectItem value="Outros">Outros</SelectItem>
-										</SelectContent>
-									</Select>
-									{errors.subject && (
-										<p className="text-red-500 text-sm">Selecione um assunto válido</p>
-									)}
-								</div>
-
-								<div className="space-y-2">
-									<Label htmlFor="message">Mensagem</Label>
-									<Textarea
-										id="message"
-										name="message"
-										placeholder="Digite sua mensagem"
-										rows={6}
-										maxLength={1024}
-										value={formData.message}
+									<Label htmlFor="name">Seu Nome</Label>
+									<Input
+										id="name"
+										name="name"
+										minLength={4}
+										maxLength={24}
+										placeholder="Digite seu nome"
+										value={formData.name}
 										onChange={handleChange}
-										className={`${errors.message ? "border-red-500" : ""}`}
+										className={`${errors.name ? "border-red-500" : ""}`}
 									/>
-									{errors.message && (
-										<p className="text-red-500 text-sm">
-											A mensagem deve ter pelo menos 32 caracteres
-										</p>
+									{errors.name && (
+										<p className="text-red-500 text-sm">Nome deve ter entre 4 e 24 caracteres</p>
 									)}
 								</div>
 
-								<TurnstileWidget />
+								<div className="space-y-2">
+									<Label htmlFor="email">Seu Email</Label>
+									<Input
+										id="email"
+										name="email"
+										type="email"
+										minLength={12}
+										maxLength={48}
+										placeholder="seuemail@email.com"
+										value={formData.email}
+										onChange={handleChange}
+										className={`${errors.email ? "border-red-500" : ""}`}
+									/>
+									{errors.email && <p className="text-red-500 text-sm">Email inválido</p>}
+								</div>
+							</div>
 
-								{error && error !== "Callback" && (
-									<Alert
-										variant="destructive"
-										className="font-bold text-center bg-red-300 text-red-900 dark:bg-red-800 dark:text-red-100"
-									>
-										<AlertDescription>{error}</AlertDescription>
-									</Alert>
+							<div className="space-y-2">
+								<Label htmlFor="subject">Assunto</Label>
+								<Select value={formData.subject} onValueChange={handleSelectChange}>
+									<SelectTrigger className={`${errors.subject ? "border-red-500" : ""}`}>
+										<SelectValue placeholder="Selecione um tópico" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="Problemas Técnicos">Problemas Técnicos</SelectItem>
+										<SelectItem value="Problemas Com Pagamentos">
+											Problemas com Pagamentos
+										</SelectItem>
+										<SelectItem value="Problemas com Conta">Problemas com Conta</SelectItem>
+										<SelectItem value="Sugestões e Feedbacks">Sugestões & Feedbacks</SelectItem>
+										<SelectItem value="Outros">Outros</SelectItem>
+									</SelectContent>
+								</Select>
+								{errors.subject && <p className="text-red-500 text-sm">Selecione um assunto válido</p>}
+							</div>
+
+							<div className="space-y-2">
+								<Label htmlFor="message">Mensagem</Label>
+								<Textarea
+									id="message"
+									name="message"
+									placeholder="Digite sua mensagem"
+									rows={6}
+									maxLength={1024}
+									value={formData.message}
+									onChange={handleChange}
+									className={`${errors.message ? "border-red-500" : ""}`}
+								/>
+								{errors.message && (
+									<p className="text-red-500 text-sm">A mensagem deve ter pelo menos 32 caracteres</p>
 								)}
+							</div>
 
-								<Button
-									type="submit"
-									className="w-full bg-green-600 hover:bg-green-700 text-white"
-									disabled={loading}
+							<TurnstileWidget />
+
+							{error && error !== "Callback" && (
+								<Alert
+									variant="destructive"
+									className="font-bold text-center bg-red-300 text-red-900 dark:bg-red-800 dark:text-red-100"
 								>
-									{loading ? "Enviando Mensagem..." : "Enviar Mensagem"}
-								</Button>
-							</form>
-						</CardContent>
-					</Card>
-					{/* <p className="text-sm text-muted-foreground mt-12 text-center">
+									<AlertDescription>{error}</AlertDescription>
+								</Alert>
+							)}
+
+							<Button
+								type="submit"
+								className="w-full bg-green-600 hover:bg-green-700 text-white"
+								disabled={loading}
+							>
+								{loading ? "Enviando Mensagem..." : "Enviar Mensagem"}
+							</Button>
+						</form>
+					</CardContent>
+				</Card>
+				{/* <p className="text-sm text-muted-foreground mt-12 text-center">
 						Rua Pais Leme 215. C1713 E1 VG PINHEIROS THERA FARIA LIMA CEP 05424-150
 					</p>
 					<p className="text-center text-sm text-muted-foreground mt-3">
 						CNPJ 61.414.573/0001-56 Galhardo Tecnologia da Informação LTDA
 					</p> */}
-				</div>
-			</main>
-		</>
+			</div>
+		</main>
 	);
 }

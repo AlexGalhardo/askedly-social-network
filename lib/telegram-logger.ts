@@ -5,7 +5,7 @@ class TelegramLogger {
 
 	constructor(
 		private readonly token: string = process.env.TELEGRAM_BOT_HTTP_TOKEN as string,
-		private readonly channelId: number = parseInt(process.env.TELEGRAM_BOT_CHANNEL_ID as string),
+		private readonly channelId: number = parseInt(process.env.TELEGRAM_BOT_CHANNEL_ID as string, 10),
 	) {
 		this.isThereToken(token);
 		this.isThereChannelId(channelId);
@@ -19,7 +19,7 @@ class TelegramLogger {
 	}
 
 	private isThereChannelId(channelId: number) {
-		if (typeof channelId !== "number" || channelId <= 0 || isNaN(channelId)) {
+		if (typeof channelId !== "number" || channelId <= 0 || Number.isNaN(channelId)) {
 			console.log("There is no valid Telegram Channel Id in TelegramLogger Class Constructor");
 		}
 	}
@@ -95,7 +95,7 @@ class TelegramLogger {
 
 const TelegramLog = new TelegramLogger(
 	process.env.TELEGRAM_BOT_HTTP_TOKEN,
-	parseInt(process.env.TELEGRAM_BOT_CHANNEL_ID as string),
+	parseInt(process.env.TELEGRAM_BOT_CHANNEL_ID as string, 10),
 );
 
 export default TelegramLog;

@@ -69,7 +69,7 @@ export function useAcceptFollowRequest() {
 
 			return { previousRequests };
 		},
-		onError: (error, variables, context) => {
+		onError: (error, _variables, context) => {
 			if (context?.previousRequests) {
 				queryClient.setQueryData(["follow-requests"], context.previousRequests);
 			}
@@ -108,7 +108,7 @@ export function useRejectFollowRequest() {
 
 			return { previousRequests };
 		},
-		onError: (error, variables, context) => {
+		onError: (error, _variables, context) => {
 			if (context?.previousRequests) {
 				queryClient.setQueryData(["follow-requests"], context.previousRequests);
 			}

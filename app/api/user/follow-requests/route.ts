@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
 	try {
 		const session = await getServerSession(authOptions);
 

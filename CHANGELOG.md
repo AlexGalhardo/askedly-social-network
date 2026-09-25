@@ -5,6 +5,15 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.6.3] - 2026-09-25
+
+### Changed
+
+- Run Next on Node in tests and e2e against a production build
+- Remove the unused like/dislike chain from sent questions
+- Fix every Biome warning
+- Fail the lint gate on Biome warnings
+
 ## [0.6.2] - 2026-09-25
 
 ### Changed

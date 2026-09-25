@@ -17,7 +17,9 @@ export default defineConfig({
 	},
 	projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
 	webServer: {
-		command: `bun node_modules/next/dist/bin/next dev -p ${PORT}`,
+		// Node, não Bun: o Turbopack externaliza @prisma/client e pg por aliases que o resolver do Bun não acha
+		// (e a Vercel roda em Node). No CI, servidor de produção (o job roda `bun run build` antes).
+		command: `node node_modules/next/dist/bin/next ${process.env.CI ? "start" : "dev"} -p ${PORT}`,
 		url: baseURL,
 		reuseExistingServer: !process.env.CI,
 		timeout: 60_000,

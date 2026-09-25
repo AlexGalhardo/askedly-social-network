@@ -103,7 +103,7 @@ export function getQuestionStatus(question: QuestionInterface): QuestionStatus {
 }
 
 export function getDeleteTimer(declinedAt: string): string {
-	const now = new Date().getTime();
+	const now = Date.now();
 	const declined = new Date(declinedAt).getTime();
 	const deleteTime = declined + 7 * 24 * 60 * 60 * 1000;
 	const diff = deleteTime - now;

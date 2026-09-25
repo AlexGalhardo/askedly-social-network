@@ -12,11 +12,6 @@ interface SentQuestionsTabsProps {
 	questionsPerPage: number;
 	onPageChange: (page: number) => void;
 	onReport?: (questionId: string) => void;
-	onLike?: (questionId: string) => void;
-	onDislike?: (questionId: string) => void;
-	userInteractions?: {
-		[questionId: string]: { liked: boolean; disliked: boolean };
-	};
 	loadingStates?: {
 		reporting?: string;
 	};
@@ -28,9 +23,6 @@ export function SentQuestionsTabs({
 	questionsPerPage,
 	onPageChange,
 	onReport,
-	onLike,
-	onDislike,
-	userInteractions = {},
 	loadingStates = {},
 }: SentQuestionsTabsProps) {
 	const answeredQuestions = filterSentQuestionsByStatus(questions, "answered");
@@ -53,9 +45,6 @@ export function SentQuestionsTabs({
 				<SentQuestionsList
 					questions={paginatedData.questions}
 					onReport={onReport}
-					onLike={onLike}
-					onDislike={onDislike}
-					userInteractions={userInteractions}
 					loadingStates={loadingStates}
 				/>
 				<QuestionsPagination

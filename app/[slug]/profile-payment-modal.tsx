@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Clock, Copy, Loader } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useEffectEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -187,7 +188,7 @@ export function ProfilePaymentModal({
 		setCustomAmount(sanitizedValue);
 
 		const numValue = Number.parseFloat(sanitizedValue);
-		if (!isNaN(numValue) && numValue >= 2) {
+		if (!Number.isNaN(numValue) && numValue >= 2) {
 			setSelectedAmount(numValue);
 		} else {
 			setSelectedAmount(0);
@@ -492,7 +493,14 @@ export function ProfilePaymentModal({
 							<>
 								<div className="bg-white p-4 rounded-lg mb-4 w-64 h-64 flex items-center justify-center border">
 									{pixData?.brCodeBase64 ? (
-										<img src={pixData.brCodeBase64} alt="QR Code PIX" width={240} height={240} />
+										<Image
+											src={pixData.brCodeBase64}
+											alt="QR Code PIX"
+											width={240}
+											height={240}
+											// data URI: não há o que otimizar
+											unoptimized
+										/>
 									) : (
 										<div className="bg-gray-200 w-full h-full flex items-center justify-center">
 											<span className="text-gray-500">QR Code PIX</span>

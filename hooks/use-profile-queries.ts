@@ -107,7 +107,7 @@ export const useLikeQuestion = () => {
 
 			return { previousData };
 		},
-		onError: (err, variables, context) => {
+		onError: (_err, _variables, context) => {
 			if (context?.previousData) {
 				context.previousData.forEach(([queryKey, data]) => {
 					queryClient.setQueryData(queryKey, data);
@@ -159,7 +159,7 @@ export const useDislikeQuestion = () => {
 
 			return { previousData };
 		},
-		onError: (err, variables, context) => {
+		onError: (_err, _variables, context) => {
 			if (context?.previousData) {
 				context.previousData.forEach(([queryKey, data]) => {
 					queryClient.setQueryData(queryKey, data);

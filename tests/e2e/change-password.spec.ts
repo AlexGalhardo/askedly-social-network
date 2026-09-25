@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { waitForCaptcha } from "./helpers";
 
 test("changing the password requires the current password", async ({ page }) => {
 	const unique = Date.now();
@@ -10,6 +11,7 @@ test("changing the password requires the current password", async ({ page }) => 
 	await page.locator("#email").fill(`pw-${unique}@example.com`);
 	await page.locator("#password").fill("Old!Pass123");
 	await page.locator("#terms").click();
+	await waitForCaptcha(page);
 	await page.getByRole("button", { name: /criar conta gratuitamente/i }).click();
 	await page.waitForURL(/\/minha-conta/, { timeout: 15_000 });
 
