@@ -5,6 +5,14 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.5.0] - 2026-09-25
+
+### Changed
+
+- Upgrade prisma to 7.10.0 with driver adapters
+- Upgrade @react-email/components to 1.0.12
+- Drop framer-motion in favor of the existing CSS spin
+
 ## [0.4.0] - 2026-09-25
 
 ### Changed

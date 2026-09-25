@@ -1,10 +1,10 @@
-import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
-import { SeedQuestionStateType, SeedUserInterface } from "../helpers/seed-interfaces.helper";
-import { SeedLogger } from "../helpers/seed-logger.helper";
-import { SeedHelpers } from "../helpers/seed-helpers.helper";
 import { SeedQuestionFactory } from "../factories/seed-question.factory";
 import { SeedWebhookFactory } from "../factories/seed-webhook.factory";
+import type { PrismaClient } from "../generated/prisma/client";
+import { SeedHelpers } from "../helpers/seed-helpers.helper";
+import { SeedQuestionStateType, SeedUserInterface } from "../helpers/seed-interfaces.helper";
+import { SeedLogger } from "../helpers/seed-logger.helper";
 
 export class SeedQuestionService {
 	constructor(private readonly prisma: PrismaClient) {}

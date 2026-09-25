@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
-import { SeedUniqueTracker } from "../helpers/seed-unique-tracker.helper";
+import type { PrismaClient } from "../generated/prisma/client";
 import { SeedFollowerInterface, SeedUserInterface } from "../helpers/seed-interfaces.helper";
 import { SeedLogger } from "../helpers/seed-logger.helper";
+import { SeedUniqueTracker } from "../helpers/seed-unique-tracker.helper";
 
 export class SeedFollowerService {
 	constructor(

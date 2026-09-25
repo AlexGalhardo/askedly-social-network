@@ -1,7 +1,7 @@
 # RespondeAê — Guia para Agentes de IA
 
 Rede social de perguntas e respostas (estilo Retrospectiva/NGL) com perguntas pagas via PIX.
-Next.js 16 (App Router) + React 19 + Prisma 6/PostgreSQL + NextAuth + AbacatePay + Resend + UploadThing.
+Next.js 16 (App Router) + React 19 + Prisma 7/PostgreSQL + NextAuth + AbacatePay + Resend + UploadThing.
 
 ## Comandos essenciais
 

@@ -1,18 +1,12 @@
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "../generated/prisma/client";
+import { prisma } from "../prisma-client";
 
 export class SeedDatabaseConfig {
-	private static instance: PrismaClient;
-
 	static getInstance(): PrismaClient {
-		if (!this.instance) {
-			this.instance = new PrismaClient();
-		}
-		return this.instance;
+		return prisma;
 	}
 
 	static async disconnect(): Promise<void> {
-		if (this.instance) {
-			await this.instance.$disconnect();
-		}
+		await prisma.$disconnect();
 	}
 }

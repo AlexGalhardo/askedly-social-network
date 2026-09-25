@@ -47,6 +47,14 @@
 	},
 	"files": {
 		"maxSize": 4194304,
-		"includes": ["**", "!**/node_modules", "!**/dist", "!**/package.json", "!next-env.d.ts", "!.claude"]
+		"includes": [
+			"**",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/package.json",
+			"!next-env.d.ts",
+			"!.claude",
+			"!prisma/generated"
+		]
 	}
 }

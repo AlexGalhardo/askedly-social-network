@@ -1,10 +1,8 @@
 // app/api/question/recused/route.ts
 
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import TelegramLog from "@/lib/telegram-logger";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(request: NextRequest) {
 	try {

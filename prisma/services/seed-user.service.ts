@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { SeedUserFactory } from "../factories/seed-user.factory";
+import type { PrismaClient } from "../generated/prisma/client";
+import { SeedUserInterface } from "../helpers/seed-interfaces.helper";
 import { SeedLogger } from "../helpers/seed-logger.helper";
 import { SeedUniqueTracker } from "../helpers/seed-unique-tracker.helper";
-import { SeedUserInterface } from "../helpers/seed-interfaces.helper";
 
 export class SeedUserService {
 	private readonly userFactory: SeedUserFactory;

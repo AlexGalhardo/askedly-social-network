@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "../generated/prisma/client";
 import { SeedLogger } from "../helpers/seed-logger.helper";
 
 export class SeedStatisticsService {

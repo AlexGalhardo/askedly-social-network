@@ -19,6 +19,9 @@ yarn-error.log*
 # env files
 .env
 
+# prisma client gerado (prisma generate; ver prisma.config.ts)
+/prisma/generated/
+
 # local sqlite dev database (see setups/*-sqlite.sh)
 *.db
 *.db-journal

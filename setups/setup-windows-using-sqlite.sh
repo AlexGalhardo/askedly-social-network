@@ -22,18 +22,19 @@ if [ ! -f .env ]; then
 	cp .env.example .env
 fi
 
-if ! grep -q '^SQLITE_DATABASE_URL=' .env; then
-	echo 'SQLITE_DATABASE_URL="file:./dev.db"' >>.env
-fi
+echo "==> Apontando DATABASE_URL para SQLite (file:./dev.db)..."
+sed -i.bak '/^DATABASE_URL=/d' .env && rm -f .env.bak
+echo 'DATABASE_URL="file:./dev.db"' >>.env
 
 echo "==> Gerando client e sincronizando schema SQLite (prisma/schema.sqlite.prisma)..."
-bunx prisma generate --schema=prisma/schema.sqlite.prisma
-bunx prisma db push --schema=prisma/schema.sqlite.prisma --skip-generate
+# prisma.config.ts seleciona schema.sqlite.prisma porque DATABASE_URL começa com `file:`.
+bunx prisma generate
+bunx prisma db push
 
 echo "==> Populando banco com dados de seed..."
-bun prisma/seed.ts || {
-	echo "Aviso: prisma/seed.ts foi escrito pensando no client gerado a partir do schema.prisma (Postgres)."
-	echo "Se falhar aqui, rode o seed manualmente após confirmar que o client SQLite está ativo."
+bunx prisma db seed || {
+	echo "Aviso: o seed usa createMany({ skipDuplicates }), que o SQLite não suporta (ver PLAN.md, Fase 11)."
+	echo "O banco foi criado vazio; cadastre usuários pela aplicação."
 }
 
 echo ""

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "../generated/prisma/client";
 
 export class SeedDatabaseCleaner {
 	constructor(private readonly prisma: PrismaClient) {}
