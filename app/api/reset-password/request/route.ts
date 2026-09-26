@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import { ResetPasswordEmail } from "@/emails/reset-password-email";
-import { EMAIL_FROM } from "@/lib/email";
+import { EMAIL_FROM, resendClient } from "@/lib/email";
 import { clientIp } from "@/lib/request-ip";
 import { createPasswordResetToken } from "@/lib/services/password-reset.service";
 import { consumeRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/services/rate-limit.service";
 import TelegramLog from "@/lib/telegram-logger";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
 	try {
@@ -29,7 +26,7 @@ export async function POST(request: Request) {
 		if (!reset) return NextResponse.json({ success: true });
 
 		const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/alterar-senha?token=${reset.token}`;
-		const { error } = await resend.emails.send({
+		const { error } = await resendClient().emails.send({
 			from: EMAIL_FROM,
 			to: email,
 			subject: "Crie Sua Nova Senha - Respondeae.com.br",

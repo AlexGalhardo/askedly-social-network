@@ -120,7 +120,7 @@
 - [x] Workflow `deploy.yml`: deploy Vercel via `workflow_run` só depois do CI verde em `main`; CLI `vercel@59.26.0` pinado no workflow em vez de devDependency (removia 16 das 26 vulnerabilidades do `bun audit`)
 - [x] Validado: `actionlint` limpo + todos os passos rodados localmente com Postgres descartável (format, 48 unit, 6 integração, build, smoke, e2e 2 passed/1 fixme)
 - [x] Commit (`ci: add github actions for lint, test, build and deploy`)
-- [~] Depende de você: criar o environment `production` no GitHub com `VERCEL_TOKEN`/`VERCEL_ORG_ID`/`VERCEL_PROJECT_ID`, e decidir entre este `deploy.yml` ou a integração Git da Vercel (os dois juntos = deploy duplicado). Ver `docs/deployment.md`.
+- [x] Deploy: o usuário conectou o projeto `respondeae` à integração Git da Vercel, então o `deploy.yml` foi removido (evita deploy duplicado; não precisa mais de `VERCEL_TOKEN`). Build na Vercel corrigido (`infra/vercel-build.sh`: `prisma generate`, migrations só em produção) — primeiro deploy de produção `READY` em `https://respondeae.vercel.app`
 
 ## Fase 11 — Revisão de lógica, segurança e qualidade (concluída; ver `CHANGELOG.md`)
 
@@ -140,7 +140,15 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 - [x] **Troca de senha sem pedir a senha atual** (A07): senha atual obrigatória; contas Google definem a primeira senha (`lib/services/password.service.ts`)
 - [x] **Rate limit** em login/cadastro/contato: feito em Postgres (tabela `rate_limits`, upsert atômico, testado com concorrência) em vez de Upstash, para não depender de serviço pago novo. Login por IP e por email; cadastro, contato e reset por IP; troca de senha por usuário. Validado contra servidor real (NextAuth e rotas)
 - [x] **Funcionalidades quebradas**: "reportar resposta" implementado (`lib/services/question-report.service.ts`, com teste); "sacar perguntas não respondidas" removido — não tinha tela, só um hook sem uso chamando rota inexistente. De quebra: o report de pergunta não checava o dono (corrigido)
-- [ ] **Vercel**: a conta conectada (time "Fitness Projects") não tem projeto do RespondeAê; falta decidir conta/projeto e configurar `VERCEL_*`, `ABACATEPAY_*`, `CRON_SECRET`, `CLOUDFLARE_TURNSTILE_SECRET`, `DATABASE_URL` de produção. **Rotacionar a chave da AbacatePay**, que ficou exposta
+- [x] **Vercel**: projeto `respondeae` no time "Fitness Projects", Postgres do Marketplace como `DATABASE_URL`, env vars cadastradas pelo usuário. Produção no ar e validada (`/api/health`, páginas com banco, migrations aplicadas, headers, webhook/cron 401 sem secret)
+
+### Ações manuais que só o dono das credenciais pode fazer (não são código)
+
+- [ ] Criar `CRON_SECRET` no projeto da Vercel (sem ela o cron diário recebe 401)
+- [ ] Criar `RESEND_FROM_EMAIL` com um remetente de domínio verificado na Resend (sem ele o reset de senha só chega ao dono da conta Resend)
+- [ ] **Rotacionar a chave da AbacatePay** (a antiga ficou exposta no bundle) e atualizar `ABACATEPAY_API_KEY`/`ABACATEPAY_WEBHOOK_SECRET`; cadastrar o webhook em `https://respondeae.vercel.app/api/webhook/abacatepay?webhookSecret=...`
+- [ ] Conferir que `NEXT_PUBLIC_TEST_MODE` é `false` em produção e remover `NODE_ENV`, `SEED_*` e `DANGER_MODE` das env vars da Vercel
+- [ ] Ativar "Deployment Checks" na Vercel exigindo os checks `CI` e `E2E`, para a produção só subir com o CI verde
 
 ### Pendências técnicas menores
 

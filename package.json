@@ -1,6 +1,6 @@
 {
   "name": "respondeae.com.br",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "private": true,
   "license": "MIT",
   "packageManager": "bun@1.4.2",
@@ -10,7 +10,8 @@
   },
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "vercel-build": "bash infra/vercel-build.sh",
     "start": "next start",
     "lint": "biome check app/ lib/ hooks/ contexts/ components/ prisma/ emails/ actions/ types/ tests/ providers/ *.ts *.json --fix",
     "lint:unsafe": "biome check app/ lib/ hooks/ contexts/ components/ prisma/ emails/ actions/ types/ tests/ providers/ *.ts *.json --fix --unsafe",

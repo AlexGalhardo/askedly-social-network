@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import { ContactEmail } from "@/emails/contact-email";
 import { isCaptchaValid } from "@/lib/captcha";
-import { EMAIL_FROM } from "@/lib/email";
+import { EMAIL_FROM, resendClient } from "@/lib/email";
 import { clientIp } from "@/lib/request-ip";
 import { contactSchema } from "@/lib/schemas/contact";
 import { consumeRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/services/rate-limit.service";
 import TelegramLog from "@/lib/telegram-logger";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
 	try {
@@ -47,7 +44,7 @@ export async function POST(request: Request) {
 
 		const { name, email, subject, message } = validationResult.data;
 
-		const { data, error } = await resend.emails.send({
+		const { data, error } = await resendClient().emails.send({
 			from: EMAIL_FROM,
 			to: ["aleexgvieira@gmail.com"],
 			subject: `Respondeae.com.br - ${email} - ${subject}`,
