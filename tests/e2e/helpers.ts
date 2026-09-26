@@ -13,3 +13,12 @@ export async function waitForCaptcha(page: Page): Promise<void> {
 		)
 		.toBe(true);
 }
+
+/**
+ * Cada teste como um cliente diferente: o rate limit (por IP) continua ligado, mas rodadas repetidas da suíte, e os
+ * retries do CI, não esgotam a cota de cadastro de um IP só.
+ */
+export async function useUniqueClientIp(page: Page): Promise<void> {
+	const octet = (): number => Math.floor(Math.random() * 254) + 1;
+	await page.setExtraHTTPHeaders({ "x-forwarded-for": `10.${octet()}.${octet()}.${octet()}` });
+}

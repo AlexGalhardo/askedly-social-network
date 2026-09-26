@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { waitForCaptcha } from "./helpers";
+import { useUniqueClientIp, waitForCaptcha } from "./helpers";
 
 test("signing up with a new account logs in and redirects to /minha-conta", async ({ page }) => {
 	const unique = Date.now();
 	const nickname = `e_${unique}`;
 	const email = `e2e-${unique}@example.com`;
 
+	await useUniqueClientIp(page);
 	await page.goto("/criar-conta");
 
 	await page.locator("#name").fill("E2E Test User");

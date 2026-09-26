@@ -6,7 +6,10 @@ import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(request: Request) {
 	// Simular pagamento só existe no modo de teste (chave sandbox); em produção marcaria um PIX como pago sem dinheiro.
-	if (process.env.NEXT_PUBLIC_TEST_MODE !== "true") return NextResponse.json({ error: "Not found" }, { status: 404 });
+	// VERCEL_ENV é definido pela própria Vercel: mesmo com TEST_MODE ligado por engano, produção nunca simula.
+	if (process.env.NEXT_PUBLIC_TEST_MODE !== "true" || process.env.VERCEL_ENV === "production") {
+		return NextResponse.json({ error: "Not found" }, { status: 404 });
+	}
 
 	try {
 		const user = await getSessionUser();

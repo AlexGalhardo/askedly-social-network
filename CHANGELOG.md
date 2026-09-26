@@ -5,6 +5,17 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.8.2] - 2026-09-25
+
+### Changed
+
+- Give each signup test its own client IP
+
+### Security
+
+- Send baseline security headers on every response
+- Never simulate PIX payments on a production deploy
+
 ## [0.8.1] - 2026-09-25
 
 ### Security

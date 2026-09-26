@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test";
-import { waitForCaptcha } from "./helpers";
+import { useUniqueClientIp, waitForCaptcha } from "./helpers";
 
 test("changing the password requires the current password", async ({ page }) => {
 	const unique = Date.now();
 	const nickname = `p_${unique}`;
 
+	await useUniqueClientIp(page);
 	await page.goto("/criar-conta");
 	await page.locator("#name").fill("E2E Password User");
 	await page.locator("#nickname").fill(nickname);
