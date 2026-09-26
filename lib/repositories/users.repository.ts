@@ -134,7 +134,7 @@ class UsersRepository {
 		const hashedPassword = await this.hashPassword(newPassword);
 		await prisma.user.update({
 			where: { id: userId },
-			data: { password: hashedPassword, updated_at: new Date() },
+			data: { password: hashedPassword, session_version: { increment: 1 }, updated_at: new Date() },
 		});
 		return { success: true };
 	}

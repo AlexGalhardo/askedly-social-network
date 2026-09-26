@@ -20,6 +20,14 @@ export default function EntrarClient() {
 	const router = useRouter();
 	const [email, setEmail] = useState("");
 	const [error, setError] = useState("");
+	const [notice, setNotice] = useState("");
+
+	// Lido do window (e não useSearchParams) para a página continuar estática, sem Suspense.
+	useEffect(() => {
+		if (new URLSearchParams(window.location.search).has("senha-alterada")) {
+			setNotice("Senha alterada. Por segurança, todas as sessões foram encerradas: entre com a nova senha.");
+		}
+	}, []);
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [password, setPassword] = useState("");
@@ -237,6 +245,12 @@ export default function EntrarClient() {
 						</div>
 
 						<TurnstileWidget />
+
+						{notice && !error && (
+							<Alert className="text-center">
+								<AlertDescription>{notice}</AlertDescription>
+							</Alert>
+						)}
 
 						{error && error !== "Callback" && (
 							<Alert

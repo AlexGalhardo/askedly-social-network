@@ -54,4 +54,5 @@ bun run build && CI=true bunx playwright test --retries=0
   (`tests/e2e/helpers.ts`) e esperam o captcha com `waitForCaptcha(page)`.
 - **Primeira execução do `next dev` é lenta** (compila rota por rota); um timeout isolado de `waitForURL` na primeira
   rodada não é bug, rode de novo antes de investigar.
+- **`NEXTAUTH_URL` na porta do teste**: o Playwright sobe o Next na 3200. Com o `NEXTAUTH_URL` do `.env` em outra porta, todo `signOut` (troca de senha, excluir conta) redireciona para um servidor que não existe (`ERR_CONNECTION_REFUSED`). Rode com `NEXTAUTH_URL=http://localhost:3200`.
 - **Hook `pre-push`** roda unit + build: exporte o `DATABASE_URL` descartável ao dar push.

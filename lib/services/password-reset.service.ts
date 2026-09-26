@@ -46,6 +46,7 @@ export async function resetPasswordWithToken(token: string, newPassword: string)
 			password: await bcrypt.hash(parsed.data, 12),
 			reset_password_token: null,
 			reset_password_token_expires_at: null,
+			session_version: { increment: 1 },
 			updated_at: new Date(),
 		},
 	});

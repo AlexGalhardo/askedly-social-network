@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Loader2, X } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { type FormEvent, useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,6 +63,8 @@ export function PasswordForm() {
 			updatePasswordMutation.mutate(formData, {
 				onSuccess: (data) => {
 					if (!data.error) {
+						// A troca de senha revoga todas as sessões, inclusive esta: entrar de novo com a senha nova.
+						signOut({ callbackUrl: "/entrar?senha-alterada=1" });
 						setCurrentPassword("");
 						setNewPassword("");
 						setConfirmPassword("");

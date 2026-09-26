@@ -23,6 +23,8 @@ bun run test:smoke        # precisa de `bun run build` antes (o teste sobe o `ne
 bun run test:e2e          # playwright: localmente sobe `next dev`; com CI=true usa `next start` (rode `bun run build` antes)
 ```
 
+Localmente, rode o e2e com `NEXTAUTH_URL=http://localhost:3200` (a porta do Playwright): o `signOut` da troca de senha redireciona para o `NEXTAUTH_URL`.
+
 No modo `CI=true` o captcha é obrigatório (produção). Rode o build com as chaves de teste da Cloudflare em `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY`/`CLOUDFLARE_TURNSTILE_SECRET` (ver `deployment.md`); `tests/e2e/helpers.ts` espera o token antes de enviar formulários.
 
 **Regra:** nunca rodar `test:integration`/`test:smoke` contra o banco de desenvolvimento com dados reais/seed — sempre um Postgres descartável (`infra/docker-compose.yaml` ou um container efêmero) com migration aplicada do zero.

@@ -18,6 +18,8 @@ model User {
   nickname    String  @unique
   email       String  @unique
   password    String?
+  // Sobe a cada troca/reset de senha; tokens JWT emitidos com versão anterior deixam de valer (lib/auth.ts).
+  session_version Int @default(0)
   description String?
   website     String?
 

@@ -15,6 +15,7 @@ import {
 import { clientIp } from "./request-ip";
 import { stripPrivateFields } from "./services/profile.service";
 import { clearRateLimit, consumeRateLimit, isRateLimited, RATE_LIMITS } from "./services/rate-limit.service";
+import { assertSessionIsCurrent, getSessionVersion } from "./services/session-revocation.service";
 import TelegramLog from "./telegram-logger";
 import { hideAnonymousAsker } from "./utils/question-privacy";
 import { isQuestionExpired } from "./utils/question-utils";
@@ -69,8 +70,11 @@ declare module "next-auth" {
 	interface Session {
 		user: ExtendedUser;
 	}
+}
 
+declare module "next-auth/jwt" {
 	interface JWT extends Omit<ExtendedUser, "questions_received" | "questions_sent" | "followers" | "following"> {
+		session_version?: number;
 		following?: string[];
 		followers?: string[];
 	}
@@ -296,6 +300,15 @@ export const authOptions: NextAuthOptions = {
 					throw new Error(`Erro na autenticação ${error?.message}`);
 				}
 			}
+
+			if (user) {
+				// Sign-in: grava a versão de sessão atual. Toda leitura seguinte compara com o banco, e uma troca de
+				// senha (que sobe a versão) derruba este token em todos os aparelhos.
+				token.session_version = (await getSessionVersion(token.id as string)) ?? 0;
+				return token;
+			}
+
+			await assertSessionIsCurrent(token);
 
 			return token;
 		},
