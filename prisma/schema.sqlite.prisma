@@ -245,3 +245,14 @@ model DeletedAccount {
 
   @@map("deleted_accounts")
 }
+
+// Janela fixa por chave (ex.: "login:<ip>:<email>"). Em Postgres porque todas as instâncias serverless o
+// compartilham; um limitador em memória não funcionaria na Vercel. Linhas vencidas são apagadas pelo cron diário.
+model RateLimit {
+  key      String   @id
+  count    Int
+  reset_at DateTime
+
+  @@index([reset_at])
+  @@map("rate_limits")
+}

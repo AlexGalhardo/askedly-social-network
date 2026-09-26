@@ -138,8 +138,8 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 ### Pendências que dependem de decisão do usuário
 
 - [x] **Troca de senha sem pedir a senha atual** (A07): senha atual obrigatória; contas Google definem a primeira senha (`lib/services/password.service.ts`)
-- [ ] **Rate limit** em login/cadastro/contato: um limitador em memória não funciona em serverless. Precisa de um store compartilhado (ex.: Upstash Redis via Vercel Marketplace)
-- [ ] **Funcionalidades quebradas**: "reportar resposta" (rota era arquivo vazio) e "sacar perguntas não respondidas" (`/api/withdraw/unanswered` nunca existiu). Implementar ou remover da UI?
+- [x] **Rate limit** em login/cadastro/contato: feito em Postgres (tabela `rate_limits`, upsert atômico, testado com concorrência) em vez de Upstash, para não depender de serviço pago novo. Login por IP e por email; cadastro, contato e reset por IP; troca de senha por usuário. Validado contra servidor real (NextAuth e rotas)
+- [x] **Funcionalidades quebradas**: "reportar resposta" implementado (`lib/services/question-report.service.ts`, com teste); "sacar perguntas não respondidas" removido — não tinha tela, só um hook sem uso chamando rota inexistente. De quebra: o report de pergunta não checava o dono (corrigido)
 - [ ] **Vercel**: a conta conectada (time "Fitness Projects") não tem projeto do RespondeAê; falta decidir conta/projeto e configurar `VERCEL_*`, `ABACATEPAY_*`, `CRON_SECRET`, `CLOUDFLARE_TURNSTILE_SECRET`, `DATABASE_URL` de produção. **Rotacionar a chave da AbacatePay**, que ficou exposta
 
 ### Pendências técnicas menores
@@ -183,6 +183,6 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 - [x] **Crítico:** linhas inteiras de `User` serializadas para o browser (feed, top curtidas, perfil, sessão) e autor de pergunta anônima revelado. Corrigido
 - [x] **Crítico:** chave da Resend hardcoded em `app/api/send-contact-email/route.ts` (bloqueava o push pelo Push Protection do GitHub). Removida do código e do histórico local; chave antiga revogada na Resend pelo usuário
 - [ ] **Alto:** `getUserByNicknameAction` (perfil) e `/top-curtidas` ainda devolvem as respostas de perfil privado, respostas privadas e perguntas pendentes para o client filtrar. Filtrar no servidor, como o feed já faz (`lib/services/feed.service.ts`)
-- [ ] **Médio:** cadastro sem captcha no servidor (o token Turnstile é de uso único e hoje é gasto no `signIn` logo depois). Resolver junto com o rate limit
+- [x] **Médio:** cadastro sem captcha no servidor: mitigado pelo rate limit por IP (5 cadastros/hora). Captcha no servidor exigiria um segundo token para o `signIn` logo depois (o token é de uso único); fica como melhoria opcional
 - [ ] **Médio:** as consultas públicas de perguntas ainda devolvem campos internos da pergunta (`webhook_id`, `payment_withdraw_id`, motivo de report). Trocar `include` por `select` explícito
 - [ ] Commit (`docs: add OWASP Top Ten security audit report`)

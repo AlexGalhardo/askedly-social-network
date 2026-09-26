@@ -2,6 +2,8 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import slugify from "slugify";
+import { AUTH_ERROR } from "./auth-errors";
+import { isCaptchaValid } from "./captcha";
 import { QuestionInterface } from "./interfaces";
 import {
 	createUser,
@@ -10,7 +12,9 @@ import {
 	updateLastLoginAt,
 	verifyCredentials,
 } from "./repositories/users.repository";
+import { clientIp } from "./request-ip";
 import { stripPrivateFields } from "./services/profile.service";
+import { consumeRateLimit, RATE_LIMITS } from "./services/rate-limit.service";
 import TelegramLog from "./telegram-logger";
 import { hideAnonymousAsker } from "./utils/question-privacy";
 import { isQuestionExpired } from "./utils/question-utils";
@@ -154,33 +158,18 @@ export const authOptions: NextAuthOptions = {
 				password: { label: "Password", type: "password" },
 				captchaToken: { label: "Captcha Token", type: "text" },
 			},
-			async authorize(credentials: Record<"email" | "password" | "captchaToken", string> | undefined) {
+			async authorize(credentials: Record<"email" | "password" | "captchaToken", string> | undefined, req) {
 				if (!credentials?.email || !credentials?.password) return null;
 
-				if (process.env.NODE_ENV === "production") {
-					if (!credentials?.captchaToken) return null;
+				// Por IP (várias contas a partir de um lugar) e por email (uma conta a partir de vários lugares).
+				const email = credentials.email.trim().toLowerCase();
+				for (const key of [`login:ip:${clientIp(req?.headers ?? {})}`, `login:email:${email}`]) {
+					if (!(await consumeRateLimit(key, RATE_LIMITS.login)).allowed)
+						throw new Error(AUTH_ERROR.rateLimited);
+				}
 
-					const turnstileSecret = process.env.CLOUDFLARE_TURNSTILE_SECRET;
-					const verifyUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-
-					try {
-						const res = await fetch(verifyUrl, {
-							method: "POST",
-							headers: { "Content-Type": "application/x-www-form-urlencoded" },
-							body: new URLSearchParams({
-								secret: turnstileSecret ?? "",
-								response: credentials.captchaToken,
-							}),
-						});
-
-						const data = await res.json();
-
-						if (!data.success) return null;
-					} catch (error: any) {
-						await TelegramLog.error(
-							`Erro na autenticação auth.ts providers authorize cloudflare captcha: ${error?.message}`,
-						);
-					}
+				if (process.env.NODE_ENV === "production" && !(await isCaptchaValid(credentials.captchaToken))) {
+					return null;
 				}
 
 				try {
@@ -197,13 +186,12 @@ export const authOptions: NextAuthOptions = {
 						name: user.name ?? null,
 						email: user.email ?? null,
 					};
-				} catch (error: any) {
-					if (error instanceof Error && error.message === "no_password") {
-						throw new Error(
-							"This user does not have a registered password. Entre com sua conta Google e crie sua senha",
-						);
-					}
-					await TelegramLog.error(`Erro na autenticação auth.ts providers authorize: ${error?.message}`);
+				} catch (error: unknown) {
+					if (error instanceof Error && error.message === "no_password")
+						throw new Error(AUTH_ERROR.noPassword);
+					await TelegramLog.error(
+						`Erro na autenticação auth.ts providers authorize: ${error instanceof Error ? error.message : error}`,
+					);
 					return null;
 				}
 			},

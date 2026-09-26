@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/auth";
 import { getUserByNickname } from "@/lib/repositories/users.repository";
 import { changePassword, PasswordChangeError } from "@/lib/services/password.service";
 import { toPublicProfile } from "@/lib/services/profile.service";
+import { consumeRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/services/rate-limit.service";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -199,6 +200,9 @@ export async function updatePassword(data: FormData) {
 
 		const validatedData = passwordSchema.parse(formData);
 		const currentPassword = (data.get("currentPassword") as string | null) || undefined;
+
+		const limit = await consumeRateLimit(`password-change:user:${session.user.id}`, RATE_LIMITS.passwordChange);
+		if (!limit.allowed) return { error: rateLimitMessage(limit.retryAfterSeconds) };
 
 		await changePassword(session.user.id, currentPassword, validatedData.newPassword);
 

@@ -1,4 +1,5 @@
 import { subDays } from "date-fns";
+import { deleteExpiredRateLimits } from "@/lib/services/rate-limit.service";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -69,9 +70,11 @@ export async function GET(request: Request) {
 	});
 
 	const deletedCount = await deleteOldUsers();
+	const expiredRateLimits = await deleteExpiredRateLimits();
 
 	await TelegramLog.info(
-		`🕒 Cronjob executado em ${formattedNow}\n🔁 Contadores resetados para ${resetResult.count} usuários.\n🗑️ Usuários deletados (30 dias marcados como deletados ou 2 anos sem login): ${deletedCount}`,
+		`🕒 Cronjob executado em ${formattedNow}\n🔁 Contadores resetados para ${resetResult.count} usuários.\n🗑️ Usuários deletados (30 dias marcados como deletados ou 2 anos sem login): ${deletedCount}
+🧹 Janelas de rate limit vencidas apagadas: ${expiredRateLimits}`,
 	);
 
 	return new Response("OK");

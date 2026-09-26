@@ -112,6 +112,7 @@ export default function CriarContaClient() {
 			});
 
 			if (!signup.ok) {
+				setError(signup.error ?? "");
 				setErrorName(signup.fieldErrors.name ?? "");
 				setErrorNickname(signup.fieldErrors.nickname ?? "");
 				setErrorEmail(signup.fieldErrors.email ?? "");

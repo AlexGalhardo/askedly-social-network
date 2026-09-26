@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { v4 as uuidv4 } from "uuid";
 import { ResetPasswordEmail } from "@/emails/reset-password-email";
+import { clientIp } from "@/lib/request-ip";
+import { consumeRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/services/rate-limit.service";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -9,6 +11,14 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
 	try {
+		const limit = await consumeRateLimit(
+			`password-reset:ip:${clientIp(request.headers)}`,
+			RATE_LIMITS.passwordReset,
+		);
+		if (!limit.allowed) {
+			return NextResponse.json({ error: rateLimitMessage(limit.retryAfterSeconds) }, { status: 429 });
+		}
+
 		const { email } = await request.json();
 
 		if (!email || !/^\S+@\S+\.\S+$/.test(email)) {

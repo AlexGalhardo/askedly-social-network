@@ -19,6 +19,7 @@ ORM: Prisma 7 (`@prisma/client` + driver adapter). Produção/dev padrão: **Pos
 | `UserBlock` | bloqueios entre usuários |
 | `PaymentWithdraw` | saques de saldo acumulado via chave PIX |
 | `DeletedAccount` | snapshot de conta excluída (soft delete + auditoria) |
+| `RateLimit` | janela fixa de rate limit por chave (`lib/services/rate-limit.service.ts`); linhas vencidas saem no cron diário |
 
 Todos os IDs são UUID (`@default(uuid())`). Nomes de tabela em `snake_case` via `@@map`.
 
@@ -36,7 +37,8 @@ bun run prisma:db:seed    # popula com dados fake (ver prisma/seed.ts)
 `prisma/schema.prisma` continua sendo Postgres (produção). Os scripts `setups/setup-*-sqlite.sh` gravam `DATABASE_URL="file:./dev.db"` no `.env`; com esse prefixo, o `prisma.config.ts` usa o schema espelhado `prisma/schema.sqlite.prisma` e o client usa o adapter libSQL. Não há migrations para SQLite: o schema é aplicado com `bunx prisma db push`.
 
 - libSQL em vez de `better-sqlite3`: `better-sqlite3` não roda no Bun, que executa o seed e os scripts.
-- O seed ainda não funciona no SQLite, porque usa `createMany({ skipDuplicates })`, que o SQLite não suporta. Está registrado no `PLAN.md`.
+- O seed roda no SQLite: `skipDuplicates` (não suportado lá) só é enviado em Postgres (`SeedDatabaseConfig.skipDuplicates`).
+- O rate limit é desligado no SQLite: ele só existe no dev local.
 
 **Importante:** esse schema espelho não é gerado automaticamente — sempre que `prisma/schema.prisma` mudar, replique manualmente a mudança em `prisma/schema.sqlite.prisma`. Tipos sem equivalente direto em SQLite (ex: nada muito exótico é usado hoje) precisam de ajuste manual nesse arquivo.
 

@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { AUTH_ERROR } from "@/lib/auth-errors";
 import TelegramLog from "@/lib/telegram-logger";
 import { getTurnstile } from "@/lib/turnstile";
 
@@ -76,10 +77,12 @@ export default function EntrarClient() {
 			});
 
 			if (result?.error) {
-				if (result.error.includes("Esse usuário não possui senha cadastrada")) {
+				if (result.error === AUTH_ERROR.noPassword) {
 					setError(
 						"Esse usuário não possui senha cadastrada. Logue com sua conta Google e crie uma senha ou resete sua senha.",
 					);
+				} else if (result.error === AUTH_ERROR.rateLimited) {
+					setError("Muitas tentativas de login. Aguarde alguns minutos e tente de novo.");
 				} else {
 					setError("Email e/ou senha incorretos");
 				}

@@ -1,16 +1,22 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { ContactEmail } from "@/emails/contact-email";
+import { isCaptchaValid } from "@/lib/captcha";
+import { clientIp } from "@/lib/request-ip";
 import { contactSchema } from "@/lib/schemas/contact";
+import { consumeRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/services/rate-limit.service";
 import TelegramLog from "@/lib/telegram-logger";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
 	try {
-		const body = await request.json();
+		const limit = await consumeRateLimit(`contact:ip:${clientIp(request.headers)}`, RATE_LIMITS.contact);
+		if (!limit.allowed) {
+			return NextResponse.json({ error: rateLimitMessage(limit.retryAfterSeconds) }, { status: 429 });
+		}
 
-		console.log("body do contato -> ", body);
+		const body = await request.json();
 
 		const validationResult = contactSchema.safeParse({
 			name: body.name,
@@ -18,8 +24,6 @@ export async function POST(request: Request) {
 			subject: body.subject,
 			message: body.message,
 		});
-
-		console.log("validationResult.success -> ", validationResult.success);
 
 		if (!validationResult.success) {
 			const errors = validationResult.error.issues.map((error) => ({
@@ -36,30 +40,8 @@ export async function POST(request: Request) {
 			);
 		}
 
-		if (process.env.NODE_ENV === "production") {
-			const turnstileSecret = process.env.CLOUDFLARE_TURNSTILE_SECRET;
-			const verifyUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-
-			try {
-				const res = await fetch(verifyUrl, {
-					method: "POST",
-					headers: { "Content-Type": "application/x-www-form-urlencoded" },
-					body: new URLSearchParams({
-						secret: turnstileSecret ?? "",
-						response: body?.captchaToken,
-					}),
-				});
-
-				const data = await res.json();
-
-				if (!data.success) {
-					console.warn("Captcha inválido: ", data);
-					return NextResponse.json({ error: "Captcha inválido" }, { status: 500 });
-				}
-			} catch (err) {
-				await TelegramLog.error(`Error sending email via Resend: ${JSON.stringify(err)}`);
-				return NextResponse.json({ error: "Erro na verificação do CAPTCHA" }, { status: 500 });
-			}
+		if (process.env.NODE_ENV === "production" && !(await isCaptchaValid(body?.captchaToken))) {
+			return NextResponse.json({ error: "Captcha inválido" }, { status: 400 });
 		}
 
 		const { name, email, subject, message } = validationResult.data;
