@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { v4 as uuidv4 } from "uuid";
 import { ResetPasswordEmail } from "@/emails/reset-password-email";
+import { EMAIL_FROM } from "@/lib/email";
 import { clientIp } from "@/lib/request-ip";
+import { createPasswordResetToken } from "@/lib/services/password-reset.service";
 import { consumeRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/services/rate-limit.service";
 import TelegramLog from "@/lib/telegram-logger";
-import { prisma } from "@/prisma/prisma-client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -20,43 +20,26 @@ export async function POST(request: Request) {
 		}
 
 		const { email } = await request.json();
-
-		if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+		if (typeof email !== "string" || !/^\S+@\S+\.\S+$/.test(email)) {
 			return NextResponse.json({ error: "Email inválido" }, { status: 400 });
 		}
 
-		const user = await prisma.user.findUnique({
-			where: { email },
-		});
+		// Mesma resposta com ou sem conta: a rota não pode servir para descobrir quais emails estão cadastrados.
+		const reset = await createPasswordResetToken(email);
+		if (!reset) return NextResponse.json({ success: true });
 
-		if (!user) {
-			return NextResponse.json({ success: true });
-		}
-
-		const token = uuidv4().replace(/-/g, "");
-		const expiresAt = new Date();
-		expiresAt.setHours(expiresAt.getHours() + 1);
-
-		await prisma.user.update({
-			where: { email },
-			data: {
-				reset_password_token: token,
-				reset_password_token_expires_at: expiresAt,
-			},
-		});
-
-		const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/alterar-senha?token=${token}`;
-
-		await resend.emails.send({
-			from: "onboarding@resend.dev",
-			to: "aleexgvieira@gmail.com", //[email]
+		const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/alterar-senha?token=${reset.token}`;
+		const { error } = await resend.emails.send({
+			from: EMAIL_FROM,
+			to: email,
 			subject: "Crie Sua Nova Senha - Respondeae.com.br",
-			react: ResetPasswordEmail({ name: user.name, resetLink }),
+			react: ResetPasswordEmail({ name: reset.name, resetLink }),
 		});
+		if (error) await TelegramLog.error(`Reset de senha: falha ao enviar email: ${error.message}`);
 
 		return NextResponse.json({ success: true });
-	} catch (error: any) {
-		await TelegramLog.error(`Catch Error file reset-password-actions.ts request: ${error?.message}`);
+	} catch (error: unknown) {
+		await TelegramLog.error(`Reset de senha (request): ${error instanceof Error ? error.message : error}`);
 		return NextResponse.json({ error: "Erro ao processar solicitação de recuperação de senha" }, { status: 500 });
 	}
 }

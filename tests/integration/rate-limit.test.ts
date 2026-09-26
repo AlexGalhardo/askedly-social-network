@@ -1,5 +1,10 @@
 import { afterAll, describe, expect, test } from "bun:test";
-import { consumeRateLimit, deleteExpiredRateLimits } from "@/lib/services/rate-limit.service";
+import {
+	clearRateLimit,
+	consumeRateLimit,
+	deleteExpiredRateLimits,
+	isRateLimited,
+} from "@/lib/services/rate-limit.service";
 import { prisma } from "@/prisma/prisma-client";
 
 // Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
@@ -45,5 +50,23 @@ describe("consumeRateLimit (integration)", () => {
 		const keys = (await prisma.rateLimit.findMany({ where: { key: { startsWith: prefix } } })).map((r) => r.key);
 		expect(keys).not.toContain(`${prefix}:expired`);
 		expect(keys).toContain(`${prefix}:live`);
+	});
+
+	test("isRateLimited only reads: checking does not spend the quota", async () => {
+		const rule = { limit: 2, windowMs: 60_000 };
+		const key = `${prefix}:peek`;
+		for (let i = 0; i < 5; i++) expect(await isRateLimited(key, rule)).toBe(false);
+		await consumeRateLimit(key, rule);
+		await consumeRateLimit(key, rule);
+		expect(await isRateLimited(key, rule)).toBe(true);
+	});
+
+	test("clearRateLimit resets a key (e.g. after a successful login)", async () => {
+		const rule = { limit: 1, windowMs: 60_000 };
+		const key = `${prefix}:clear`;
+		await consumeRateLimit(key, rule);
+		expect(await isRateLimited(key, rule)).toBe(true);
+		await clearRateLimit(key);
+		expect(await isRateLimited(key, rule)).toBe(false);
 	});
 });

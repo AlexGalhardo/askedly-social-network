@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import { prisma } from "@/prisma/prisma-client";
 import TelegramLog from "../telegram-logger";
 
+// Hash bcrypt (custo 12, igual ao das senhas reais) de um texto qualquer. Não é segredo.
+const TIMING_EQUALIZER_HASH = "$2b$12$mSx8ohkXxZyBI9lbal7z6ePPNVgi/w.u6q.gnM3fCfcafHUxQk./O";
+
 export const publicUserSelect = {
 	id: true,
 	nickname: true,
@@ -109,7 +112,11 @@ class UsersRepository {
 
 	async verifyCredentials(email: string, password: string) {
 		const user = await this.getUserByEmail(email);
-		if (!user) return null;
+		if (!user) {
+			// Mesmo custo de bcrypt de uma senha errada: sem isso o tempo de resposta diz quais emails têm conta.
+			await bcrypt.compare(password, TIMING_EQUALIZER_HASH);
+			return null;
+		}
 		if (!user.password) throw new Error("no_password");
 		const isValid = await bcrypt.compare(password, user.password);
 		return isValid ? user : null;

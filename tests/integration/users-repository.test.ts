@@ -43,6 +43,18 @@ describe("users.repository (integration)", () => {
 		expect(invalid).toBeNull();
 	});
 
+	test("verifyCredentials takes as long for an unknown email as for a wrong password", async () => {
+		const time = async (email: string): Promise<number> => {
+			const start = performance.now();
+			await verifyCredentials(email, "wrong-password");
+			return performance.now() - start;
+		};
+		const known = await time(testEmail);
+		const unknown = await time(`nobody-${Date.now()}@example.com`);
+		// Sem o bcrypt de fachada o email inexistente responde em ~1ms contra centenas de ms: dá para listar contas.
+		expect(unknown).toBeGreaterThan(known * 0.5);
+	});
+
 	test("updateUserPassword changes the password used by verifyCredentials", async () => {
 		const user = await getUserByEmail(testEmail);
 		await updateUserPassword(user!.id, "new-password");

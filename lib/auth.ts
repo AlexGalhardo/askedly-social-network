@@ -14,7 +14,7 @@ import {
 } from "./repositories/users.repository";
 import { clientIp } from "./request-ip";
 import { stripPrivateFields } from "./services/profile.service";
-import { consumeRateLimit, RATE_LIMITS } from "./services/rate-limit.service";
+import { clearRateLimit, consumeRateLimit, isRateLimited, RATE_LIMITS } from "./services/rate-limit.service";
 import TelegramLog from "./telegram-logger";
 import { hideAnonymousAsker } from "./utils/question-privacy";
 import { isQuestionExpired } from "./utils/question-utils";
@@ -161,21 +161,29 @@ export const authOptions: NextAuthOptions = {
 			async authorize(credentials: Record<"email" | "password" | "captchaToken", string> | undefined, req) {
 				if (!credentials?.email || !credentials?.password) return null;
 
-				// Por IP (várias contas a partir de um lugar) e por email (uma conta a partir de vários lugares).
-				const email = credentials.email.trim().toLowerCase();
-				for (const key of [`login:ip:${clientIp(req?.headers ?? {})}`, `login:email:${email}`]) {
-					if (!(await consumeRateLimit(key, RATE_LIMITS.login)).allowed)
-						throw new Error(AUTH_ERROR.rateLimited);
+				// Por IP, toda tentativa conta: esgotar a própria cota só prejudica quem tenta.
+				if (!(await consumeRateLimit(`login:ip:${clientIp(req?.headers ?? {})}`, RATE_LIMITS.login)).allowed) {
+					throw new Error(AUTH_ERROR.rateLimited);
 				}
 
 				if (process.env.NODE_ENV === "production" && !(await isCaptchaValid(credentials.captchaToken))) {
 					return null;
 				}
 
+				// Por email, só falhas depois do captcha contam, e um login certo zera o contador. Se toda tentativa
+				// contasse, qualquer um travaria o login da vítima errando a senha dela de propósito.
+				const emailKey = `login:email:${credentials.email.trim().toLowerCase()}`;
+				if (await isRateLimited(emailKey, RATE_LIMITS.login)) throw new Error(AUTH_ERROR.rateLimited);
+
 				try {
 					const user = await verifyCredentials(credentials.email, credentials.password);
 
-					if (!user?.id) return null;
+					if (!user?.id) {
+						await consumeRateLimit(emailKey, RATE_LIMITS.login);
+						return null;
+					}
+
+					await clearRateLimit(emailKey);
 
 					await handleDeletedAccount(user);
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { ContactEmail } from "@/emails/contact-email";
 import { isCaptchaValid } from "@/lib/captcha";
+import { EMAIL_FROM } from "@/lib/email";
 import { clientIp } from "@/lib/request-ip";
 import { contactSchema } from "@/lib/schemas/contact";
 import { consumeRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/services/rate-limit.service";
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
 		const { name, email, subject, message } = validationResult.data;
 
 		const { data, error } = await resend.emails.send({
-			from: "onboarding@resend.dev",
+			from: EMAIL_FROM,
 			to: ["aleexgvieira@gmail.com"],
 			subject: `Respondeae.com.br - ${email} - ${subject}`,
 			react: ContactEmail({ name, email, subject, message }),

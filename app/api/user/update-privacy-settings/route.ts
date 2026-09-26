@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { publicErrorMessage } from "@/lib/errors";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -109,6 +110,6 @@ export async function POST(req: NextRequest) {
 		);
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file update-privacy-settings.ts: ${error?.message}`);
-		return NextResponse.json({ error: error?.message ?? "Erro interno do servidor" }, { status: 500 });
+		return NextResponse.json({ error: publicErrorMessage(error, "Erro interno do servidor") }, { status: 500 });
 	}
 }

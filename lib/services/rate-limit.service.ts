@@ -43,6 +43,18 @@ export async function consumeRateLimit(key: string, rule: RateLimitRule): Promis
 	};
 }
 
+/** Só consulta, sem gastar a cota: para limites que contam apenas falhas (ver login em lib/auth.ts). */
+export async function isRateLimited(key: string, rule: RateLimitRule): Promise<boolean> {
+	if (process.env.DATABASE_URL?.startsWith("file:")) return false;
+	const row = await prisma.rateLimit.findUnique({ where: { key } });
+	return !!row && row.reset_at > new Date() && row.count >= rule.limit;
+}
+
+export async function clearRateLimit(key: string): Promise<void> {
+	if (process.env.DATABASE_URL?.startsWith("file:")) return;
+	await prisma.rateLimit.deleteMany({ where: { key } });
+}
+
 export async function deleteExpiredRateLimits(): Promise<number> {
 	const { count } = await prisma.rateLimit.deleteMany({ where: { reset_at: { lt: new Date() } } });
 	return count;

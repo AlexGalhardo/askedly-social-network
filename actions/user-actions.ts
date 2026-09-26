@@ -4,6 +4,7 @@ import { revalidatePath, updateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
+import { publicErrorMessage } from "@/lib/errors";
 import { getUserByNickname } from "@/lib/repositories/users.repository";
 import { changePassword, PasswordChangeError } from "@/lib/services/password.service";
 import { toPublicProfile } from "@/lib/services/profile.service";
@@ -105,7 +106,7 @@ export async function updatePersonalInfo(data: FormData) {
 		};
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts update personal info: ${error?.message}`);
-		return { error: error.message || "Erro interno do servidor" };
+		return { error: publicErrorMessage(error, "Erro interno do servidor") };
 	}
 }
 
@@ -152,7 +153,7 @@ export async function updateSocialMedia(data: FormData) {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts update social media: ${error?.message}`);
-		return { error: error.message || "Erro interno do servidor" };
+		return { error: publicErrorMessage(error, "Erro interno do servidor") };
 	}
 }
 
@@ -182,7 +183,7 @@ export async function updatePixKey(data: FormData) {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts update pix key: ${error?.message}`);
-		return { error: error.message || "Erro interno do servidor" };
+		return { error: publicErrorMessage(error, "Erro interno do servidor") };
 	}
 }
 
@@ -210,7 +211,7 @@ export async function updatePassword(data: FormData) {
 	} catch (error: any) {
 		if (error instanceof PasswordChangeError) return { error: error.message };
 		await TelegramLog.error(`Catch Error file user-actions.ts update password: ${error?.message}`);
-		return { error: error.message || "Erro interno do servidor" };
+		return { error: publicErrorMessage(error, "Erro interno do servidor") };
 	}
 }
 
@@ -265,7 +266,7 @@ export async function updatePrivacySettings(data: FormData) {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts update privacy settings: ${error?.message}`);
-		return { error: error.message || "Erro interno do servidor" };
+		return { error: publicErrorMessage(error, "Erro interno do servidor") };
 	}
 }
 
@@ -312,7 +313,7 @@ export async function deleteAccount() {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts delete account: ${error?.message}`);
-		return { error: error.message || "Erro interno do servidor" };
+		return { error: publicErrorMessage(error, "Erro interno do servidor") };
 	}
 }
 
@@ -451,7 +452,7 @@ export const followUserAction = async (followingId: string, followerId: string) 
 		};
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts follow user: ${error?.message}`);
-		return { error: error.message || "Erro ao seguir usuário" };
+		return { error: publicErrorMessage(error, "Erro ao seguir usuário") };
 	}
 };
 
@@ -509,7 +510,7 @@ export const likeQuestionAction = async (questionId: string, nickname: string) =
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts like question: ${error?.message}`);
-		return { error: error.message || "Erro ao curtir pergunta" };
+		return { error: publicErrorMessage(error, "Erro ao curtir pergunta") };
 	}
 };
 
@@ -567,7 +568,7 @@ export const dislikeQuestionAction = async (questionId: string, nickname: string
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts dislike question: ${error?.message}`);
-		return { error: error.message || "Erro ao descurtir pergunta" };
+		return { error: publicErrorMessage(error, "Erro ao descurtir pergunta") };
 	}
 };
 
@@ -611,7 +612,7 @@ export const blockUserAction = async (blockedUserId: string) => {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts block user: ${error?.message}`);
-		return { error: error.message || "Erro ao bloquear usuário" };
+		return { error: publicErrorMessage(error, "Erro ao bloquear usuário") };
 	}
 };
 
@@ -635,6 +636,6 @@ export const unblockUserAction = async (blockedUserId: string) => {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts unblock user: ${error?.message}`);
-		return { error: error.message || "Erro ao desbloquear usuário" };
+		return { error: publicErrorMessage(error, "Erro ao desbloquear usuário") };
 	}
 };
