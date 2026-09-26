@@ -37,6 +37,7 @@ Infra (Docker/docker-compose) fica em `infra/`.
 - [`docs/telegram-bot.md`](docs/telegram-bot.md) — logger/bot Telegram
 - [`docs/testing.md`](docs/testing.md) — como rodar cada tipo de teste
 - [`docs/deployment.md`](docs/deployment.md) — CI/CD e deploy
+- [`docs/security.md`](docs/security.md) — auditoria OWASP Top 10:2025, riscos aceitos
 
 ## Skills (uso obrigatório)
 
@@ -47,6 +48,7 @@ Skills de terceiros vendorizadas em `.claude/skills/` (origem/commit em `.claude
 - Revisão: `code-review-and-quality`, `ponytail-review`/`ponytail-audit`, `security-and-hardening` (OWASP), `performance-optimization`
 - UI: `impeccable`, `frontend-design`, `frontend-ui-engineering`, `ui-ux-pro-max`, `web-design-guidelines`, `vercel-react-best-practices`
 - Processo: `git-workflow-and-versioning`, `ci-cd-and-automation`, `documentation-and-adrs`, `planning-and-task-breakdown`
+- Do projeto: `respondeae-secure-endpoint` (toda action/rota/dado que vai ao browser) e `respondeae-local-verification` (validar como o CI antes de dar como pronto)
 
 ## Convenções
 

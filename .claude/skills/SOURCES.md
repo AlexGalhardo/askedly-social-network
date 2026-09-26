@@ -14,3 +14,8 @@ Skills copiadas (vendored) dos repositórios upstream. Para atualizar, clone o r
 
 - **graphify** precisa do CLI Python `graphifyy` (versão pinada `0.9.68`): `pip install --user graphifyy==0.9.68` (ou `uv tool install graphifyy==0.9.68`). Saída em `graphify-out/` (ignorada no git).
 - **impeccable** traz scripts próprios em `impeccable/scripts/`. Os hooks de `settings.json` do repositório upstream **não** foram instalados (rodariam em todo Edit/Write) — ative só se quiser o detector automático.
+
+## Skills do próprio projeto
+
+`respondeae-secure-endpoint` e `respondeae-local-verification` foram escritas neste repositório (Fase 13 do `PLAN.md`), a partir dos achados da auditoria (`docs/security.md`) e das armadilhas de validação encontradas.
+

@@ -153,36 +153,44 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 
 ## Fase 12 — README.md final
 
-- [ ] Nome do app centralizado
-- [ ] Badges/status (build, licença, versão)
-- [ ] Introdução em português
-- [ ] Tech stack
-- [ ] Links para `setups/*`
-- [ ] Links para `docs/*`
-- [ ] Créditos + licença MIT
-- [ ] Commit (`docs: rewrite README following open source standard`)
+- [x] Nome do app centralizado
+- [x] Badges/status (build, licença, versão)
+- [x] Introdução em português
+- [x] Tech stack
+- [x] Links para `setups/*`
+- [x] Links para `docs/*`
+- [x] Créditos + licença MIT (arquivo `LICENSE` criado; só o `package.json` dizia MIT)
+- [x] Commit (`docs: rewrite README following open source standard`)
 
 ## Fase 13 — Skills novas (.claude/skills/)
 
-- [ ] Avaliar necessidade de skills específicas do projeto (ex: "como rodar migrations", "como adicionar novo endpoint de pagamento") conforme forem surgindo durante as fases acima
+- [x] Avaliar necessidade de skills específicas do projeto: criadas `respondeae-secure-endpoint` (checklist a partir dos achados reais da auditoria) e `respondeae-local-verification` (validar como o CI: banco descartável, Node, chaves de teste do Turnstile, armadilhas do Prisma 7). Migrations ficaram cobertas pela segunda
 
 ## Fase 14 — [FINAL] Auditoria de segurança OWASP Top Ten (aplicação inteira)
 
 > Última fase, depois de todas as outras. Diferente da Fase 11 (que revisa lógica pontualmente), aqui é uma passada completa e sistemática na aplicação como um todo.
 
-- [ ] Ler a versão vigente em <https://owasp.org/projects/top-ten> (não confiar em lista memorizada — categorias mudam entre edições) e montar checklist por categoria
-- [ ] Rodar `graphify` no repo para mapear superfícies de ataque: API routes (`app/api/*`), Server Actions (`actions/`), webhook PIX, auth (NextAuth), uploads (UploadThing), cron (`/api/cronjob`), variáveis `NEXT_PUBLIC_*`
-- [ ] Verificar cada categoria contra cada superfície usando as skills `security-and-hardening` (+ `.claude/references/security-checklist.md`) e o agente `.claude/agents/security-auditor.md`
-- [ ] Registrar achados em `docs/security.md` (categoria OWASP, arquivo, severidade, correção) e linkar em `AGENTS.md`/`CLAUDE.md`
-- [ ] Corrigir achados críticos/altos (1 commit por correção, com teste que prova a correção); médios/baixos viram itens no plano
-- [ ] `bun audit` sem vulnerabilidades altas/críticas; CI `security-audit` bloqueante
+- [x] Ler a versão vigente em <https://owasp.org/projects/top-ten> (não confiar em lista memorizada — categorias mudam entre edições) e montar checklist por categoria: **OWASP Top 10:2025**
+- [x] Rodar `graphify` no repo para mapear superfícies de ataque: API routes (`app/api/*`), Server Actions (`actions/`), webhook PIX, auth (NextAuth), uploads (UploadThing), cron (`/api/cronjob`), variáveis `NEXT_PUBLIC_*`
+- [x] Verificar cada categoria contra cada superfície usando as skills `security-and-hardening` (+ `.claude/references/security-checklist.md`) e o agente `.claude/agents/security-auditor.md`
+- [x] Registrar achados em `docs/security.md` (categoria OWASP, arquivo, severidade, correção) e linkar em `AGENTS.md`/`CLAUDE.md`
+- [x] Corrigir achados críticos/altos (1 commit por correção, com teste que prova a correção); médios/baixos viram itens no plano (ver "Riscos aceitos" em `docs/security.md`)
+- [x] `bun audit` sem vulnerabilidades altas/críticas; CI `security-audit` bloqueante
 
 ### Achados antecipados (encontrados antes da auditoria formal)
 
 - [x] **Crítico:** repositórios com `"use server"` (endpoints públicos: dump de usuários, troca de senha de qualquer conta, webhook forjado). Corrigido + teste de guarda
 - [x] **Crítico:** linhas inteiras de `User` serializadas para o browser (feed, top curtidas, perfil, sessão) e autor de pergunta anônima revelado. Corrigido
 - [x] **Crítico:** chave da Resend hardcoded em `app/api/send-contact-email/route.ts` (bloqueava o push pelo Push Protection do GitHub). Removida do código e do histórico local; chave antiga revogada na Resend pelo usuário
-- [ ] **Alto:** `getUserByNicknameAction` (perfil) e `/top-curtidas` ainda devolvem as respostas de perfil privado, respostas privadas e perguntas pendentes para o client filtrar. Filtrar no servidor, como o feed já faz (`lib/services/feed.service.ts`)
+- [x] **Alto:** `getUserByNicknameAction` (perfil) e `/top-curtidas` ainda devolvem as respostas de perfil privado, respostas privadas e perguntas pendentes para o client filtrar: filtrado no servidor (`toPublicProfile`, `publicRankingOwner`)
 - [x] **Médio:** cadastro sem captcha no servidor: mitigado pelo rate limit por IP (5 cadastros/hora). Captcha no servidor exigiria um segundo token para o `signIn` logo depois (o token é de uso único); fica como melhoria opcional
-- [ ] **Médio:** as consultas públicas de perguntas ainda devolvem campos internos da pergunta (`webhook_id`, `payment_withdraw_id`, motivo de report). Trocar `include` por `select` explícito
-- [ ] Commit (`docs: add OWASP Top Ten security audit report`)
+- [x] **Médio:** as consultas públicas de perguntas ainda devolvem campos internos da pergunta: removidos por `toPublicQuestion`, que também esconde o valor pago quando o dono não o tornou público
+- [x] Commit (`docs: add OWASP Top Ten security audit report`)
+
+### Melhorias futuras (não bloqueiam; detalhes em `docs/security.md`)
+
+- Revogar sessões JWT depois de troca/reset de senha (versão de sessão no banco)
+- CSP completo com `script-src` e nonce
+- Captcha verificado no servidor também no cadastro
+- Tirar as relações (perguntas, seguidores) da sessão do NextAuth e buscá-las por action nas ~10 telas que as usam
+- **Decisão de produto:** a tela de perfil só mostra respostas para o dono e seguidores, então a flag `privacy_show_questions_answered_only_to_followers` não muda nada ali. Confirmar se perfis públicos deveriam mostrar respostas a qualquer visitante
