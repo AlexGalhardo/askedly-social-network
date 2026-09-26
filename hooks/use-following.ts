@@ -1,28 +1,17 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { unfollowUser } from "@/actions/follow-actions";
+import { getMyFollowing } from "@/actions/my-account-actions";
+import { useSessionBoundList } from "@/hooks/use-session-bound-list";
 import { FollowingUserInterface } from "@/types/FollowingUserInterface";
 
+const loadFollowing = async (): Promise<FollowingUserInterface[]> =>
+	(await getMyFollowing()) as unknown as FollowingUserInterface[];
+
 export function useFollowing() {
-	const { data: session } = useSession();
-	const [following, setFollowing] = useState<FollowingUserInterface[]>([]);
-
-	useEffect(() => {
-		if (session?.user?.following) {
-			setFollowing(session.user.following);
-		}
-	}, [session?.user?.following]);
-
-	return {
-		data: following,
-		setData: setFollowing,
-		isLoading: false,
-		error: null,
-	};
+	return useSessionBoundList(loadFollowing);
 }
 
 export function useUnfollowUser() {

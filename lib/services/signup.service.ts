@@ -6,7 +6,18 @@ export type SignupResult =
 	| { ok: false; fieldErrors: Partial<Record<SignupField, string>>; error?: string };
 
 /** Cadastro com senha. `input` vem do browser: a validação do client é só conveniência, a que vale é esta. */
-export async function signUp(input: unknown): Promise<SignupResult> {
+export interface SignupCaptcha {
+	captchaToken: string | undefined;
+	/** Em produção, `isCaptchaValid` (lib/captcha.ts). Injetável para testar sem rede. */
+	verifyCaptcha: (token: string | undefined) => Promise<boolean>;
+}
+
+export async function signUp(input: unknown, captcha?: SignupCaptcha): Promise<SignupResult> {
+	// Captcha antes de qualquer consulta: robô nem chega a testar quais nicknames/emails existem.
+	if (captcha && !(await captcha.verifyCaptcha(captcha.captchaToken))) {
+		return { ok: false, fieldErrors: {}, error: "Por favor, verifique o CAPTCHA." };
+	}
+
 	const parsed = signupSchema.safeParse(input);
 	if (!parsed.success) {
 		const fieldErrors: Partial<Record<SignupField, string>> = {};

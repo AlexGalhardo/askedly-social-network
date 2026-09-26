@@ -1,36 +1,23 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { getMySentQuestions } from "@/actions/my-account-actions";
 import { reportAnswer } from "@/actions/sent-question-actions";
+import { useSessionBoundList } from "@/hooks/use-session-bound-list";
 import { SentQuestionInterface } from "@/types/SentQuestion";
 
+const loadSentQuestions = async (): Promise<SentQuestionInterface[]> =>
+	(await getMySentQuestions()).map((q) => ({
+		...q,
+		owner: q.owner ?? null,
+		asked_by: q.asked_by ?? null,
+		total_likes: q.liked_by_users?.length || 0,
+		total_dislikes: q.desliked_by_users?.length || 0,
+	})) as unknown as SentQuestionInterface[];
+
 export function useSentQuestions() {
-	const { data: session } = useSession();
-	const [questions, setQuestions] = useState<SentQuestionInterface[]>([]);
-
-	useEffect(() => {
-		if (session?.user?.questions_sent) {
-			setQuestions(
-				session.user.questions_sent.map((q: any) => ({
-					...q,
-					owner: q.owner ?? null,
-					asked_by: q.asked_by ?? null,
-					total_likes: q.liked_by_users?.length || 0,
-					total_dislikes: q.desliked_by_users?.length || 0,
-				})),
-			);
-		}
-	}, [session?.user?.questions_sent]);
-
-	return {
-		data: questions,
-		setData: setQuestions,
-		isLoading: false,
-		error: null,
-	};
+	return useSessionBoundList(loadSentQuestions);
 }
 
 export function useReportAnswer() {

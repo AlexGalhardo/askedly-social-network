@@ -1,29 +1,18 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { acceptFollowRequest, rejectFollowRequest, removeFollower } from "@/actions/follower-actions";
+import { getMyFollowers } from "@/actions/my-account-actions";
+import { useSessionBoundList } from "@/hooks/use-session-bound-list";
 import { followerService } from "@/lib/services/follower-service";
 import { FollowerUserInterface, FollowRequestInterface } from "@/types/FollowerUserInterface";
 
+const loadFollowers = async (): Promise<FollowerUserInterface[]> =>
+	(await getMyFollowers()) as unknown as FollowerUserInterface[];
+
 export function useFollowers() {
-	const { data: session } = useSession();
-	const [followers, setFollowers] = useState<FollowerUserInterface[]>([]);
-
-	useEffect(() => {
-		if (session?.user?.followers) {
-			setFollowers(session.user.followers);
-		}
-	}, [session?.user?.followers]);
-
-	return {
-		data: followers,
-		setData: setFollowers,
-		isLoading: false,
-		error: null,
-	};
+	return useSessionBoundList(loadFollowers);
 }
 
 export function useFollowRequests() {

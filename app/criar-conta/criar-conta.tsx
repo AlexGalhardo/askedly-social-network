@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { signupSchema } from "@/lib/schemas/signup";
 import TelegramLog from "@/lib/telegram-logger";
-import { getTurnstile } from "@/lib/turnstile";
+import { getTurnstile, waitForFreshTurnstileToken } from "@/lib/turnstile";
 
 export default function CriarContaClient() {
 	const { data: session } = useSession();
@@ -103,13 +103,16 @@ export default function CriarContaClient() {
 		}
 
 		try {
-			const signup = await signUp({
-				name: name.trim(),
-				nickname: nickname.trim(),
-				email: email.trim(),
-				password,
-				acceptTerms,
-			});
+			const signup = await signUp(
+				{
+					name: name.trim(),
+					nickname: nickname.trim(),
+					email: email.trim(),
+					password,
+					acceptTerms,
+				},
+				token ?? undefined,
+			);
 
 			if (!signup.ok) {
 				setError(signup.error ?? "");
@@ -122,11 +125,21 @@ export default function CriarContaClient() {
 				return;
 			}
 
+			// O cadastro gastou o token do captcha; o login precisa de outro.
+			let loginToken: string | null = null;
+			if (process.env.NODE_ENV === "production") {
+				loginToken = await waitForFreshTurnstileToken();
+				if (!loginToken) {
+					router.push("/entrar?conta-criada=1");
+					return;
+				}
+			}
+
 			const result = await signIn("credentials", {
 				redirect: false,
 				email,
 				password,
-				captchaToken: token,
+				captchaToken: loginToken,
 			});
 
 			if (result?.error) {

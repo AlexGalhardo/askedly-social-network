@@ -82,6 +82,10 @@ class UsersRepository {
 		});
 	}
 
+	async getUserForSession(email: string) {
+		return prisma.user.findUnique({ where: { email } });
+	}
+
 	async getUserByApiKey(apiKey: string) {
 		return prisma.user.findUnique({ where: { api_key: apiKey } });
 	}
@@ -195,6 +199,10 @@ export async function getUserByNickname(nickname: string) {
 
 export async function getUserByEmail(email: string) {
 	return repo.getUserByEmail(email);
+}
+
+export async function getUserForSession(email: string) {
+	return repo.getUserForSession(email);
 }
 
 export async function getUserByApiKey(apiKey: string) {

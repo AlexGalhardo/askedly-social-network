@@ -197,8 +197,8 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 
 ### Melhorias futuras (não bloqueiam; detalhes em `docs/security.md`)
 
-- Revogar sessões JWT depois de troca/reset de senha (versão de sessão no banco)
-- CSP completo com `script-src` e nonce
-- Captcha verificado no servidor também no cadastro
-- Tirar as relações (perguntas, seguidores) da sessão do NextAuth e buscá-las por action nas ~10 telas que as usam
+- [x] Revogar sessões JWT depois de troca/reset de senha (`session_version`; e2e com dois navegadores)
+- [x] CSP completo com `script-src` e nonce (`proxy.ts` + `lib/csp.ts`; e2e em modo produção sem nenhuma violação)
+- [x] Captcha verificado no servidor também no cadastro (segundo token para o login; recusa provada com a chave de teste que sempre falha)
+- [x] Tirar as relações da sessão do NextAuth: cada tela busca por action (`actions/my-account-actions.ts`); de quebra, o feed escondia as próprias respostas do usuário ("bloqueado por" apontava para ele mesmo)
 - **Decisão de produto:** a tela de perfil só mostra respostas para o dono e seguidores, então a flag `privacy_show_questions_answered_only_to_followers` não muda nada ali. Confirmar se perfis públicos deveriam mostrar respostas a qualquer visitante

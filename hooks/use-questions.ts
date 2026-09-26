@@ -1,10 +1,10 @@
 "use client";
 
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getFeedQuestions } from "@/actions/feed-actions";
+import { getMyReceivedQuestions } from "@/actions/my-account-actions";
+import { useSessionBoundList } from "@/hooks/use-session-bound-list";
 import { useToast } from "@/hooks/use-toast";
 import type { PublicQuestion } from "@/lib/repositories/questions.repository";
 import { QuestionInterface } from "@/types/QuestionInterface";
@@ -76,102 +76,86 @@ export const useQuestions = (feedType: FeedType = "community", userNickname?: st
 	return queryResult;
 };
 
+const toReceivedQuestion = (q: any) => ({
+	id: q.id,
+	is_seed: q.is_seed || false,
+	question_text: q.question_text,
+	answer_text: q.answer_text || null,
+	answered_at: q.answered_at || null,
+	amount_paid: q.amount_paid || 0,
+	amount_already_withdraw: q.amount_already_withdraw || false,
+	asker_want_answer_to_be_private: q.asker_want_answer_to_be_private || false,
+	asker_sent_anonymous_question: q.asker_sent_anonymous_question || false,
+	amount_paid_is_private: q.amount_paid_is_private || false,
+	onwer_wants_amount_paid_not_show_public: q.onwer_wants_amount_paid_not_show_public || false,
+	owner_user_nickname: q.owner_user_nickname,
+	asked_by_user_nickname: q.asked_by_user_nickname,
+	question_is_awaiting_answer: q.question_is_awaiting_answer || false,
+	question_answered: q.question_answered || false,
+	question_answer_was_recused: q.question_answer_was_recused || false,
+	question_answer_was_expired: q.question_answer_was_expired || false,
+	question_answer_recused_at: q.question_answer_recused_at || null,
+	question_answer_expired_at: q.question_answer_expired_at || null,
+	liked_by_users: q.liked_by_users || null,
+	desliked_by_users: q.desliked_by_users || null,
+	owner_reported_offensive_question: q.owner_reported_offensive_question || false,
+	onwer_reported_inadequate_question: q.onwer_reported_inadequate_question || false,
+	onwer_reported_question_at: q.onwer_reported_question_at || null,
+	asker_reported_answer: q.asker_reported_answer || false,
+	asker_reported_answer_reason: q.asker_reported_answer_reason || null,
+	asker_reported_answer_at: q.asker_reported_answer_at || null,
+	payment_withdraw_id: q.payment_withdraw_id || null,
+	created_at: q.created_at,
+	updated_at: q.updated_at || null,
+	deleted_at: q.deleted_at || null,
+	webhook_id: q.webhook_id,
+	owner: q.owner
+		? {
+				id: q.owner.id,
+				name: q.owner.name,
+				nickname: q.owner.nickname,
+				email: q.owner.email,
+				avatar_url: q.owner.avatar_url || null,
+				description: q.owner.description || null,
+				website: q.owner.website || null,
+				twitter: q.owner.twitter || null,
+				instagram: q.owner.instagram || null,
+				youtube: q.owner.youtube || null,
+				tiktok: q.owner.tiktok || null,
+				linkedin: q.owner.linkedin || null,
+				twitch: q.owner.twitch || null,
+				facebook: q.owner.facebook || null,
+				github: q.owner.github || null,
+				created_at: q.owner.created_at,
+			}
+		: null,
+	asked_by: q.asked_by
+		? {
+				id: q.asked_by.id,
+				name: q.asked_by.name,
+				nickname: q.asked_by.nickname,
+				email: q.asked_by.email,
+				avatar_url: q.asked_by.avatar_url || null,
+				description: q.asked_by.description || null,
+				website: q.asked_by.website || null,
+				twitter: q.asked_by.twitter || null,
+				instagram: q.asked_by.instagram || null,
+				youtube: q.asked_by.youtube || null,
+				tiktok: q.asked_by.tiktok || null,
+				linkedin: q.asked_by.linkedin || null,
+				twitch: q.asked_by.twitch || null,
+				facebook: q.asked_by.facebook || null,
+				github: q.asked_by.github || null,
+				created_at: q.asked_by.created_at,
+			}
+		: null,
+});
+
+const loadReceivedQuestions = async (): Promise<QuestionInterface[]> =>
+	(await getMyReceivedQuestions()).map(toReceivedQuestion);
+
 export function useReceivedQuestions() {
-	const { data: session } = useSession();
-	const [questions, setQuestions] = useState<QuestionInterface[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-
-	useEffect(() => {
-		if (session?.user?.questions_received) {
-			const formattedQuestions: QuestionInterface[] = session.user.questions_received.map((q: any) => ({
-				id: q.id,
-				is_seed: q.is_seed || false,
-				question_text: q.question_text,
-				answer_text: q.answer_text || null,
-				answered_at: q.answered_at || null,
-				amount_paid: q.amount_paid || 0,
-				amount_already_withdraw: q.amount_already_withdraw || false,
-				asker_want_answer_to_be_private: q.asker_want_answer_to_be_private || false,
-				asker_sent_anonymous_question: q.asker_sent_anonymous_question || false,
-				amount_paid_is_private: q.amount_paid_is_private || false,
-				onwer_wants_amount_paid_not_show_public: q.onwer_wants_amount_paid_not_show_public || false,
-				owner_user_nickname: q.owner_user_nickname,
-				asked_by_user_nickname: q.asked_by_user_nickname,
-				question_is_awaiting_answer: q.question_is_awaiting_answer || false,
-				question_answered: q.question_answered || false,
-				question_answer_was_recused: q.question_answer_was_recused || false,
-				question_answer_was_expired: q.question_answer_was_expired || false,
-				question_answer_recused_at: q.question_answer_recused_at || null,
-				question_answer_expired_at: q.question_answer_expired_at || null,
-				liked_by_users: q.liked_by_users || null,
-				desliked_by_users: q.desliked_by_users || null,
-				owner_reported_offensive_question: q.owner_reported_offensive_question || false,
-				onwer_reported_inadequate_question: q.onwer_reported_inadequate_question || false,
-				onwer_reported_question_at: q.onwer_reported_question_at || null,
-				asker_reported_answer: q.asker_reported_answer || false,
-				asker_reported_answer_reason: q.asker_reported_answer_reason || null,
-				asker_reported_answer_at: q.asker_reported_answer_at || null,
-				payment_withdraw_id: q.payment_withdraw_id || null,
-				created_at: q.created_at,
-				updated_at: q.updated_at || null,
-				deleted_at: q.deleted_at || null,
-				webhook_id: q.webhook_id,
-				owner: q.owner
-					? {
-							id: q.owner.id,
-							name: q.owner.name,
-							nickname: q.owner.nickname,
-							email: q.owner.email,
-							avatar_url: q.owner.avatar_url || null,
-							description: q.owner.description || null,
-							website: q.owner.website || null,
-							twitter: q.owner.twitter || null,
-							instagram: q.owner.instagram || null,
-							youtube: q.owner.youtube || null,
-							tiktok: q.owner.tiktok || null,
-							linkedin: q.owner.linkedin || null,
-							twitch: q.owner.twitch || null,
-							facebook: q.owner.facebook || null,
-							github: q.owner.github || null,
-							created_at: q.owner.created_at,
-						}
-					: null,
-				asked_by: q.asked_by
-					? {
-							id: q.asked_by.id,
-							name: q.asked_by.name,
-							nickname: q.asked_by.nickname,
-							email: q.asked_by.email,
-							avatar_url: q.asked_by.avatar_url || null,
-							description: q.asked_by.description || null,
-							website: q.asked_by.website || null,
-							twitter: q.asked_by.twitter || null,
-							instagram: q.asked_by.instagram || null,
-							youtube: q.asked_by.youtube || null,
-							tiktok: q.asked_by.tiktok || null,
-							linkedin: q.asked_by.linkedin || null,
-							twitch: q.asked_by.twitch || null,
-							facebook: q.asked_by.facebook || null,
-							github: q.asked_by.github || null,
-							created_at: q.asked_by.created_at,
-						}
-					: null,
-			}));
-
-			setQuestions(formattedQuestions);
-			setIsLoading(false);
-		} else if (session && !session.user?.questions_received) {
-			setQuestions([]);
-			setIsLoading(false);
-		}
-	}, [session]);
-
-	return {
-		data: questions,
-		setData: setQuestions,
-		isLoading,
-		error: null,
-	};
+	return useSessionBoundList(loadReceivedQuestions);
 }
 
 export const useLikeQuestion = () => {

@@ -10,7 +10,9 @@ const valid = { name: "Signup Test", nickname, email, password: "Sup3r!Secret", 
 
 describe("signUp (integration)", () => {
 	afterAll(async () => {
-		await prisma.user.deleteMany({ where: { email: { in: [email, `other-${email}`] } } });
+		await prisma.user.deleteMany({
+			where: { email: { in: [email, `other-${email}`, `captcha-${email}`, `captcha-ok-${email}`] } },
+		});
 	});
 
 	test("validates on the server, whatever the browser sent", async () => {
@@ -35,5 +37,24 @@ describe("signUp (integration)", () => {
 			ok: false,
 			fieldErrors: { email: "Esse Email está indisponível" },
 		});
+	});
+
+	test("refuses to create the account when the captcha check fails", async () => {
+		const other = { ...valid, nickname: `cap${run}`.slice(0, 16), email: `captcha-${email}` };
+		const result = await signUp(other, { captchaToken: "bad", verifyCaptcha: async () => false });
+		expect(result).toEqual({ ok: false, fieldErrors: {}, error: expect.any(String) });
+		expect(await prisma.user.findUnique({ where: { email: other.email } })).toBeNull();
+	});
+
+	test("creates the account when the captcha check passes", async () => {
+		const other = { ...valid, nickname: `capok${run}`.slice(0, 16), email: `captcha-ok-${email}` };
+		const seen: (string | undefined)[] = [];
+		const verifyCaptcha = async (token: string | undefined) => {
+			seen.push(token);
+			return true;
+		};
+		expect(await signUp(other, { captchaToken: "good", verifyCaptcha })).toEqual({ ok: true });
+		expect(seen).toEqual(["good"]);
+		await prisma.user.deleteMany({ where: { email: other.email } });
 	});
 });

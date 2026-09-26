@@ -2,13 +2,15 @@
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { getMyBlockedUsers } from "@/actions/my-account-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSessionBoundList } from "@/hooks/use-session-bound-list";
 import { toast } from "@/hooks/use-toast";
 import TelegramLog from "@/lib/telegram-logger";
 
 export default function BlockedUsersCard() {
-	const { data: session, update } = useSession();
-	const [blockedUsers, setBlockedUsers] = useState<any[]>(session?.user?.blocked_users || []);
+	const { update } = useSession();
+	const { data: blockedUsers, setData: setBlockedUsers } = useSessionBoundList(getMyBlockedUsers);
 	const [unblockingUsers, setUnblockingUsers] = useState<Set<string>>(new Set());
 	const [isOpen, setIsOpen] = useState(false);
 

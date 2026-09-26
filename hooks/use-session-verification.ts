@@ -7,9 +7,6 @@ import { toast } from "./use-toast";
 interface SessionUserInterface {
 	id: string;
 	nickname: string;
-	questions_received?: Array<{
-		question_is_awaiting_answer: boolean;
-	}>;
 	pix_key?: string;
 }
 

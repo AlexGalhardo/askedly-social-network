@@ -2,6 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMySocialGraph } from "@/hooks/use-my-social-graph";
 import { type FeedType, useDislikeQuestion, useLikeQuestion, useQuestions } from "@/hooks/use-questions";
 import type { PublicQuestion } from "@/lib/repositories/questions.repository";
 import { FeedQuestionCard } from "./feed-question-card";
@@ -10,7 +11,6 @@ import { FeedTabs } from "./feed-tabs";
 interface FeedQuestionsFeedProps {
 	userNickname?: string;
 	userId?: string;
-	session?: any;
 }
 
 interface FeedOptimisticState {
@@ -23,7 +23,7 @@ interface FeedOptimisticState {
 	};
 }
 
-export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestionsFeedProps) => {
+export const FeedQuestionsFeed = ({ userNickname, userId }: FeedQuestionsFeedProps) => {
 	const [activeTab, setActiveTab] = useState<FeedType>("community");
 	const [optimisticStates, setOptimisticStates] = useState<FeedOptimisticState>({});
 
@@ -35,13 +35,11 @@ export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestio
 	const likeQuestionMutation = useLikeQuestion();
 	const dislikeQuestionMutation = useDislikeQuestion();
 
-	const blockedNicknames = useMemo(() => {
-		const blockedByUser = session?.user?.blocked_users?.map((block: any) => block.blocked.nickname) || [];
-		const blockedByOthers = session?.user?.blocked_by_users?.map((block: any) => block.blocked.nickname) || [];
-		const allBlocked = [...blockedByUser, ...blockedByOthers];
-
-		return allBlocked;
-	}, [session?.user?.blocked_users, session?.user?.blocked_by_users]);
+	const socialGraph = useMySocialGraph();
+	const blockedNicknames = useMemo(
+		() => [...socialGraph.blockedNicknames, ...socialGraph.blockedByNicknames],
+		[socialGraph],
+	);
 
 	const questions = useMemo(() => {
 		const allQuestions =
@@ -52,9 +50,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestio
 		filteredQuestions = filteredQuestions.filter((question) => {
 			if (question.owner.privacy_is_private_profile === true) {
 				const isOwner = userNickname === question.owner.nickname;
-				const isFollowing = session?.user?.following?.some(
-					(follow: any) => follow.following.nickname === question.owner.nickname,
-				);
+				const isFollowing = socialGraph.followingNicknames.includes(question.owner.nickname);
 
 				return isOwner || isFollowing;
 			}
@@ -71,7 +67,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId, session }: FeedQuestio
 		}
 
 		return filteredQuestions;
-	}, [data, userNickname, blockedNicknames, session?.user?.following]);
+	}, [data, userNickname, blockedNicknames, socialGraph.followingNicknames]);
 
 	const hasUserLiked = useCallback(
 		(question: PublicQuestion) => {

@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMySocialGraph } from "@/hooks/use-my-social-graph";
 import { useProfile } from "@/hooks/use-profile-queries";
 import { QuestionInterface } from "@/lib/interfaces";
 import { ProfileHeader } from "./profile-header";
@@ -28,16 +29,11 @@ export default function ProfileClient() {
 
 	const { data: profileFound, isLoading, error } = useProfile(slug);
 
+	const socialGraph = useMySocialGraph();
+
 	useEffect(() => {
-		if (session?.user?.blocked_users && profileFound) {
-			const blocked = session.user.blocked_users.some(
-				(block) => block.blocked.nickname === profileFound.nickname,
-			);
-			setIsBlocked(blocked);
-		} else {
-			setIsBlocked(false);
-		}
-	}, [session?.user?.blocked_users, profileFound]);
+		setIsBlocked(!!profileFound && socialGraph.blockedNicknames.includes(profileFound.nickname));
+	}, [socialGraph.blockedNicknames, profileFound]);
 
 	const questionsData = useMemo(() => {
 		if (!profileFound?.questions_received) return [];
@@ -127,9 +123,7 @@ export default function ProfileClient() {
 		return null;
 	}
 
-	const wasBlockedByProfile = session?.user?.blocked_by_users?.some((block) => {
-		return block.blocker_id === profileFound?.id && block.blocked_id === session?.user?.id;
-	});
+	const wasBlockedByProfile = !!profileFound && socialGraph.blockedByUserIds.includes(profileFound.id);
 
 	if (wasBlockedByProfile) {
 		router.push("/");

@@ -12,3 +12,20 @@ interface TurnstileApi {
 export function getTurnstile(): TurnstileApi | undefined {
 	return (window as Window & { turnstile?: TurnstileApi }).turnstile;
 }
+
+/**
+ * O token do Turnstile é de uso único. Quando um fluxo precisa de dois (cadastro, depois login), reseta o widget e
+ * espera o novo. Null se não chegar a tempo (ex.: a Cloudflare pediu interação).
+ */
+export async function waitForFreshTurnstileToken(timeoutMs = 15_000): Promise<string | null> {
+	const turnstile = getTurnstile();
+	if (!turnstile) return null;
+	turnstile.reset();
+	const deadline = Date.now() + timeoutMs;
+	while (Date.now() < deadline) {
+		const token = turnstile.getResponse();
+		if (token) return token;
+		await new Promise((resolve) => setTimeout(resolve, 200));
+	}
+	return null;
+}

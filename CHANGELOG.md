@@ -5,6 +5,17 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.10.0] - 2026-09-25
+
+### Changed
+
+- Load account lists per screen instead of inside the session
+
+### Security
+
+- Verify the captcha on the server at signup
+- Enforce a nonce-based Content Security Policy
+
 ## [0.9.0] - 2026-09-25
 
 ### Security

@@ -24,8 +24,11 @@ export default function EntrarClient() {
 
 	// Lido do window (e não useSearchParams) para a página continuar estática, sem Suspense.
 	useEffect(() => {
-		if (new URLSearchParams(window.location.search).has("senha-alterada")) {
+		const params = new URLSearchParams(window.location.search);
+		if (params.has("senha-alterada")) {
 			setNotice("Senha alterada. Por segurança, todas as sessões foram encerradas: entre com a nova senha.");
+		} else if (params.has("conta-criada")) {
+			setNotice("Conta criada! Entre com seu email e senha.");
 		}
 	}, []);
 	const [loading, setLoading] = useState(false);

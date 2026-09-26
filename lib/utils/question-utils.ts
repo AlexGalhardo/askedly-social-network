@@ -236,3 +236,28 @@ export function filterQuestionsByStatus(questions: QuestionInterface[], status: 
 
 	return sortQuestionsByDate(filteredQuestions);
 }
+
+interface ExpirableQuestion {
+	created_at: string | Date;
+	question_is_awaiting_answer: boolean;
+	question_answered: boolean;
+	question_answer_was_expired: boolean;
+	question_answer_expired_at: Date | string | null;
+}
+
+/** Marca como expirada (só na resposta, sem gravar) a pergunta que passou do prazo; o cron/rota grava de fato. */
+export function markExpiredQuestions<T extends ExpirableQuestion>(questions: T[]): T[] {
+	return questions.map((question) =>
+		question.question_is_awaiting_answer &&
+		!question.question_answered &&
+		!question.question_answer_was_expired &&
+		isQuestionExpired(question.created_at)
+			? {
+					...question,
+					question_answer_was_expired: true,
+					question_is_awaiting_answer: false,
+					question_answer_expired_at: new Date(),
+				}
+			: question,
+	);
+}

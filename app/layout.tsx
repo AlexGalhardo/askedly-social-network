@@ -3,6 +3,7 @@ import type React from "react";
 import "@/app/globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter } from "next/font/google";
+import { headers } from "next/headers";
 import Script from "next/script";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { MySidebar } from "@/components/my-sidebar";
@@ -48,15 +49,19 @@ export const metadata: Metadata = {
 	metadataBase: new URL("https://respondeae.com.br"),
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	// Gerado a cada requisição em proxy.ts. Ler o header torna todas as páginas dinâmicas, o que o CSP por nonce exige:
+	// página estática é gerada no build, sem requisição, e seus scripts seriam bloqueados.
+	const nonce = (await headers()).get("x-nonce") ?? undefined;
+
 	return (
 		<html lang="pt-BR" suppressHydrationWarning>
 			<body className={inter.className}>
-				<GoogleAnalytics GA_MEASUREMENT_ID="G-3QEQRYL4P9" />
+				<GoogleAnalytics GA_MEASUREMENT_ID="G-3QEQRYL4P9" nonce={nonce} />
 
 				<Providers>
 					<ThemeProvider
@@ -64,6 +69,7 @@ export default function RootLayout({
 						defaultTheme="light"
 						enableSystem={false}
 						disableTransitionOnChange
+						nonce={nonce}
 					>
 						<ReactQueryProvider>
 							<div className="min-h-screen bg-background">
@@ -80,7 +86,7 @@ export default function RootLayout({
 
 				<SpeedInsights />
 
-				<Script id="ms-clarity" strategy="afterInteractive">
+				<Script id="ms-clarity" strategy="afterInteractive" nonce={nonce}>
 					{`
 							(function(c,l,a,r,i,t,y){
 								c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "./zod";
 
 export const signupSchema = z.object({
 	name: z.string().min(4, "Nome deve ter pelo menos 4 letras").max(32, "Nome deve ter no máximo 32 caracters"),

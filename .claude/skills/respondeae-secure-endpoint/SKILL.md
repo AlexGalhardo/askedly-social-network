@@ -36,6 +36,10 @@ Os bugs mais graves do projeto vieram de esquecer essas duas frases.
 - [ ] **Captcha falha fechado**: `isCaptchaValid` (`lib/captcha.ts`).
 - [ ] **Erro para o usuário**: `publicErrorMessage(error, "texto genérico")` (`lib/errors.ts`), nunca `error.message`
       cru. O detalhe vai para `TelegramLog.error`.
+- [ ] **Dados da conta não entram na sessão do NextAuth**: service em `lib/services/my-account.service.ts` + action em
+      `actions/my-account-actions.ts`, consumidos por `useSessionBoundList`/`useMySocialGraph`.
+- [ ] **Serviço externo novo** (script, API chamada do browser, iframe): adicione a origem em `lib/csp.ts` e rode
+      `tests/e2e/csp.spec.ts` em modo produção, senão o CSP bloqueia em silêncio.
 - [ ] **Segredo nunca em `NEXT_PUBLIC_*`** e nunca hardcoded (o GitHub Push Protection bloqueia o push).
 - [ ] **Teste que prova o controle**: integração em `tests/integration/` (ex.: "outro usuário não consegue"), com
       Postgres descartável.

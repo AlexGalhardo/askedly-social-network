@@ -1,6 +1,6 @@
 "use client";
 
-import { isAfter, subDays } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
 import {
 	AlertCircle,
 	Bell,
@@ -29,6 +29,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useMemo, useState } from "react";
+import { getMyPendingQuestionsCount } from "@/actions/my-account-actions";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,12 @@ type SidebarItem = {
 
 export function MySidebar() {
 	const { session, isAuthenticated, isLoading, error, refetch } = useSessionVerification();
+	const { data: pendingQuestions = 0 } = useQuery({
+		queryKey: ["my-pending-questions", session?.user?.id],
+		queryFn: () => getMyPendingQuestionsCount(),
+		enabled: isAuthenticated,
+		staleTime: 60_000,
+	});
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	// O tema só é conhecido no client: o markup não pode depender dele (hydration), então os dois ícones
 	// são renderizados e o CSS `dark:` escolhe qual aparece.
@@ -71,29 +78,6 @@ export function MySidebar() {
 		];
 
 		if (isAuthenticated && session?.user) {
-			let pendingQuestions = 0;
-
-			try {
-				if (Array.isArray(session.user.questions_received)) {
-					console.log("session.user.questions_received -> ", session.user.questions_received);
-					pendingQuestions = session.user.questions_received.filter((question) => {
-						return (
-							question &&
-							typeof question === "object" &&
-							"question_is_awaiting_answer" in question &&
-							"question_answer_was_expired" in question &&
-							"created_at" in question &&
-							(question as any).question_is_awaiting_answer === true &&
-							(question as any).question_answer_was_expired === false &&
-							((question as any).question_answer_expired_at === null ||
-								isAfter(new Date((question as any).created_at), subDays(new Date(), 7)))
-						);
-					}).length;
-				}
-			} catch {
-				pendingQuestions = 0;
-			}
-
 			items.push(
 				{
 					icon: User,
@@ -149,7 +133,7 @@ export function MySidebar() {
 		}
 
 		return items;
-	}, [isAuthenticated, session, pathname]);
+	}, [isAuthenticated, session, pathname, pendingQuestions]);
 
 	const legalItems: SidebarItem[] = [
 		{ icon: Info, label: "Sobre", href: "/sobre", active: pathname === "/sobre", requiresAuth: false },

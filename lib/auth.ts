@@ -4,21 +4,18 @@ import GoogleProvider from "next-auth/providers/google";
 import slugify from "slugify";
 import { AUTH_ERROR } from "./auth-errors";
 import { isCaptchaValid } from "./captcha";
-import { QuestionInterface } from "./interfaces";
 import {
 	createUser,
 	getUserByEmail,
+	getUserForSession,
 	reactiveDeletedAccount,
 	updateLastLoginAt,
 	verifyCredentials,
 } from "./repositories/users.repository";
 import { clientIp } from "./request-ip";
-import { stripPrivateFields } from "./services/profile.service";
 import { clearRateLimit, consumeRateLimit, isRateLimited, RATE_LIMITS } from "./services/rate-limit.service";
 import { assertSessionIsCurrent, getSessionVersion } from "./services/session-revocation.service";
 import TelegramLog from "./telegram-logger";
-import { hideAnonymousAsker } from "./utils/question-privacy";
-import { isQuestionExpired } from "./utils/question-utils";
 
 interface ExtendedUser {
 	id: string;
@@ -55,12 +52,6 @@ interface ExtendedUser {
 	privacy_show_total_likes_all_answers_public?: boolean;
 	privacy_show_total_questions_received_public?: boolean;
 	privacy_show_total_questions_answered_public?: boolean;
-	questions_received?: QuestionInterface[];
-	questions_sent?: QuestionInterface[];
-	followers: any[];
-	following: any[];
-	blocked_users: any[];
-	blocked_by_users: any[];
 	created_at?: Date | null;
 	updated_at?: Date | null;
 	deleted_at?: Date | null;
@@ -73,31 +64,10 @@ declare module "next-auth" {
 }
 
 declare module "next-auth/jwt" {
-	interface JWT extends Omit<ExtendedUser, "questions_received" | "questions_sent" | "followers" | "following"> {
+	interface JWT extends ExtendedUser {
 		session_version?: number;
-		following?: string[];
-		followers?: string[];
 	}
 }
-
-const processExpiredQuestions = (questions: any[]): any[] => {
-	return questions.map((question) => {
-		if (
-			question.question_is_awaiting_answer &&
-			!question.question_answered &&
-			!question.question_answer_was_expired &&
-			isQuestionExpired(question.created_at)
-		) {
-			return {
-				...question,
-				question_answer_was_expired: true,
-				question_is_awaiting_answer: false,
-				question_answer_expired_at: new Date(),
-			};
-		}
-		return question;
-	});
-};
 
 const mapUserToSession = (dbUser: any): Partial<ExtendedUser> => ({
 	id: dbUser?.id,
@@ -226,40 +196,14 @@ export const authOptions: NextAuthOptions = {
 			}
 
 			try {
-				const dbUser = await getUserByEmail(token.email);
+				// Só os campos da própria conta. Perguntas, seguidores e bloqueios são buscados por tela
+				// (actions/my-account-actions.ts): carregá-los aqui custava uma consulta pesada a cada leitura de sessão.
+				const dbUser = await getUserForSession(token.email);
 
 				if (!dbUser) return session;
 
 				// Reativar conta e registrar login acontecem no sign-in (authorize/jwt), não a cada leitura de sessão.
 				Object.assign(session.user, mapUserToSession(dbUser));
-
-				// A sessão é serializada para o browser: as relações passam pelo mesmo filtro do perfil público
-				// (sem hash/email/PIX/api_key de ninguém, sem revelar autor de pergunta anônima).
-				session.user.questions_received = stripPrivateFields(
-					processExpiredQuestions(
-						dbUser.questions_received?.map((q: any) =>
-							hideAnonymousAsker({ ...q, owner: q.owner ?? null }),
-						) ?? [],
-					),
-				) as QuestionInterface[];
-
-				session.user.questions_sent = stripPrivateFields(
-					processExpiredQuestions(
-						dbUser.questions_sent?.map((q: any) => ({
-							...q,
-							asked_by: q.asked_by ?? null,
-						})) ?? [],
-					),
-				) as QuestionInterface[];
-
-				session.user.followers = stripPrivateFields(dbUser.followers ?? []) as typeof session.user.followers;
-				session.user.following = stripPrivateFields(dbUser.following ?? []) as typeof session.user.following;
-				session.user.blocked_users = stripPrivateFields(
-					dbUser.blocked_users ?? [],
-				) as typeof session.user.blocked_users;
-				session.user.blocked_by_users = stripPrivateFields(
-					dbUser.blocked_by_users ?? [],
-				) as typeof session.user.blocked_by_users;
 			} catch (error: any) {
 				await TelegramLog.error(`Erro na autenticação auth.ts callbacks session: ${error?.message}`);
 			}
@@ -288,9 +232,6 @@ export const authOptions: NextAuthOptions = {
 					if (dbUser) await updateLastLoginAt(dbUser.nickname);
 
 					Object.assign(token, mapUserToSession(dbUser));
-
-					token.followers = dbUser?.followers ? dbUser.followers.map((f: any) => f.follower?.nickname) : [];
-					token.following = dbUser?.following ? dbUser.following.map((f: any) => f.following?.nickname) : [];
 
 					if (!token.avatar_url && (profile as any)?.picture) {
 						token.avatar_url = (profile as any).picture;
