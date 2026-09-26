@@ -6,6 +6,7 @@ import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { publicErrorMessage } from "@/lib/errors";
 import { getUserByNickname } from "@/lib/repositories/users.repository";
+import { type FollowToggleResult, toggleFollow } from "@/lib/services/follow-toggle.service";
 import { changePassword, PasswordChangeError } from "@/lib/services/password.service";
 import { toPublicProfile } from "@/lib/services/profile.service";
 import { consumeRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/services/rate-limit.service";
@@ -338,7 +339,7 @@ export const getUserByNicknameAction = async (nickname: string) => {
 		}
 
 		return {
-			...toPublicProfile(user, session?.user?.id ?? null),
+			...toPublicProfile(user, { viewerId: session?.user?.id ?? null, isFollowing }),
 			isFollowing,
 			hasPendingRequest,
 		};
@@ -348,115 +349,27 @@ export const getUserByNicknameAction = async (nickname: string) => {
 	}
 };
 
-export const followUserAction = async (followingId: string, followerId: string) => {
+export const followUserAction = async (
+	followingId: string,
+): Promise<Partial<FollowToggleResult> & { success?: boolean; error?: string }> => {
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) return { error: "Não autorizado" };
 
-		const existingFollow = await prisma.follower.findUnique({
-			where: {
-				followerId_followingId: {
-					followerId: followerId,
-					followingId: followingId,
-				},
-			},
-		});
-
-		const followRequest = await prisma.followRequest.findUnique({
-			where: {
-				senderId_receiverId: {
-					senderId: followerId,
-					receiverId: followingId,
-				},
-			},
-		});
-
-		const targetUser = await prisma.user.findUnique({
-			where: { id: followingId },
-			select: { privacy_is_private_profile: true },
-		});
-
-		let isFollowing = false;
-		let hasPendingRequest = false;
-		let message = "";
-
-		if (existingFollow) {
-			await prisma.follower.delete({
-				where: {
-					followerId_followingId: {
-						followerId: followerId,
-						followingId: followingId,
-					},
-				},
-			});
-
-			isFollowing = false;
-			hasPendingRequest = false;
-			message = "Você parou de seguir este usuário";
-		} else {
-			if (targetUser?.privacy_is_private_profile) {
-				if (followRequest) {
-					await prisma.followRequest.delete({
-						where: {
-							senderId_receiverId: {
-								senderId: followerId,
-								receiverId: followingId,
-							},
-						},
-					});
-					hasPendingRequest = false;
-					message = "Solicitação cancelada";
-				} else {
-					await prisma.followRequest.create({
-						data: {
-							senderId: followerId,
-							receiverId: followingId,
-						},
-					});
-					hasPendingRequest = true;
-					message = "Solicitação enviada";
-				}
-				isFollowing = false;
-			} else {
-				await prisma.follower.create({
-					data: {
-						followerId: followerId,
-						followingId: followingId,
-					},
-				});
-
-				if (followRequest) {
-					await prisma.followRequest.delete({
-						where: {
-							senderId_receiverId: {
-								senderId: followerId,
-								receiverId: followingId,
-							},
-						},
-					});
-				}
-
-				isFollowing = true;
-				hasPendingRequest = false;
-				message = "Agora você está seguindo este usuário";
-			}
-		}
+		const result = await toggleFollow(session.user.id, followingId);
+		if (!result) return { error: "Usuário não encontrado" };
 
 		updateTag("user-profile");
-
-		return {
-			success: true,
-			isFollowing,
-			hasPendingRequest,
-			message,
-		};
-	} catch (error: any) {
-		await TelegramLog.error(`Catch Error file user-actions.ts follow user: ${error?.message}`);
+		return { success: true, ...result };
+	} catch (error: unknown) {
+		await TelegramLog.error(
+			`Catch Error file user-actions.ts follow user: ${error instanceof Error ? error.message : error}`,
+		);
 		return { error: publicErrorMessage(error, "Erro ao seguir usuário") };
 	}
 };
 
-export const likeQuestionAction = async (questionId: string, nickname: string) => {
+export const likeQuestionAction = async (questionId: string) => {
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
@@ -483,7 +396,8 @@ export const likeQuestionAction = async (questionId: string, nickname: string) =
 			dislikedUsers = [];
 		}
 
-		const userNickname = session.user.nickname || nickname;
+		const userNickname = session.user.nickname;
+		if (!userNickname) return { error: "Não autorizado" };
 		const hasLiked = likedUsers.includes(userNickname);
 		const hasDisliked = dislikedUsers.includes(userNickname);
 
@@ -514,7 +428,7 @@ export const likeQuestionAction = async (questionId: string, nickname: string) =
 	}
 };
 
-export const dislikeQuestionAction = async (questionId: string, nickname: string) => {
+export const dislikeQuestionAction = async (questionId: string) => {
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
@@ -541,7 +455,8 @@ export const dislikeQuestionAction = async (questionId: string, nickname: string
 			dislikedUsers = [];
 		}
 
-		const userNickname = session.user.nickname || nickname;
+		const userNickname = session.user.nickname;
+		if (!userNickname) return { error: "Não autorizado" };
 		const hasLiked = likedUsers.includes(userNickname);
 		const hasDisliked = dislikedUsers.includes(userNickname);
 

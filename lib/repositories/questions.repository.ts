@@ -1,4 +1,4 @@
-import { hideAnonymousAsker } from "@/lib/utils/question-privacy";
+import { toPublicQuestion } from "@/lib/utils/question-privacy";
 import { prisma } from "@/prisma/prisma-client";
 
 // Estas consultas alimentam páginas públicas e vão serializadas para o browser: só campos públicos do usuário,
@@ -11,6 +11,7 @@ const publicQuestionInclude = {
 			name: true,
 			avatar_url: true,
 			privacy_is_private_profile: true,
+			privacy_show_questions_answered_only_to_followers: true,
 			privacy_show_likes_each_answer_public: true,
 			privacy_show_dislikes_each_answer_public: true,
 			privacy_show_value_received_from_answering_question: true,
@@ -18,6 +19,13 @@ const publicQuestionInclude = {
 	},
 	asked_by: { select: { nickname: true, name: true, avatar_url: true } },
 } as const;
+
+// O ranking é uma página estática, sem saber quem está vendo: perfis restritos (privados ou com respostas só para
+// seguidores) ficam de fora de vez. O feed, que conhece o visitante, filtra em lib/services/feed.service.ts.
+const publicRankingOwner = {
+	privacy_is_private_profile: false,
+	privacy_show_questions_answered_only_to_followers: false,
+};
 
 class QuestionsRepository {
 	async getAllLatestDescPublicQuestionsAnswered() {
@@ -99,6 +107,7 @@ class QuestionsRepository {
 					lt: tomorrow,
 				},
 				asker_want_answer_to_be_private: false,
+				owner: publicRankingOwner,
 				liked_by_users: {
 					not: null,
 				},
@@ -133,6 +142,7 @@ class QuestionsRepository {
 					lt: endOfWeek,
 				},
 				asker_want_answer_to_be_private: false,
+				owner: publicRankingOwner,
 				liked_by_users: {
 					not: null,
 				},
@@ -163,6 +173,7 @@ class QuestionsRepository {
 					lt: endOfMonth,
 				},
 				asker_want_answer_to_be_private: false,
+				owner: publicRankingOwner,
 				liked_by_users: {
 					not: null,
 				},
@@ -193,6 +204,7 @@ class QuestionsRepository {
 					lt: endOfYear,
 				},
 				asker_want_answer_to_be_private: false,
+				owner: publicRankingOwner,
 				liked_by_users: {
 					not: null,
 				},
@@ -215,6 +227,7 @@ class QuestionsRepository {
 					not: null,
 				},
 				asker_want_answer_to_be_private: false,
+				owner: publicRankingOwner,
 				liked_by_users: {
 					not: null,
 				},
@@ -385,31 +398,31 @@ class QuestionsRepository {
 const repo = new QuestionsRepository();
 
 export async function getAllLatestDescPublicQuestionsAnswered() {
-	return (await repo.getAllLatestDescPublicQuestionsAnswered()).map(hideAnonymousAsker);
+	return (await repo.getAllLatestDescPublicQuestionsAnswered()).map(toPublicQuestion);
 }
 
 export async function getFollowingQuestionsAnswered(userNickname: string) {
-	return (await repo.getFollowingQuestionsAnswered(userNickname)).map(hideAnonymousAsker);
+	return (await repo.getFollowingQuestionsAnswered(userNickname)).map(toPublicQuestion);
 }
 
 export async function getTopLikedAnswersToday() {
-	return (await repo.getTopLikedAnswersToday()).map(hideAnonymousAsker);
+	return (await repo.getTopLikedAnswersToday()).map(toPublicQuestion);
 }
 
 export async function getTopLikedAnswersThisWeek() {
-	return (await repo.getTopLikedAnswersThisWeek()).map(hideAnonymousAsker);
+	return (await repo.getTopLikedAnswersThisWeek()).map(toPublicQuestion);
 }
 
 export async function getTopLikedAnswersThisMonth() {
-	return (await repo.getTopLikedAnswersThisMonth()).map(hideAnonymousAsker);
+	return (await repo.getTopLikedAnswersThisMonth()).map(toPublicQuestion);
 }
 
 export async function getTopLikedAnswersThisYear() {
-	return (await repo.getTopLikedAnswersThisYear()).map(hideAnonymousAsker);
+	return (await repo.getTopLikedAnswersThisYear()).map(toPublicQuestion);
 }
 
 export async function getTopLikedAnswersAllTime() {
-	return (await repo.getTopLikedAnswersAllTime()).map(hideAnonymousAsker);
+	return (await repo.getTopLikedAnswersAllTime()).map(toPublicQuestion);
 }
 
 export async function getUserQuestionsAnsweredPaymentDetails(nickname: string) {

@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { getTopLikedAnswersAllTime } from "@/lib/repositories/questions.repository";
 import { getFeedQuestions } from "@/lib/services/feed.service";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -8,7 +9,8 @@ const owner = `fowner${run}`;
 const privateOwner = `fprivate${run}`;
 const asker = `fasker${run}`;
 const follower = `ffollower${run}`;
-const nicknames = [owner, privateOwner, asker, follower];
+const followersOnlyOwner = `fonly${run}`;
+const nicknames = [owner, privateOwner, asker, follower, followersOnlyOwner];
 
 async function createAnsweredQuestion(ownerNickname: string, text: string, anonymous = false): Promise<void> {
 	const webhook = await prisma.webhookAbacatePay.create({
@@ -53,6 +55,7 @@ describe("getFeedQuestions (integration)", () => {
 					password: "hash-que-nunca-pode-vazar",
 					pix_key: `pix-que-nunca-pode-vazar-${nickname}`,
 					privacy_is_private_profile: nickname === privateOwner,
+					privacy_show_questions_answered_only_to_followers: nickname === followersOnlyOwner,
 				},
 			});
 		}
@@ -65,6 +68,7 @@ describe("getFeedQuestions (integration)", () => {
 		await createAnsweredQuestion(owner, `public-${run}`);
 		await createAnsweredQuestion(owner, `anonymous-${run}`, true);
 		await createAnsweredQuestion(privateOwner, `private-${run}`);
+		await createAnsweredQuestion(followersOnlyOwner, `followers-only-${run}`);
 	});
 
 	afterAll(async () => {
@@ -79,6 +83,8 @@ describe("getFeedQuestions (integration)", () => {
 		expect(serialized).not.toContain("pix-que-nunca-pode-vazar");
 		expect(serialized).not.toContain(`${asker}@example.com`);
 		expect(serialized).not.toContain(`k-${owner}`);
+		expect(serialized).not.toContain("webhook_id");
+		expect(serialized).not.toContain("payment_withdraw_id");
 	});
 
 	test("hides who asked an anonymous question", async () => {
@@ -98,5 +104,20 @@ describe("getFeedQuestions (integration)", () => {
 	test("the following feed needs a signed-in viewer", async () => {
 		expect(await getFeedQuestions("following", null)).toEqual([]);
 		expect(texts(await getFeedQuestions("following", follower))).toEqual([`private-${run}`]);
+	});
+
+	test("answers restricted to followers stay out of the community feed for others", async () => {
+		expect(texts(await getFeedQuestions("community", asker))).not.toContain(`followers-only-${run}`);
+		expect(texts(await getFeedQuestions("community", followersOnlyOwner))).toContain(`followers-only-${run}`);
+	});
+
+	test("the public top-liked ranking never lists restricted profiles", async () => {
+		await prisma.question.updateMany({
+			where: { question_text: { in: [`private-${run}`, `followers-only-${run}`, `public-${run}`] } },
+			data: { liked_by_users: JSON.stringify(Array.from({ length: 999 }, (_, i) => `fan${i}`)) },
+		});
+		const ranking = texts(await getTopLikedAnswersAllTime());
+		expect(ranking).not.toContain(`private-${run}`);
+		expect(ranking).not.toContain(`followers-only-${run}`);
 	});
 });

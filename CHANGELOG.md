@@ -5,6 +5,15 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.8.3] - 2026-09-25
+
+### Security
+
+- Filter public profiles on the server
+- Keep restricted profiles and internal fields out of public data
+- Alert on Telegram when a rate limit is first exceeded
+- Follow and like only as the signed-in user
+
 ## [0.8.2] - 2026-09-25
 
 ### Changed

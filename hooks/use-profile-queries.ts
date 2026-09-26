@@ -20,8 +20,7 @@ export const useFollowUser = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ followingId, followerId }: { followingId: string; followerId: string }) =>
-			followUserAction(followingId, followerId),
+		mutationFn: ({ followingId }: { followingId: string; followerId?: string }) => followUserAction(followingId),
 		onSuccess: (data, variables) => {
 			if (data.error) {
 				return;
@@ -72,8 +71,7 @@ export const useLikeQuestion = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ questionId, nickname }: { questionId: string; nickname: string }) =>
-			likeQuestionAction(questionId, nickname),
+		mutationFn: ({ questionId }: { questionId: string; nickname?: string }) => likeQuestionAction(questionId),
 		onMutate: async ({ questionId, nickname }) => {
 			await queryClient.cancelQueries({ queryKey: ["profile"] });
 
@@ -124,8 +122,7 @@ export const useDislikeQuestion = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ questionId, nickname }: { questionId: string; nickname: string }) =>
-			dislikeQuestionAction(questionId, nickname),
+		mutationFn: ({ questionId }: { questionId: string; nickname?: string }) => dislikeQuestionAction(questionId),
 		onMutate: async ({ questionId, nickname }) => {
 			await queryClient.cancelQueries({ queryKey: ["profile"] });
 

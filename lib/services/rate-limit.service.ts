@@ -1,4 +1,10 @@
+import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
+
+// "login:email:fulano@x.com" → "login:email:f***@x.com": o alerta vai para o Telegram.
+export function maskEmail(key: string): string {
+	return key.replace(/([^:@]+)(@[^:]+)$/, (_, user: string, domain: string) => `${user.charAt(0)}***${domain}`);
+}
 
 export interface RateLimitRule {
 	limit: number;
@@ -36,6 +42,13 @@ export async function consumeRateLimit(key: string, rule: RateLimitRule): Promis
 			count = CASE WHEN rate_limits.reset_at <= ${now} THEN 1 ELSE rate_limits.count + 1 END,
 			reset_at = CASE WHEN rate_limits.reset_at <= ${now} THEN ${resetAt} ELSE rate_limits.reset_at END
 		RETURNING count, reset_at`;
+
+	// Alerta só na primeira requisição acima do limite em cada janela, para um ataque não virar enxurrada de mensagens.
+	if (row.count === rule.limit + 1) {
+		await TelegramLog.warning(
+			`🚦 Rate limit atingido: ${maskEmail(key)} (${rule.limit} em ${rule.windowMs / 60_000} min)`,
+		);
+	}
 
 	return {
 		allowed: row.count <= rule.limit,
