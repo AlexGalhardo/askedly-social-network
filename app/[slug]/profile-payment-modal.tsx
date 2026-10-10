@@ -2,6 +2,7 @@
 
 import { Check, Clock, Copy, Loader } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useEffectEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -37,6 +38,17 @@ export function ProfilePaymentModal({
 	const [customAmount, setCustomAmount] = useState<string>("");
 	const [useCustomAmount, setUseCustomAmount] = useState(false);
 	const [isLoadingPayment, setIsLoadingPayment] = useState(false);
+	const [payWithCredits, setPayWithCredits] = useState(false);
+	const [credits, setCredits] = useState<number | null>(null);
+	const currency = payWithCredits ? "USD" : "BRL";
+
+	useEffect(() => {
+		if (currentStep !== "payment") return;
+		fetch("/api/stripe/connect")
+			.then((res) => (res.ok ? res.json() : null))
+			.then((data) => setCredits(typeof data?.credits === "number" ? data.credits : null))
+			.catch(() => setCredits(null));
+	}, [currentStep]);
 
 	const [isAnonymousNewQuestion, setIsAnonymousNewQuestion] = useState(false);
 	const [isPrivateAnswer, setIsPrivateAnswer] = useState(false);
@@ -250,6 +262,53 @@ export function ProfilePaymentModal({
 		}
 	};
 
+	const handlePayWithCredits = async () => {
+		if (!selectedAmount) return;
+
+		setIsLoadingPayment(true);
+		try {
+			const response = await fetch("/api/question/create-with-credits", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					question_text: question,
+					is_anonymous: isAnonymousNewQuestion,
+					asker_want_answer_to_be_private: isPrivateAnswer,
+					amount_paid_is_private: questionAmountPaidIsPrivate,
+					amount: Math.round(selectedAmount * 100),
+					owner_user_id: profile.id,
+				}),
+			});
+			const result = await response.json();
+
+			if (!response.ok || result.error) {
+				toast({
+					title: "Erro ao enviar pergunta",
+					description: result?.error ?? "Houve um erro ao enviar sua pergunta.",
+					variant: "error",
+				});
+				return;
+			}
+
+			toast({
+				title: "Pagamento confirmado!",
+				description: "Sua pergunta foi enviada com sucesso.",
+				variant: "success",
+			});
+			onStepChange("closed");
+			await update();
+		} catch (error: any) {
+			TelegramLog.error(`Erro ao enviar pergunta com créditos: ${error?.message}`);
+			toast({
+				title: "Erro ao enviar pergunta",
+				description: "Houve um erro ao enviar sua pergunta.",
+				variant: "error",
+			});
+		} finally {
+			setIsLoadingPayment(false);
+		}
+	};
+
 	const handlePaymentSuccess = async () => {
 		try {
 			const questionData = {
@@ -413,6 +472,31 @@ export function ProfilePaymentModal({
 							/>
 						</div>
 
+						<div className="grid grid-cols-2 gap-2 mb-2">
+							<Button
+								variant={payWithCredits ? "outline" : "default"}
+								onClick={() => setPayWithCredits(false)}
+							>
+								PIX
+							</Button>
+							<Button
+								variant={payWithCredits ? "default" : "outline"}
+								onClick={() => setPayWithCredits(true)}
+							>
+								Créditos
+							</Button>
+						</div>
+						<p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+							{payWithCredits && (
+								<>
+									Saldo: {formatCurrency(credits ?? 0, "USD")}.{" "}
+									<Link href="/minha-conta" className="underline">
+										Comprar créditos
+									</Link>
+								</>
+							)}
+						</p>
+
 						<div className="grid grid-cols-3 gap-2 mb-6">
 							{PRESET_AMOUNTS.map((amount) => (
 								<Button
@@ -422,7 +506,7 @@ export function ProfilePaymentModal({
 									disabled={useCustomAmount}
 									className="h-16 text-lg"
 								>
-									{formatCurrency(amount * 100)}
+									{formatCurrency(amount * 100, currency)}
 								</Button>
 							))}
 
@@ -439,7 +523,9 @@ export function ProfilePaymentModal({
 							<div className="space-y-2 mb-6">
 								<Label htmlFor="custom-amount">Digite o valor</Label>
 								<div className="relative">
-									<span className="absolute left-3 top-1/2 -translate-y-1/2">R$</span>
+									<span className="absolute left-3 top-1/2 -translate-y-1/2">
+										{payWithCredits ? "$" : "R$"}
+									</span>
 									<Input
 										id="custom-amount"
 										value={customAmount}
@@ -453,15 +539,21 @@ export function ProfilePaymentModal({
 						)}
 
 						<Button
-							onClick={handleGeneratePix}
-							disabled={!isGenerateButtonEnabled || isLoadingPayment}
+							onClick={payWithCredits ? handlePayWithCredits : handleGeneratePix}
+							disabled={
+								!isGenerateButtonEnabled ||
+								isLoadingPayment ||
+								(payWithCredits && (credits ?? 0) < (selectedAmount ?? 0) * 100)
+							}
 							className="w-full flex items-center justify-center gap-2 bg-green-500 text-white dark:hover:bg-green-800"
 						>
 							{isLoadingPayment ? (
 								<>
 									<Loader className="h-4 w-4 animate-spin" />
-									Gerando PIX...
+									{payWithCredits ? "Enviando..." : "Gerando PIX..."}
 								</>
+							) : payWithCredits ? (
+								"Pagar com créditos"
 							) : (
 								"Gerar PIX para Pagar"
 							)}

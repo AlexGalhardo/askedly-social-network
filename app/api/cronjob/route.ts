@@ -1,5 +1,6 @@
 import { subDays } from "date-fns";
 import { deleteExpiredRateLimits } from "@/lib/services/rate-limit.service";
+import { settlePendingCreditQuestions } from "@/lib/services/stripe-connect.service";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -71,10 +72,12 @@ export async function GET(request: Request) {
 
 	const deletedCount = await deleteOldUsers();
 	const expiredRateLimits = await deleteExpiredRateLimits();
+	const creditQuestions = await settlePendingCreditQuestions();
 
 	await TelegramLog.info(
 		`🕒 Cronjob executado em ${formattedNow}\n🔁 Contadores resetados para ${resetResult.count} usuários.\n🗑️ Usuários deletados (30 dias marcados como deletados ou 2 anos sem login): ${deletedCount}
-🧹 Janelas de rate limit vencidas apagadas: ${expiredRateLimits}`,
+🧹 Janelas de rate limit vencidas apagadas: ${expiredRateLimits}
+💸 Perguntas em créditos com liquidação pendente processadas: ${creditQuestions}`,
 	);
 
 	return new Response("OK");

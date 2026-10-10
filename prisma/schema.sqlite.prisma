@@ -28,6 +28,10 @@ model User {
 
   pix_key String? @unique
 
+  // Créditos comprados na Stripe, em centavos de dólar.
+  credits_cents     Int     @default(0)
+  stripe_account_id String? @unique
+
   avatar_url String? @unique
 
   twitter   String?
@@ -86,6 +90,7 @@ model User {
   blocked_by_users UserBlock[] @relation("BlockedUser")
 
   payment_withdraws PaymentWithdraw[]
+  stripe_purchases  StripePurchase[]
 
   @@map("users")
 }
@@ -147,6 +152,9 @@ model Question {
   answered_at   DateTime?
 
   amount_paid Int
+  // "BRL" = paga por PIX (saque manual). "USD" = paga com créditos (repasse por transferência Stripe).
+  currency    String @default("BRL")
+  stripe_transfer_id String?
 
   amount_already_withdraw Boolean @default(false)
 
@@ -183,8 +191,8 @@ model Question {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
-  webhook_id String            @unique
-  webhook    WebhookAbacatePay @relation(fields: [webhook_id], references: [id])
+  webhook_id String?            @unique
+  webhook    WebhookAbacatePay? @relation(fields: [webhook_id], references: [id])
 
   owner    User @relation("QuestionOwner", fields: [owner_user_nickname], references: [nickname], onDelete: Cascade)
   asked_by User @relation("QuestionAsker", fields: [asked_by_user_nickname], references: [nickname], onDelete: Cascade)
@@ -209,6 +217,23 @@ model PaymentWithdraw {
   created_at DateTime @default(now())
 
   @@map("payment_withdraws")
+}
+
+model StripePurchase {
+  id String @id @default(uuid())
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  checkout_session_id String @unique
+  amount_cents        Int
+  // pending | completed | expired
+  status              String @default("pending")
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("stripe_purchases")
 }
 
 model WebhookAbacatePay {

@@ -42,7 +42,7 @@ export function SentQuestionCard({ question, onReport, isReporting = false }: Se
 				<div className="flex justify-between items-start">
 					<div className="flex items-center gap-2">
 						<Badge className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-800 border-green-200 dark:border-green-700">
-							Você Pagou {formatCurrency(question.amount_paid)}
+							Você Pagou {formatCurrency(question.amount_paid, question.currency)}
 						</Badge>
 						<span className="text-gray-500 dark:text-gray-400">
 							{" "}

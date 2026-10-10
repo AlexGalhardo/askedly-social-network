@@ -6,7 +6,7 @@
 	<a href="https://github.com/AlexGalhardo/respondeae/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/AlexGalhardo/respondeae/actions/workflows/ci.yml/badge.svg?branch=main"></a>
 	<a href="https://github.com/AlexGalhardo/respondeae/actions/workflows/e2e.yml"><img alt="E2E" src="https://github.com/AlexGalhardo/respondeae/actions/workflows/e2e.yml/badge.svg?branch=main"></a>
 	<a href="LICENSE"><img alt="Licença MIT" src="https://img.shields.io/badge/licen%C3%A7a-MIT-blue.svg"></a>
-	<a href="CHANGELOG.md"><img alt="Versão" src="https://img.shields.io/badge/vers%C3%A3o-0.10.0-green.svg"></a>
+	<a href="CHANGELOG.md"><img alt="Versão" src="https://img.shields.io/badge/vers%C3%A3o-0.11.0-green.svg"></a>
 </p>
 
 ## Sobre

@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.11.0] - 2026-10-10
+
+### Added
+
+- Add stripe credits and connect payouts alongside pix
+
+### Changed
+
+- Update dependencies to latest stable and add stripe
+
 ## [0.10.0] - 2026-09-25
 
 ### Changed

@@ -83,6 +83,7 @@ const toReceivedQuestion = (q: any) => ({
 	answer_text: q.answer_text || null,
 	answered_at: q.answered_at || null,
 	amount_paid: q.amount_paid || 0,
+	currency: q.currency,
 	amount_already_withdraw: q.amount_already_withdraw || false,
 	asker_want_answer_to_be_private: q.asker_want_answer_to_be_private || false,
 	asker_sent_anonymous_question: q.asker_sent_anonymous_question || false,

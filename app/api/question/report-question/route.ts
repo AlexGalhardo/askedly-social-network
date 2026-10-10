@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { reportQuestion } from "@/lib/services/question-report.service";
+import { settleCreditQuestion } from "@/lib/services/stripe-connect.service";
 import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
 
@@ -17,6 +18,8 @@ export async function POST(request: NextRequest) {
 		if (!(await reportQuestion(questionId, user.nickname, reason))) {
 			return NextResponse.json({ error: "Pergunta não encontrada" }, { status: 404 });
 		}
+
+		await settleCreditQuestion(questionId);
 
 		await TelegramLog.info(`PERGUNTA REPORTADA: ${questionId} por @${user.nickname} (${reason})`);
 		return NextResponse.json({ message: "Pergunta reportada com sucesso" });

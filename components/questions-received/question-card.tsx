@@ -120,7 +120,7 @@ export function QuestionCard({
 					</div>
 					<div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
 						<Badge className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs sm:text-sm hover:bg-green-100 dark:hover:bg-green-800 border-green-200 dark:border-green-700">
-							Pagou {formatCurrency(question.amount_paid)}
+							Pagou {formatCurrency(question.amount_paid, question.currency)}
 						</Badge>
 						<span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
 							{formatDate(

@@ -26,6 +26,7 @@ export async function withdrawBalance(
 		const questions = await tx.question.findMany({
 			where: {
 				id: { in: ids },
+				currency: "BRL",
 				amount_already_withdraw: false,
 				OR: [
 					{
