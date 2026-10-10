@@ -18,9 +18,9 @@ export function Navbar() {
 				<div className="flex items-center gap-4">
 					<Button
 						className="bg-gradient-to-r from-green-700 to-green-600 hover:from-green-800 hover:to-green-700"
-						asChild
+						render={<Link href="/login" />}
 					>
-						<Link href="/login">{t("signInShort")}</Link>
+						{t("signInShort")}
 					</Button>
 				</div>
 			</div>

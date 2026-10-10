@@ -138,27 +138,29 @@ export function ProfileBlockUserButton({
 
 	return (
 		<AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-			<AlertDialogTrigger asChild>
-				<Button
-					variant="outline"
-					className={`flex-1 min-w-[130px] ${
-						isBlocked
-							? "text-red-600 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-950"
-							: "text-red-600 border-red-200 hover:bg-red-50 dark:text-white dark:border-white dark:hover:bg-gray-800"
-					}`}
-				>
-					{isBlocked ? (
-						<>
-							<UserCheck className="h-4 w-4 mr-2" />
-							{t("block.unblock")}
-						</>
-					) : (
-						<>
-							<UserX className="h-4 w-4 mr-2" />
-							{t("block.block")}
-						</>
-					)}
-				</Button>
+			<AlertDialogTrigger
+				render={
+					<Button
+						variant="outline"
+						className={`flex-1 min-w-[130px] ${
+							isBlocked
+								? "text-red-600 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-950"
+								: "text-red-600 border-red-200 hover:bg-red-50 dark:text-white dark:border-white dark:hover:bg-gray-800"
+						}`}
+					/>
+				}
+			>
+				{isBlocked ? (
+					<>
+						<UserCheck className="h-4 w-4 mr-2" />
+						{t("block.unblock")}
+					</>
+				) : (
+					<>
+						<UserX className="h-4 w-4 mr-2" />
+						{t("block.block")}
+					</>
+				)}
 			</AlertDialogTrigger>
 			<AlertDialogContent>
 				<AlertDialogHeader>

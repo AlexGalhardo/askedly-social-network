@@ -5,6 +5,12 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.16.0] - 2026-10-10
+
+### Added
+
+- Replace shadcn and radix with base ui and fix theme tokens
+
 ## [0.15.0] - 2026-10-10
 
 ### Added

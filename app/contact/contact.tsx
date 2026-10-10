@@ -146,9 +146,17 @@ export default function ContatoClient() {
 		setFormData((prev) => ({ ...prev, [name]: transformedValue }));
 	};
 
-	const handleSelectChange = (value: string) => {
-		setFormData((prev) => ({ ...prev, subject: value }));
+	const handleSelectChange = (value: string | null) => {
+		setFormData((prev) => ({ ...prev, subject: value ?? "" }));
 	};
+
+	const subjects = [
+		{ value: "Problemas Técnicos", label: t("subjectTechnical") },
+		{ value: "Problemas Com Pagamentos", label: t("subjectPayments") },
+		{ value: "Problemas com Conta", label: t("subjectAccount") },
+		{ value: "Sugestões e Feedbacks", label: t("subjectFeedback") },
+		{ value: "Outros", label: t("subjectOther") },
+	];
 
 	return (
 		<div className="p-4 lg:p-6">
@@ -198,16 +206,21 @@ export default function ContatoClient() {
 
 							<div className="space-y-2">
 								<Label htmlFor="subject">{t("subjectLabel")}</Label>
-								<Select value={formData.subject} onValueChange={handleSelectChange}>
+								<Select
+									id="subject"
+									items={subjects}
+									value={formData.subject}
+									onValueChange={handleSelectChange}
+								>
 									<SelectTrigger className={`${errors.subject ? "border-red-500" : ""}`}>
 										<SelectValue placeholder={t("subjectPlaceholder")} />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="Problemas Técnicos">{t("subjectTechnical")}</SelectItem>
-										<SelectItem value="Problemas Com Pagamentos">{t("subjectPayments")}</SelectItem>
-										<SelectItem value="Problemas com Conta">{t("subjectAccount")}</SelectItem>
-										<SelectItem value="Sugestões e Feedbacks">{t("subjectFeedback")}</SelectItem>
-										<SelectItem value="Outros">{t("subjectOther")}</SelectItem>
+										{subjects.map(({ value, label }) => (
+											<SelectItem key={value} value={value}>
+												{label}
+											</SelectItem>
+										))}
 									</SelectContent>
 								</Select>
 								{errors.subject && (

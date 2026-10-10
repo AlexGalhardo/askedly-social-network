@@ -17,7 +17,7 @@ O projeto é construído em quatro fases. Cada fase só começa com o critério 
 
 ## Decisões travadas (não perguntar de novo)
 
-- **Stack:** Next.js 16 (App Router) + React 19 + TypeScript estrito, Prisma 7 + PostgreSQL, NextAuth, Tailwind 4 + shadcn/ui, TanStack Query.
+- **Stack:** Next.js 16 (App Router) + React 19 + TypeScript estrito, Prisma 7 + PostgreSQL, NextAuth, Tailwind 4 + Base UI, TanStack Query.
 - **Gerenciador:** Bun (pacotes, scripts, testes). O Next roda em Node em produção, smoke e e2e (a Vercel roda Node).
 - **Dependências:** última versão estável, versão exata, sem `rc`/`beta`. Dependência nova precisa de justificativa.
 - **Banco:** `prisma/schema.prisma` (Postgres) é o schema de produção, com migrations versionadas. `prisma/schema.sqlite.prisma` é um espelho mantido à mão, só para dev local sem Docker.
