@@ -52,6 +52,8 @@ Objetivo: qualquer pessoa clona, roda um comando e tem o ambiente de pé, com o 
 - [x] Camadas definidas: `app/` (rotas), `actions/` (Server Actions), `lib/services` (regra de negócio), `lib/repositories`, `hooks/`
 - [x] Headers de segurança e CSP estrito por nonce (`proxy.ts`, `lib/csp.ts`)
 - [x] `/api/health`
+- [x] Variáveis de ambiente validadas com Zod no build (`lib/env.ts`): essencial faltando derruba o build, opcional só avisa
+- [x] Telas de erro (`app/error.tsx`, `app/global-error.tsx`) no lugar do 500 cru
 
 ### Banco de dados
 
@@ -157,6 +159,7 @@ Objetivo: dinheiro de verdade com usuários convidados. Nada que mova dinheiro o
 - [x] Identidade sempre da sessão (`getSessionUser`); autorização por objeto dentro do próprio `where`
 - [x] Nenhuma linha inteira de `User` no browser; autor de pergunta anônima nunca sai do servidor
 - [x] Rate limit em Postgres para login, cadastro, contato, senha e compra de créditos
+- [x] Captcha (Turnstile) como recurso opcional: ligado só com as duas chaves, e então falha fechado
 - [x] Captcha verificado no servidor; sessões revogadas na troca de senha (`session_version`)
 - [x] Teste de guarda: `"use server"` proibido em `lib/`
 - [x] `SECURITY.md` com canal privado de reporte
@@ -216,7 +219,7 @@ Objetivo: aberto ao público e mantido como projeto open source. Quem chega pela
 ### Produto
 
 - [ ] Domínio próprio, com `metadataBase`, sitemap e emails apontando para ele (hoje `respondeae.com.br` e `respondeae.vercel.app`)
-- [ ] Nomes de rota em inglês com redirecionamento das atuais (`/login` para `/sign-in` etc.)
+- [x] Nomes de rota em inglês com redirecionamento 301 das antigas (`proxy.ts`) e nicknames reservados para as rotas
 - [ ] Decisão de produto: perfil público deve mostrar respostas a qualquer visitante? (a flag `privacy_show_questions_answered_only_to_followers` hoje não muda a tela)
 - [ ] Notificações (pergunta recebida, resposta recebida, repasse feito)
 - [ ] Acessibilidade revisada (WCAG AA) e Core Web Vitals medidos em produção

@@ -73,6 +73,10 @@ Riscos aceitos novos:
 | Médio | Cartão roubado: comprar créditos, perguntar a uma conta própria e receber o repasse | O Radar da Stripe é a primeira barreira; a plataforma responde por saldo negativo (`losses_collector: application`). Limites antifraude estão no `PLAN.md` |
 | Baixo | `PAYMENTS_SIMULATED=true` em um host de produção fora da Vercel liberaria pagamentos sem dinheiro | Variável só existe no compose de demonstração; documentado em `docker.md` |
 
+### Captcha como recurso opcional
+
+O Turnstile só fica ligado quando existem **as duas** chaves (`NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY` e `CLOUDFLARE_TURNSTILE_SECRET`). Sem alguma delas o widget não aparece e o servidor não exige token (`lib/turnstile.ts`, `lib/captcha.ts`); com as duas, continua falhando fechado. Consequência: um deploy sem as chaves fica sem captcha em login, cadastro e contato, protegido só pelo rate limit. O build avisa (`[env] Captcha ... is off`). Em produção, mantenha as duas chaves.
+
 ## Como manter
 
 - Rodar `bun audit` (o CI já bloqueia) e os testes de integração, que cobrem os controles de acesso de dinheiro, reset e perfil.

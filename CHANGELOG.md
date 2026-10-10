@@ -45,6 +45,9 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- Seletor de idioma ilegível no tema escuro (fundo branco com letra branca).
+- Borda e sombra dos cartões em `/login`, `/signup`, `/privacy-policy` e `/terms-of-use`.
+- Os redirecionamentos de `proxy.ts` nunca casavam (a chave tinha barra, a busca não).
 - O feed escondia as respostas e perguntas do próprio usuário: a lista de "quem me bloqueou" continha o próprio nickname.
 - O card de usuários bloqueados não tinha nome nem avatar.
 - A sidebar logava todas as perguntas recebidas no console.
@@ -65,6 +68,8 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Added
 
+- **Variáveis de ambiente validadas com Zod no build** (`lib/env.ts`): essencial faltando derruba o build; opcional faltando só desliga o recurso e avisa.
+- Telas de erro traduzidas (`app/error.tsx`, `app/global-error.tsx`) no lugar do erro 500 do servidor; o cron responde erro tratado e registra no Telegram.
 - **Internacionalização** com next-intl: inglês (padrão), português e espanhol. O idioma vem do cookie `NEXT_LOCALE` (seletor na barra lateral) ou do navegador; não há idioma na URL. Só a interface é traduzida, não o conteúdo dos usuários. As chaves são checadas pelo `tsc` nos três idiomas.
 - **Painel do admin** em `/admin` (404 para quem não é admin): totais por moeda, receita da plataforma, compras de créditos e saques.
 - **Modo demonstração em Docker** (`infra/docker-compose.demo.yaml`): Postgres, migrations, seed e app, com pagamentos simulados por `PAYMENTS_SIMULATED` (ignorado em produção na Vercel). O seed ganhou dados de pagamento para o admin (`admin@gmail.com`).
@@ -90,6 +95,10 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Changed
 
+- **Rotas em inglês** (`/login`, `/signup`, `/my-account`, `/payments`, `/terms-of-use` etc.). As antigas em português redirecionam com 301. Nicknames iguais a uma rota passam a ser recusados no cadastro.
+- O título do site é só **Askedly**, com ícone próprio (balão de pergunta) na barra lateral e como favicon.
+- **Captcha opcional**: o Turnstile só liga com a site key e o secret configurados; sem eles o widget some e o servidor não exige token.
+- `CONTRIBUTING.md` virou `CONTRIBUTE.md`. `next.config.mjs` virou `next.config.ts`.
 - **O projeto passou a se chamar Askedly Social Network** (repositório `askedly-social-network`). Domínios, o projeto na Vercel e a conta oficial do seed mantêm os nomes antigos.
 - `PLAN.md` reescrito em quatro fases: ESTRUTURA, ALPHA, BETA e 1.0.0 STABLE.
 - `LICENSE` virou `LICENSE.md`.
