@@ -62,6 +62,7 @@ export interface QuestionInterface {
 	answer_text: string;
 	answered_at: string | Date;
 	amount_paid: number;
+	currency?: string;
 	amount_already_withdraw: boolean;
 	asker_want_answer_to_be_private: boolean;
 	asker_sent_anonymous_question: boolean;

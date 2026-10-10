@@ -24,7 +24,7 @@ export const FeedQuestionHeader = memo(({ question }: FeedQuestionHeaderProps) =
 								variant="secondary"
 								className="text-xs w-fit bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
 							>
-								Pagou {formatCurrency(question.amount_paid)}
+								Pagou {formatCurrency(question.amount_paid, question.currency)}
 							</Badge>
 							<span className="hidden sm:inline">•</span>
 						</>

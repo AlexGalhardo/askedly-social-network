@@ -75,3 +75,67 @@ export async function createPaidQuestion(input: CreatePaidQuestionInput, checkCh
 		});
 	});
 }
+
+export const MIN_CREDIT_QUESTION_CENTS = 200;
+export const MAX_CREDIT_QUESTION_CENTS = 100_000;
+
+export interface CreateCreditQuestionInput extends Omit<CreatePaidQuestionInput, "pixId"> {
+	amountCents: number;
+}
+
+/**
+ * Cria a pergunta paga com créditos (dólar). O débito é condicional ao saldo e roda na mesma transação da
+ * pergunta: duas requisições simultâneas não gastam o mesmo crédito, e uma falha desfaz o débito.
+ */
+export async function createCreditQuestion(input: CreateCreditQuestionInput) {
+	if (
+		!Number.isInteger(input.amountCents) ||
+		input.amountCents < MIN_CREDIT_QUESTION_CENTS ||
+		input.amountCents > MAX_CREDIT_QUESTION_CENTS
+	) {
+		throw new CreateQuestionError("Valor inválido", 400);
+	}
+
+	return prisma.$transaction(async (tx) => {
+		const [owner, asker] = await Promise.all([
+			tx.user.findUnique({ where: { id: input.ownerId }, select: { nickname: true } }),
+			tx.user.findUnique({ where: { id: input.askerId }, select: { nickname: true } }),
+		]);
+		if (!owner) throw new CreateQuestionError("Usuário proprietário não encontrado", 404);
+		if (!asker) throw new CreateQuestionError("Usuário que fez o pagamento não encontrado", 404);
+
+		const limitField = input.isAnonymous
+			? "anonymous_questions_remaining_today"
+			: "public_questions_remaining_today";
+		const limit = await tx.user.updateMany({
+			where: { id: input.askerId, [limitField]: { gt: 0 } },
+			data: { [limitField]: { decrement: 1 } },
+		});
+		if (limit.count === 0) throw new CreateQuestionError("Limite diário de perguntas atingido", 429);
+
+		const debit = await tx.user.updateMany({
+			where: { id: input.askerId, credits_cents: { gte: input.amountCents } },
+			data: { credits_cents: { decrement: input.amountCents } },
+		});
+		if (debit.count === 0) throw new CreateQuestionError("Créditos insuficientes", 400);
+
+		return tx.question.create({
+			data: {
+				question_text: input.questionText.trim(),
+				amount_paid: input.amountCents,
+				currency: "USD",
+				asker_want_answer_to_be_private: input.askerWantsPrivateAnswer ?? false,
+				asker_sent_anonymous_question: input.isAnonymous,
+				amount_paid_is_private: input.amountIsPrivate ?? false,
+				owner_user_nickname: owner.nickname,
+				asked_by_user_nickname: asker.nickname,
+				liked_by_users: "[]",
+				desliked_by_users: "[]",
+			},
+			include: {
+				owner: { select: { id: true, name: true, nickname: true, avatar_url: true } },
+				asked_by: { select: { id: true, name: true, nickname: true, avatar_url: true } },
+			},
+		});
+	});
+}

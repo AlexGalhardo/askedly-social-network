@@ -19,6 +19,7 @@ export const RATE_LIMITS = {
 	contact: { limit: 5, windowMs: 60 * MINUTE },
 	passwordReset: { limit: 5, windowMs: 60 * MINUTE },
 	passwordChange: { limit: 10, windowMs: 15 * MINUTE },
+	creditsCheckout: { limit: 20, windowMs: 60 * MINUTE },
 } satisfies Record<string, RateLimitRule>;
 
 export interface RateLimitResult {

@@ -5,6 +5,7 @@ export interface SentQuestionInterface {
 	answer_text: string | null;
 	answered_at: Date | string | null;
 	amount_paid: number;
+	currency?: string;
 	amount_already_withdraw: boolean;
 	asker_want_answer_to_be_private: boolean;
 	asker_sent_anonymous_question: boolean;
@@ -30,7 +31,7 @@ export interface SentQuestionInterface {
 	created_at: Date | string;
 	updated_at: Date | string | null;
 	deleted_at: Date | string | null;
-	webhook_id: string;
+	webhook_id: string | null;
 	owner: {
 		id: string;
 		name: string;

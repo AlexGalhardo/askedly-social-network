@@ -245,6 +245,7 @@ class QuestionsRepository {
 		const paymentReadyQuestions = await prisma.question.findMany({
 			where: {
 				owner_user_nickname: nickname,
+				currency: "BRL",
 				question_answered: true,
 				question_is_awaiting_answer: false,
 				amount_already_withdraw: false,
@@ -254,6 +255,7 @@ class QuestionsRepository {
 		const paymentAwaitingAnswerQuestions = await prisma.question.findMany({
 			where: {
 				owner_user_nickname: nickname,
+				currency: "BRL",
 				question_is_awaiting_answer: true,
 				amount_already_withdraw: false,
 				question_answer_was_expired: false,
@@ -307,6 +309,7 @@ class QuestionsRepository {
 		const paymentSentAnsweredQuestions = await prisma.question.findMany({
 			where: {
 				asked_by_user_nickname: nickname,
+				currency: "BRL",
 				question_answered: true,
 				question_is_awaiting_answer: false,
 			},
@@ -319,6 +322,7 @@ class QuestionsRepository {
 		const paymentAwaitingAnswerQuestions = await prisma.question.findMany({
 			where: {
 				asked_by_user_nickname: nickname,
+				currency: "BRL",
 				question_is_awaiting_answer: true,
 				question_answer_was_expired: false,
 				question_answer_was_recused: false,
@@ -334,6 +338,7 @@ class QuestionsRepository {
 		const questionsAvailableForWithdraw = await prisma.question.findMany({
 			where: {
 				asked_by_user_nickname: nickname,
+				currency: "BRL",
 				amount_already_withdraw: false,
 				payment_withdraw_id: null,
 				OR: [

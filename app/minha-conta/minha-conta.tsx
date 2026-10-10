@@ -11,6 +11,7 @@ import { PersonalInfoForm } from "./personal-info-form";
 import { PixForm } from "./pix-form";
 import { PrivacySettingsForm } from "./privacy-settings-form";
 import { SocialMediaForm } from "./social-media-form";
+import { StripeForm } from "./stripe-form";
 
 export default function MinhaContaClient() {
 	const router = useRouter();
@@ -35,6 +36,7 @@ export default function MinhaContaClient() {
 			<div className="space-y-6">
 				<PersonalInfoForm user={session.user} />
 				<PixForm initialPixKey={session.user.pix_key} />
+				<StripeForm />
 				<SocialMediaForm user={session.user} />
 				<PasswordForm />
 				<PrivacySettingsForm user={session.user} />

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { settleCreditQuestion } from "@/lib/services/stripe-connect.service";
 import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
@@ -89,6 +90,8 @@ export async function POST(request: NextRequest) {
 				updated_at: new Date(),
 			},
 		});
+
+		await settleCreditQuestion(questionId);
 
 		TelegramLog.info(`PERGUNTA RESPONDIDA:
         ID da Pergunta: ${updatedQuestion.id}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { expireQuestion } from "@/lib/services/question-expiry.service";
+import { settleCreditQuestion } from "@/lib/services/stripe-connect.service";
 import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
 
@@ -16,6 +17,8 @@ export async function POST(request: NextRequest) {
 		if (!(await expireQuestion(questionId, user.nickname))) {
 			return NextResponse.json({ error: "Pergunta não pode ser expirada" }, { status: 409 });
 		}
+
+		await settleCreditQuestion(questionId);
 
 		return NextResponse.json({ success: true, message: "Pergunta expirada com sucesso" }, { status: 200 });
 	} catch (error: unknown) {

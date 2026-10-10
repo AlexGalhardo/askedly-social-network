@@ -65,6 +65,10 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Added
 
+- **Pagamento com créditos via Stripe**, ao lado do PIX. O usuário compra créditos em dólar (Stripe Checkout, `POST /api/stripe/checkout`) e paga perguntas com eles (`POST /api/question/create-with-credits`). O webhook `/api/webhook/stripe` credita a compra de forma idempotente.
+- **Stripe Connect (Accounts v2, conta de recebimento)**: quem recebe perguntas se cadastra pela Stripe em Minha Conta. Ao responder uma pergunta paga com créditos, o valor sem a taxa da plataforma é transferido para a conta conectada; pergunta recusada, expirada ou denunciada devolve os créditos inteiros a quem perguntou. O cron diário refaz liquidações pendentes.
+- `questions.currency` (`BRL` para PIX, `USD` para créditos), `questions.stripe_transfer_id`, `users.credits_cents`, `users.stripe_account_id` e a tabela `stripe_purchases`. `questions.webhook_id` virou opcional.
+
 - CI/CD com GitHub Actions: `ci.yml` (lint, format, typecheck, `bun audit`, unit, integração, build + smoke, todos bloqueantes), `e2e.yml` (Playwright) e `deploy.yml` (Vercel, só após CI verde em `main`). Ver `docs/deployment.md`.
 - `lib/session.ts` (`getSessionUser`) e services testados para regras que movem dinheiro: `withdraw.service`, `question-create.service`, `question-expiry.service`.
 - Testes de integração para saque (incluindo concorrência), criação de pergunta, expiração e autorização do cron. Teste e2e de regressão para renderização única do layout. O e2e de cadastro, antes `fixme`, agora passa.
@@ -79,6 +83,7 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Changed
 
+- Dependências atualizadas para as últimas versões estáveis, com versão fixa: Next 16.4.0, TypeScript 7.0.2, Radix UI, React Query 5.104.1, Resend 6.32.1, lucide-react 1.55.0, Biome 2.5.15, Playwright 1.64.0, entre outras. Prisma fica em 7.10.0 (a 8 ainda é release candidate).
 - A sessão do NextAuth carrega só a própria conta. Perguntas, seguidores e bloqueios são buscados por tela (`actions/my-account-actions.ts`); o contador da sidebar virou um `COUNT` no banco.
 - **Prisma 6 → 7.10.0** com driver adapters (`@prisma/adapter-pg`; `@prisma/adapter-libsql` para SQLite local), `prisma.config.ts`, client gerado em `prisma/generated/` e uma única instância compartilhada. Rode `bun run prisma:generate` após instalar. `SQLITE_DATABASE_URL` deixou de existir: use `DATABASE_URL="file:./dev.db"`.
 - `@react-email/components` 0.0.41 → 1.0.12.
