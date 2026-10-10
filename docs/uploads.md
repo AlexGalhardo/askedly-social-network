@@ -1,19 +1,19 @@
-# Upload de Arquivos
+# File uploads
 
-[UploadThing](https://uploadthing.com) (`UPLOADTHING_TOKEN`) para upload de avatar de usuário.
+[UploadThing](https://uploadthing.com) (`UPLOADTHING_TOKEN`) for uploading the user's avatar.
 
-## Onde está
+## Where it lives
 
-- `app/api/uploadthing/route.ts` + `app/api/uploadthing/core.ts` — define o `OurFileRouter` (rotas de upload permitidas, limites de tamanho/tipo)
-- `lib/uploadthing.ts` — exporta `UploadButton`/`UploadDropzone` tipados a partir do `OurFileRouter`, para uso nos componentes client
-- `lib/services/image-upload.service.ts` — lógica de negócio ao redor do upload (ex: atualizar `avatar_url` do usuário após upload concluído)
+- `app/api/uploadthing/route.ts` + `app/api/uploadthing/core.ts` — defines the `OurFileRouter` (allowed upload routes, size/type limits)
+- `lib/uploadthing.ts` — exports `UploadButton`/`UploadDropzone` typed from the `OurFileRouter`, for use in the client components
+- `lib/services/image-upload.service.ts` — business logic around the upload (e.g. updating the user's `avatar_url` after the upload completes)
 
-## Fluxo
+## Flow
 
-1. Componente client usa `UploadButton`/`UploadDropzone` de `lib/uploadthing.ts`.
-2. UploadThing processa o arquivo e chama o callback `onUploadComplete` definido em `app/api/uploadthing/core.ts`.
-3. O callback persiste a nova URL (`User.avatar_url`, que é `@unique` no schema) via `image-upload.service.ts`.
+1. A client component uses `UploadButton`/`UploadDropzone` from `lib/uploadthing.ts`.
+2. UploadThing processes the file and calls the `onUploadComplete` callback defined in `app/api/uploadthing/core.ts`.
+3. The callback persists the new URL (`User.avatar_url`, which is `@unique` in the schema) through `image-upload.service.ts`.
 
-## Adicionando uma nova rota de upload
+## Adding a new upload route
 
-Adicionar a definição em `app/api/uploadthing/core.ts` (tipo de arquivo, tamanho máximo, middleware de autenticação) — nunca aceitar upload sem validar a sessão do usuário no middleware da rota.
+Add the definition in `app/api/uploadthing/core.ts` (file type, maximum size, authentication middleware) — never accept an upload without validating the user's session in the route's middleware.

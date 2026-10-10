@@ -16,6 +16,8 @@ To run the whole product without any external account (payments are simulated), 
 - For anything larger than a small fix, open an issue first and describe the change. It avoids work that cannot be merged.
 - Read [`docs/architecture.md`](docs/architecture.md) and [`docs/security.md`](docs/security.md). Every Server Action and API route is a public endpoint: the acting user always comes from the session, never from the request body, and money values are always computed on the server.
 - User-facing text is never hardcoded. Add it to `messages/en`, `messages/pt` and `messages/es` (see [`docs/i18n.md`](docs/i18n.md)).
+- Code, comments, documentation and commit messages are written in English. The interface is translated (English by default, Portuguese and Spanish); user content is never translated.
+- The UI is built with Base UI (`@base-ui/react`) wrappers in `components/ui/` and Tailwind 4 tokens declared in `app/globals.css` (see [`docs/tooling.md`](docs/tooling.md#ui)).
 
 ## Pull request checklist
 

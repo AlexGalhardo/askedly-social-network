@@ -1,34 +1,34 @@
-# Testes
+# Tests
 
 ## Runner
 
-`bun:test` (nativo do Bun) para unit/funcional/integração/smoke. [Playwright](https://playwright.dev) só para e2e.
+`bun:test` (native to Bun) for unit/functional/integration/smoke. [Playwright](https://playwright.dev) only for e2e.
 
-## Tipos
+## Types
 
-| Tipo | O que cobre | Onde |
+| Type | What it covers | Where |
 | --- | --- | --- |
-| Unitário/funcional | funções puras (`lib/utils/*`, `lib/date-time.ts`, `lib/utils.ts`, cálculo de repasse, sanitização de perfil) e o teste de guarda que proíbe `"use server"` em `lib/` | `*.test.ts` ao lado do arquivo testado |
-| Integração | repositórios e services contra um Postgres de teste real (não mockado): usuários, saque (incluindo saque concorrente), criação de pergunta (valor do webhook, limite diário), expiração, autorização do cron, troca de senha (senha atual obrigatória, conta Google definindo a primeira), cadastro validado no servidor, feed sem dado privado nem autor de pergunta anônima | `tests/integration/*.test.ts` |
-| Smoke | a aplicação sobe com `node .../next start` e responde (`/api/health` e `/`) | `tests/smoke/*.test.ts` |
-| E2E | fluxos no browser: home, formulário de login, cadastro, troca de senha pedindo a senha atual. Fluxo de pergunta paga via PIX/responder ainda não coberto | `tests/e2e/*.spec.ts` (Playwright) |
+| Unit/functional | pure functions (`lib/utils/*`, `lib/date-time.ts`, `lib/utils.ts`, payout calculation, profile sanitization, env validation in `lib/env.ts`, CSP) and the guard test that forbids `"use server"` in `lib/` | `*.test.ts` next to the file under test |
+| Integration | repositories and services against a real test Postgres (not mocked): users, withdrawal (including concurrent withdrawal), question creation (webhook amount, daily limit), expiry, cron authorization, password change (current password mandatory, Google account setting the first one), signup validated on the server, feed with no private data and no author of an anonymous question | `tests/integration/*.test.ts` |
+| Smoke | the application starts with `node .../next start` and responds (`/api/health` and `/`) | `tests/smoke/*.test.ts` |
+| E2E | browser flows: home, login form, signup, password change asking for the current password, profile, account pages, CSP with no violation. The paid question flow through PIX/answering is not covered yet | `tests/e2e/*.spec.ts` (Playwright) |
 
-## Rodando
+## Running
 
 ```bash
-bun run test            # unit + funcional (lib/, hooks/)
+bun run test            # unit + functional (lib/, hooks/, i18n/)
 bun run test:unit
-bun run test:integration  # precisa de DATABASE_URL apontando pra um Postgres real e descartável
-bun run test:smoke        # precisa de `bun run build` antes (o teste sobe o `next start` sozinho)
-bun run test:e2e          # playwright: localmente sobe `next dev`; com CI=true usa `next start` (rode `bun run build` antes)
+bun run test:integration  # needs DATABASE_URL pointing to a real, disposable Postgres
+bun run test:smoke        # needs `bun run build` first (the test starts `next start` by itself)
+bun run test:e2e          # playwright: locally it starts `next dev`; with CI=true it uses `next start` (run `bun run build` first)
 ```
 
-Localmente, rode o e2e com `NEXTAUTH_URL=http://localhost:3200` (a porta do Playwright): o `signOut` da troca de senha redireciona para o `NEXTAUTH_URL`.
+Locally, run the e2e with `NEXTAUTH_URL=http://localhost:3200` (Playwright's port): the `signOut` of the password change redirects to `NEXTAUTH_URL`.
 
-No modo `CI=true` o captcha é obrigatório (produção). Rode o build com as chaves de teste da Cloudflare em `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY`/`CLOUDFLARE_TURNSTILE_SECRET` (ver `deployment.md`); `tests/e2e/helpers.ts` espera o token antes de enviar formulários.
+The captcha is optional: it is on only when both `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY` and `CLOUDFLARE_TURNSTILE_SECRET` are set, and the server enforces it only in a production build. CI runs the e2e in `CI=true` mode (production) with the captcha on: run the build with Cloudflare's test keys in those two variables (see `deployment.md`); `tests/e2e/helpers.ts` waits for the token before submitting forms.
 
-**Regra:** nunca rodar `test:integration`/`test:smoke` contra o banco de desenvolvimento com dados reais/seed — sempre um Postgres descartável (`infra/docker-compose.yaml` ou um container efêmero) com migration aplicada do zero.
+**Rule:** never run `test:integration`/`test:smoke` against the development database with real/seed data — always a disposable Postgres (`infra/docker-compose.yaml` or an ephemeral container) with the migrations applied from scratch.
 
-Os créditos da Stripe são testados em `tests/integration/stripe-credits.test.ts` sem chamar a Stripe: a transferência entra por parâmetro (`SendTransfer`). `i18n/config.test.ts` cobre a escolha de idioma, e o Playwright roda com `locale: "pt-BR"` porque os specs conferem textos em português.
+Stripe credits are tested in `tests/integration/stripe-credits.test.ts` without calling Stripe: the transfer comes in as a parameter (`SendTransfer`). `i18n/config.test.ts` covers the choice of language, and Playwright runs with `locale: "pt-BR"` because the specs check Portuguese texts.
 
-No CI (`.github/workflows/ci.yml` e `e2e.yml`) cada tipo roda num job separado com Postgres em service container — ver [`deployment.md`](deployment.md).
+In CI (`.github/workflows/ci.yml` and `e2e.yml`) each type runs in a separate job with Postgres in a service container — see [`deployment.md`](deployment.md).

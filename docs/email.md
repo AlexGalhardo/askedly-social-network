@@ -1,18 +1,18 @@
-# E-mail
+# Email
 
-Envio via [Resend](https://resend.com) (`RESEND_API_KEY`). Templates em React Email (`@react-email/components`), pasta `emails/`.
+Sent through [Resend](https://resend.com) (`RESEND_API_KEY`). Templates in React Email (`@react-email/components`), in the `emails/` folder. Emails are an optional feature: without `RESEND_API_KEY` the build only warns (`lib/env.ts`).
 
-## Templates existentes
+## Existing templates
 
-- `emails/contact-email.tsx` — usado por `app/api/send-contact-email/route.ts` (formulário de contato, `app/contact`)
-- `emails/reset-password-email.tsx` — usado pelo fluxo de recuperação de senha (`app/api/reset-password/*`)
+- `emails/contact-email.tsx` — used by `app/api/send-contact-email/route.ts` (contact form, `app/contact`)
+- `emails/reset-password-email.tsx` — used by the password recovery flow (`app/api/reset-password/*`)
 
-## Fluxo de recuperação de senha
+## Password recovery flow
 
-1. `POST /api/reset-password/request` — gera `reset_password_token` (com expiração) no `User` e dispara o e-mail com o link.
-2. `POST /api/reset-password/verify` — valida o token antes de mostrar o formulário de nova senha.
-3. `POST /api/reset-password/reset` — troca a senha (hash via `bcryptjs`) e invalida o token.
+1. `POST /api/reset-password/request` — generates `reset_password_token` (with an expiry) on the `User` and sends the email with the link.
+2. `POST /api/reset-password/verify` — validates the token before showing the new password form.
+3. `POST /api/reset-password/reset` — changes the password (hash through `bcryptjs`) and invalidates the token.
 
-## Adicionando um novo template
+## Adding a new template
 
-Criar componente em `emails/`, renderizar com `@react-email/components` e chamar `resend.emails.send(...)` no route handler correspondente. Não reaproveitar templates entre fluxos diferentes — cada e-mail transacional tem seu próprio arquivo.
+Create a component in `emails/`, render it with `@react-email/components` and call `resend.emails.send(...)` in the corresponding route handler. Do not reuse templates across different flows — each transactional email has its own file. Email texts are translated like the rest of the interface (`emails` namespace, see [`i18n.md`](i18n.md)).
