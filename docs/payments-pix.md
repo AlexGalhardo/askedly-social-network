@@ -1,5 +1,7 @@
 # Pagamentos PIX (AbacatePay)
 
+> O PIX é o trilho em reais. O trilho em dólar (créditos via Stripe, com repasse automático) está em [`payments-stripe.md`](payments-stripe.md). As telas de saldo e saque daqui só consideram perguntas com `currency = "BRL"`.
+
 Toda pergunta enviada no app é paga via PIX através do gateway [AbacatePay](https://abacatepay.com). Não existe pergunta gratuita: o model `Question` exige `webhook_id` (único, obrigatório) apontando para um `WebhookAbacatePay` confirmado.
 
 ## Fluxo (API v2, `https://api.abacatepay.com/v2`, checkout transparente)

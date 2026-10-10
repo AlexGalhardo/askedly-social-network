@@ -4,6 +4,7 @@ import { SeedEnvironment } from "./helpers/seed-environment.helper";
 import { SeedLogger } from "./helpers/seed-logger.helper";
 import { SeedUniqueTracker } from "./helpers/seed-unique-tracker.helper";
 import { SeedFollowerService } from "./services/seed-follower.service";
+import { SeedPaymentsDemoService } from "./services/seed-payments-demo.service";
 import { SeedQuestionService } from "./services/seed-question.service";
 import { SeedStatisticsService } from "./services/seed-statistics.service";
 import { SeedUserService } from "./services/seed-user.service";
@@ -17,6 +18,7 @@ export class SeedOrchestrator {
 	private readonly userService = new SeedUserService(this.prisma, this.uniqueTracker);
 	private readonly followerService = new SeedFollowerService(this.prisma, this.uniqueTracker);
 	private readonly questionService = new SeedQuestionService(this.prisma);
+	private readonly paymentsDemoService = new SeedPaymentsDemoService(this.prisma);
 	private readonly statisticsService = new SeedStatisticsService(this.prisma);
 
 	async execute(): Promise<void> {
@@ -37,6 +39,8 @@ export class SeedOrchestrator {
 			await this.questionService.createGuaranteedQuestions(allUsers);
 
 			await this.questionService.createRandomQuestions(allUsers, this.config.totalQuestions);
+
+			await this.paymentsDemoService.create(allUsers);
 
 			await this.statisticsService.generateReport();
 		} catch (error: any) {

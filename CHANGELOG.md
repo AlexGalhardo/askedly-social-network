@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.13.0] - 2026-10-10
+
+### Added
+
+- Add admin dashboard, payment simulation mode and docker demo stack
+
+### Changed
+
+- Rewrite plan in four phases and document stripe, i18n, docker, vercel and tooling
+
 ## [0.12.0] - 2026-10-10
 
 ### Added

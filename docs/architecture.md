@@ -10,8 +10,11 @@ actions/            → Server Actions chamadas pelos componentes client
 hooks/              → hooks React Query (useQuery/useMutation) por domínio, chamam actions/ ou fetch nas API routes
 lib/session.ts      → getSessionUser(): identidade do usuário da requisição (única fonte de "quem está agindo")
 lib/abacatepay.ts   → segredos da AbacatePay, só no servidor
+lib/stripe.ts       → cliente da Stripe, só no servidor
+lib/payment-simulation.ts → modo demonstração (PAYMENTS_SIMULATED), ignorado em produção na Vercel
+i18n/ + messages/   → next-intl: idioma por cookie/navegador e textos em en, pt, es (ver i18n.md)
 lib/repositories/   → acesso direto ao Prisma (uma função por operação de dados)
-lib/services/       → regras de negócio, em especial as que movem dinheiro (withdraw, question-create, question-expiry)
+lib/services/       → regras de negócio, em especial as que movem dinheiro (withdraw, question-create, question-expiry, credits, stripe-connect, admin)
 lib/utils/          → funções puras (formatação, validação)
 prisma/             → schema, migrations, seed (dados fake via @faker-js/faker)
 ```

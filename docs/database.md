@@ -11,9 +11,10 @@ ORM: Prisma 7 (`@prisma/client` + driver adapter). Produção/dev padrão: **Pos
 ## Models (resumo)
 
 | Model | Papel |
-|---|---|
-| `User` | conta, perfil público, configs de privacidade (`privacy_*`), limites diários de perguntas |
-| `Question` | pergunta paga; sempre ligada 1:1 a um `WebhookAbacatePay` (`webhook_id` único) |
+| --- | --- |
+| `User` | conta, perfil público, configs de privacidade (`privacy_*`), limites diários de perguntas, `credits_cents` (créditos em centavos de dólar), `stripe_account_id` (conta conectada), `is_admin` |
+| `Question` | pergunta paga. `currency` diz o trilho: `BRL` (PIX, ligada 1:1 a um `WebhookAbacatePay` por `webhook_id`) ou `USD` (créditos, sem `webhook_id`, com `stripe_transfer_id` depois do repasse) |
+| `StripePurchase` | compra de créditos por Checkout da Stripe (`pending`, `completed`, `expired`); o webhook credita uma vez |
 | `WebhookAbacatePay` | eventos brutos recebidos do gateway PIX — fonte de verdade do pagamento |
 | `Follower` / `FollowRequest` | grafo social; `FollowRequest` só existe para perfis privados |
 | `UserBlock` | bloqueios entre usuários |
@@ -45,3 +46,5 @@ bun run prisma:db:seed    # popula com dados fake (ver prisma/seed.ts)
 ## Seed
 
 `prisma/seed-orchestrator.ts` chama os `services/` e `factories/` em `prisma/` para gerar usuários, perguntas e relações de seguidores fake. Quantidade controlada por `SEED_TOTAL_RANDOM_USERS_TO_CREATED`, `SEED_TOTAL_FOLLOWERS_RELATIONS` e `SEED_RANDOM_QUESTIONS_TO_CREATE` no `.env`.
+
+O seed também cria a conta admin (`admin@gmail.com` / `adminBR@123`) e, por `services/seed-payments-demo.service.ts`, os dados de pagamento que alimentam o painel `/admin`: compras de créditos, perguntas pagas com créditos em vários estados, perguntas PIX do admin e um saque. O seed apaga todas as tabelas antes de popular: nunca rode em banco com dados reais.

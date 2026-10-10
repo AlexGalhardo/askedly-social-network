@@ -1,1 +1,22 @@
-{}
+{
+	"title": "Painel do admin",
+	"users": "Usuários",
+	"payoutAccounts": "Contas de recebimento Stripe",
+	"questions": "Perguntas",
+	"answered": "Respondidas",
+	"awaiting": "Aguardando resposta",
+	"refused": "Recusadas",
+	"expired": "Expiradas",
+	"pixVolume": "Volume em PIX",
+	"pixRevenue": "Receita da plataforma em PIX",
+	"creditsVolume": "Volume em créditos",
+	"creditsRevenue": "Receita da plataforma em créditos",
+	"creditsPurchased": "Créditos comprados",
+	"creditsOutstanding": "Créditos não gastos",
+	"pendingSettlements": "Liquidações de créditos pendentes",
+	"withdrawals": "Saques PIX",
+	"withdrawalsTotal": "Total sacado em PIX",
+	"latestPurchases": "Últimas compras de créditos",
+	"latestWithdrawals": "Últimos saques PIX",
+	"empty": "Nada por aqui ainda."
+}
