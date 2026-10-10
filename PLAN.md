@@ -1,204 +1,238 @@
-# PLANO — Refatoração Askedly Social Network para padrão Open Source
+# PLANO — Askedly Social Network
 
-> Plano vivo. Cada sessão futura deve ler este arquivo antes de continuar.
-> Legenda: `[ ]` não iniciado · `[~]` parcial/depende de ação do dev · `[x]` concluído.
-> Regra: 1 tarefa concluída = 1 microcommit (Conventional Commits).
+> Plano vivo. Cada sessão deve ler este arquivo antes de continuar.
+> Legenda: `[ ]` não iniciado · `[~]` parcial ou depende de ação do dono das credenciais · `[x]` concluído.
+> Regra: 1 tarefa concluída = 1 commit (Conventional Commits), com teste e doc quando couber.
 
-## Decisões já travadas (não perguntar de novo)
+Rede social global de perguntas e respostas pagas. Cada pessoa tem um perfil público; quem pergunta paga (PIX em reais ou créditos em dólar via Stripe), quem responde recebe a maior parte, e a plataforma fica com a taxa.
 
-- **Package manager:** Bun 1.4.2 como padrão; comandos alternativos em npm/node só onde Bun não suportar.
-- **SQLite:** `prisma/schema.prisma` (Postgres) continua sendo o schema de produção. Um `prisma/schema.sqlite.prisma` espelhado é mantido só para os scripts `setup-*-sqlite.sh` (dev local sem Docker). Precisa ser atualizado manualmente sempre que `schema.prisma` mudar — documentar isso em `docs/database.md`.
-- **Test runner:** `bun:test` para unit/funcional/integração/smoke. Playwright só para e2e.
-- **docs/:** os 8 arquivos antigos (já deletados no working tree, não commitados) NÃO serão restaurados — docs/ recomeça do zero, focada em dar contexto para agentes de IA.
-- **Ritmo de execução:** autonomia total nas fases de baixo risco (commit por tarefa). Parar para revisão do usuário antes de: (a) qualquer refatoração de lógica/arquitetura que mude comportamento (Fase 12), (b) bumps de versão *major* que possam quebrar build.
-- **Deploy alvo do CI/CD:** Vercel (evidência: `vercel.json` + `@vercel/speed-insights` já em uso). Ajustar se o usuário corrigir.
-- **Skills obrigatórias:** toda fase deste plano deve ser executada usando as skills de `.claude/skills/` (lista e quando usar cada uma em `CLAUDE.md`/`AGENTS.md`, origem em `.claude/skills/SOURCES.md`).
-- **Formatação:** `.editorconfig` na raiz (tab, largura 4, LF) é a fonte da verdade; `biome.json` usa `formatter.useEditorconfig: true` e repete os mesmos valores. Exceções: YAML (spec proíbe tab) e `package.json` (Bun reescreve com 2 espaços).
+O projeto é construído em quatro fases. Cada fase só começa com o critério de saída da anterior cumprido.
+
+| Fase | Versão | Objetivo |
+| --- | --- | --- |
+| 1. ESTRUTURA | `0.1.0` | Repositório, ferramentas, banco e CI prontos, sem funcionalidade de produto |
+| 2. ALPHA | `0.5.0` | Produto funcionando de ponta a ponta para o time, com pagamentos simulados |
+| 3. BETA | `0.9.0` | Pagamentos reais, segurança auditada, três idiomas, produção para usuários convidados |
+| 4. 1.0.0 STABLE | `1.0.0` | Aberto ao público, open source, operável por qualquer pessoa com a documentação |
+
+## Decisões travadas (não perguntar de novo)
+
+- **Stack:** Next.js 16 (App Router) + React 19 + TypeScript estrito, Prisma 7 + PostgreSQL, NextAuth, Tailwind 4 + shadcn/ui, TanStack Query.
+- **Gerenciador:** Bun (pacotes, scripts, testes). O Next roda em Node em produção, smoke e e2e (a Vercel roda Node).
+- **Dependências:** última versão estável, versão exata, sem `rc`/`beta`. Dependência nova precisa de justificativa.
+- **Banco:** `prisma/schema.prisma` (Postgres) é o schema de produção, com migrations versionadas. `prisma/schema.sqlite.prisma` é um espelho mantido à mão, só para dev local sem Docker.
+- **Pagamentos:** dois trilhos independentes. PIX (AbacatePay) em BRL com saque manual; créditos (Stripe) em USD com repasse automático por Connect. `questions.currency` separa os dois. Valores sempre em centavos inteiros, calculados no servidor.
+- **Taxa da plataforma:** quem responde fica com 50% de perguntas até 5,00 e 70% acima (`calculatePayout`), nos dois trilhos.
+- **Idiomas:** inglês (padrão), português e espanhol, sem prefixo na URL. Só a interface é traduzida; conteúdo de usuário não.
+- **Segurança:** todo endpoint é público; quem age vem da sessão; nenhuma linha inteira de `User` vai ao browser; segredo nunca é `NEXT_PUBLIC_*`.
+- **Testes:** `bun:test` para unidade, integração (Postgres real e descartável, sem mock) e smoke; Playwright para e2e.
+- **Deploy:** Vercel pela integração Git (`main` = produção, PR = preview). CI no GitHub Actions bloqueia em lint, tipos, auditoria, testes e build.
+- **Formatação:** `.editorconfig` (tab, largura 4, LF) é a fonte da verdade; Biome para código, markdownlint para Markdown.
+- **Skills:** toda tarefa usa as skills de `.claude/skills/` (lista em `CLAUDE.md`).
 
 ---
 
-## Fase 0 — Housekeeping git
+## Fase 1 — ESTRUTURA (`0.1.0`)
 
-- [x] Commit da remoção dos 8 arquivos antigos de `docs/` (`docs: remove outdated documentation`)
-- [x] Commit de `.claude/skills/` e primeira versão do plano, hoje `PLAN.md` (`chore: add claude skills and refactor plan`)
+Objetivo: qualquer pessoa clona, roda um comando e tem o ambiente de pé, com o CI verde, antes de existir produto.
 
-## Fase 1 — Bun/tooling baseline
+### Repositório e ferramentas
 
-- [x] Adicionar `"packageManager": "bun@1.4.2"` e `engines.bun` no `package.json`
-- [x] Remover `package-lock.json` duplicado (mantido só `bun.lock`)
-- [x] Corrigir `biome.json` (schema desatualizado quebrava o hook `pre-commit`) e habilitar `css.parser.tailwindDirectives` para `globals.css` formatar sem erro
-- [x] `.nvmrc`/`.bun-version`: decidido não criar — `packageManager`/`engines.bun` no `package.json` já fixam o Bun e o CI usa `bun-version: 1.4.2` explícito
-- [x] Script `husky` renomeado para `prepare` (convenção Husky v9, roda hooks automaticamente após `bun install`)
+- [x] Repositório `askedly-social-network`, licença MIT (`LICENSE.md`), `.editorconfig`, `.gitignore`, `.dockerignore`
+- [x] Bun fixado em `packageManager`/`engines`; todas as dependências em versão exata
+- [x] TypeScript estrito, sem `ignoreBuildErrors`
+- [x] Biome (lint + format) lendo o `.editorconfig`; `lint:ci` falha com warning
+- [x] markdownlint (`bun run lint:md`) em `*.md`, `docs/` e `.github/`
+- [x] Husky: `pre-commit` (format + lint-staged), `commit-msg` (commitlint), `pre-push` (testes + build)
+- [x] Conventional Commits + SemVer + `CHANGELOG.md` (Keep a Changelog)
 
-## Fase 2 — Upgrade de dependências
+### Aplicação base
 
-- [x] Levantar versão estável exata atual de cada dependência em `"latest"`: `@auth/core`, `@radix-ui/react-dialog`, `@radix-ui/react-radio-group`, `@react-email/components`, `next-auth`
-- [x] Atualizar todas as demais dependências para a última versão estável de produção dentro da major atual (sem canary/beta/rc)
-- [x] Rodar `bun install`, `bun run build` (com Postgres descartável via Docker) e validar que nada quebrou
-- [x] Commit (`chore(deps): pin all dependencies to exact latest stable versions`)
+- [x] Next.js App Router com layout, tema claro/escuro e navegação lateral
+- [x] Camadas definidas: `app/` (rotas), `actions/` (Server Actions), `lib/services` (regra de negócio), `lib/repositories`, `hooks/`
+- [x] Headers de segurança e CSP estrito por nonce (`proxy.ts`, `lib/csp.ts`)
+- [x] `/api/health`
 
-### Upgrades major (aplicados com aval do usuário)
+### Banco de dados
 
-- [x] Prisma 6 → 7.10.0 (driver adapters, `prisma.config.ts`, client gerado em `prisma/generated/`, instância única). SQLite local usa `@prisma/adapter-libsql` porque `better-sqlite3` não roda no Bun.
-- [x] `@react-email/components` 0.0.41 → 1.0.12 (os dois templates renderizam igual).
-- [x] `framer-motion`: removido em vez de atualizado. Só girava um ícone que já tinha `animate-spin`.
-- [x] TypeScript mantido na 6.x (6.0.3, a mais recente) por decisão do usuário.
-- [x] SQLite nativo do Bun (`bun:sqlite`): **descartado por inviabilidade técnica**. `bun:sqlite` só existe no runtime Bun, e o Next precisa rodar em Node (a Vercel roda Node, e sob Bun os módulos externalizados pelo Turbopack nem resolvem — ver `docs/deployment.md`). Além disso o único adapter Prisma é comunitário, de um mantenedor só. O SQLite local segue com `@prisma/adapter-libsql`, que funciona em Node e Bun
+- [x] Prisma 7 com driver adapters e instância única (`prisma/prisma-client.ts`)
+- [x] Schema inicial e migrations versionadas; espelho SQLite para dev local
+- [x] Seed modular (`prisma/seed-orchestrator.ts`): usuários do sistema, usuários aleatórios, seguidores, perguntas
 
-## Fase 3 — AGENTS.md e CLAUDE.md (raiz)
+### Ambiente local e infraestrutura
 
-- [x] Criar `AGENTS.md` e `CLAUDE.md` idênticos, ≤50 linhas, linkando para `docs/*`
-- [x] Commit (`docs: add AGENTS.md and CLAUDE.md`)
+- [x] `.env.example` com todas as variáveis comentadas
+- [x] Seis scripts em `setups/` (Windows/Unix × SQLite/Postgres/Postgres com Docker)
+- [x] `infra/docker-compose.yaml` (Postgres) e `infra/Dockerfile` (imagem `oven/bun` com tag fixa)
 
-## Fase 4 — docs/ (contexto para agentes de IA)
+### CI/CD
 
-- [x] `docs/architecture.md` — visão geral do app, App Router, camadas
-- [x] `docs/database.md` — schema Prisma, migrations, seed, estratégia sqlite dev
-- [x] `docs/auth.md` — NextAuth, fluxo de login/registro
-- [x] `docs/payments-pix.md` — integração AbacatePay, webhook PIX (achado: API keys `NEXT_PUBLIC_*` expostas no client — revisar na Fase 11 OWASP)
-- [x] `docs/email.md` — Resend, templates em `emails/`
-- [x] `docs/uploads.md` — UploadThing
-- [x] `docs/telegram-bot.md` — bot de notificações
-- [x] `docs/testing.md` — atualizado com o estado real (tipos, modos local/CI do e2e, captcha)
-- [x] `docs/deployment.md` — atualizado com o estado real (todos os gates bloqueantes, e2e em produção, Node nos testes)
-- [x] Commit (`docs: add AI-agent-focused documentation`)
+- [x] `ci.yml`: lint, markdown lint, typecheck, auditoria de dependências, testes unitários, integração (Postgres em service container), build + smoke
+- [x] `e2e.yml`: Playwright contra build de produção
+- [x] Dependabot para `bun` e `github-actions`
+- [x] Integração Git da Vercel; `infra/vercel-build.sh` (generate, migrate só em produção, build)
 
-## Fase 5 — setups/
+### Documentação para pessoas e agentes
 
-- [x] `setups/setup-windows-using-sqlite.sh`
-- [x] `setups/setup-windows-using-postgres.sh`
-- [x] `setups/setup-windows-using-postgres-with-docker.sh`
-- [x] `setups/setup-unix-using-sqlite.sh`
-- [x] `setups/setup-unix-using-postgres.sh`
-- [x] `setups/setup-unix-using-postgres-with-docker.sh`
-- [x] `prisma/schema.sqlite.prisma` criado e validado (`prisma validate` + `prisma db push` contra sqlite descartável)
-- [x] Commit (`feat: add setup scripts for windows/unix with sqlite/postgres/docker`)
-- [x] Scripts executados de ponta a ponta num worktree limpo (sem `.env`, como um contribuidor novo): os 3 Windows no Git Bash e `unix-sqlite`/`unix-postgres` num container `oven/bun:1.4.2`. O `unix-postgres-with-docker` difere do Windows só nas mensagens de instalação
+- [x] `README.md`, `AGENTS.md` e `CLAUDE.md` (idênticos, curtos, apontando para `docs/`)
+- [x] `docs/architecture.md`, `docs/database.md`, `docs/tooling.md`, `docs/testing.md`, `docs/deployment.md`
+- [x] Skills vendorizadas em `.claude/skills/` com origem registrada em `SOURCES.md`
 
-## Fase 6 — infra/
+**Critério de saída:** clone limpo + um script de `setups/` + `bun run dev` funciona; CI verde em um PR vazio.
 
-- [x] Mover `docker-compose.yaml` para `infra/docker-compose.yaml` (pinado em `postgres:17-alpine`, com healthcheck), criar `infra/Dockerfile`
-- [x] Remover `setup.sh` (substituído por `setups/`)
-- [x] Commit (`chore: centralize infra configs under infra/`)
+---
 
-## Fase 7 — SemVer + Conventional Commits
+## Fase 2 — ALPHA (`0.5.0`)
 
-- [x] Adicionar `"version": "1.0.0"` ao `package.json` (feito na Fase 1)
-- [x] Criar `CHANGELOG.md` (Keep a Changelog + SemVer)
-- [x] Adicionar commitlint (`@commitlint/cli` + `@commitlint/config-conventional`, pinados exatos) + `.husky/commit-msg`
-- [x] Testado: mensagem válida passa, mensagem inválida é rejeitada (`bunx commitlint`)
-- [x] Commit (`chore: adopt semver and conventional commits`)
+Objetivo: o produto inteiro funciona para o time, de criar conta a sacar, com pagamentos simulados. Pode ter aresta visual; não pode ter fluxo quebrado.
 
-## Fase 8 — Testes
+### Contas
 
-- [x] Testes unitários/funcionais com `bun:test` (48 testes: `lib/date-time.ts`, `lib/utils.ts`, `lib/utils/*.ts`). `hooks/` e `actions/` ainda sem cobertura — dependem de mocks de React Query/Next que não valiam o esforço nesta rodada; considerar no Fase 11.
-- [x] Testes de integração (`tests/integration/users-repository.test.ts`, contra Postgres real descartável)
-- [x] Smoke tests (`tests/smoke/health.test.ts` — sobe `next start` de verdade, checa `/api/health` e `/`)
-- [x] E2E com Playwright (`tests/e2e/homepage.spec.ts`, `tests/e2e/signup.spec.ts`; fluxo de pagamento PIX/responder pergunta ficou de fora por tempo — considerar expandir depois)
-- [x] Scripts `test`, `test:unit`, `test:integration`, `test:smoke`, `test:e2e` no `package.json`
-- [x] Commits por tipo de teste
-- [x] `tests/e2e/signup.spec.ts` reativado (o `test.fixme` saiu com a correção do Zod na Fase 11)
+- [x] Cadastro com email e senha, validado no servidor (Zod), com captcha
+- [x] Login com credenciais e com Google (NextAuth, sessão JWT)
+- [x] Esqueci a senha e reset por email (Resend + React Email)
+- [x] Minha Conta: dados pessoais, redes sociais, avatar (UploadThing), senha, excluir conta
+- [x] Configurações de privacidade (perfil privado, aceitar anônimas, mostrar valores, curtidas)
 
-### 🐛 Bugs críticos encontrados escrevendo os testes (corrigidos na Fase 11)
+### Perfil e rede
 
-- **`app/layout.tsx` renderiza `{children}` duas vezes** (`lg:hidden` + `hidden lg:block`) — duplica toda página no DOM (IDs duplicados, hooks/efeitos/chamadas de API em dobro). Afeta TODAS as páginas. Ver `CHANGELOG.md`.
-- **`ZodError.errors` não existe na versão do Zod instalada** (é `.issues`) — quebra o tratamento de erro de validação em `handleSignup` (`app/criar-conta/criar-conta.tsx`) e provavelmente em todo formulário/rota que usa esse padrão (ver lista de erros de `bunx tsc --noEmit`: `app/api/send-contact-email`, `app/api/user/delete-account`, `app/api/user/update-password`, `app/api/user/update-personal-info`, `app/api/user/update-social-medias`, `app/contato/contato.tsx`).
+- [x] Perfil público em `/[slug]`
+- [x] Seguir, deixar de seguir, pedidos para perfil privado, aceitar e rejeitar
+- [x] Bloquear e desbloquear
+- [x] Listas de seguidores e seguindo
 
-## Fase 9 — Husky
+### Perguntas
 
-- [x] `pre-commit`: `bun run format` + `bunx lint-staged` (biome `--write`, sem `--unsafe`, só nos arquivos staged — evita travar todo commit nos ~31 erros de lint pré-existentes)
-- [x] `commit-msg`: validar Conventional Commits via commitlint (feito na Fase 7)
-- [x] `pre-push`: `bun run test` (unit) + `bun run build`
-- [x] Instalado pacote `lint-staged` de verdade (config já existia no `package.json` mas nada rodava ela) e corrigida a flag do Biome (`--apply` não existe mais no Biome 2.x, agora `--write`)
-- [x] Testado rodando um commit real com o novo hook
-- [x] Commit (`chore: update husky hooks for staged linting and pre-push tests`)
+- [x] Enviar pergunta paga: pública ou anônima, resposta pública ou privada, valor público ou privado
+- [x] Limite diário de perguntas (10 públicas, 1 anônima), zerado pelo cron
+- [x] Responder, recusar, expirar por prazo, denunciar pergunta, denunciar resposta
+- [x] Perguntas recebidas e perguntas enviadas
+- [x] Curtir e descurtir respostas
+- [x] Feed da comunidade e de quem você segue; ranking das mais curtidas
 
-## Fase 10 — CI/CD GitHub Actions
+### Dinheiro (simulado)
 
-- [x] Workflow `ci.yml`: lint, format, typecheck, `bun audit`, unit, integração (Postgres service), build + smoke — `lint`/`typecheck`/`security-audit` não bloqueantes até a Fase 11 pagar a dívida
-- [x] Workflow `e2e.yml`: Playwright (reporter HTML só em `CI=true`, publicado como artifact em falha)
-- [x] Workflow `deploy.yml`: deploy Vercel via `workflow_run` só depois do CI verde em `main`; CLI `vercel@59.26.0` pinado no workflow em vez de devDependency (removia 16 das 26 vulnerabilidades do `bun audit`)
-- [x] Validado: `actionlint` limpo + todos os passos rodados localmente com Postgres descartável (format, 48 unit, 6 integração, build, smoke, e2e 2 passed/1 fixme)
-- [x] Commit (`ci: add github actions for lint, test, build and deploy`)
-- [x] Deploy: o usuário conectou o projeto `respondeae` à integração Git da Vercel, então o `deploy.yml` foi removido (evita deploy duplicado; não precisa mais de `VERCEL_TOKEN`). Build na Vercel corrigido (`infra/vercel-build.sh`: `prisma generate`, migrations só em produção) — primeiro deploy de produção `READY` em `https://respondeae.vercel.app`
+- [x] Cobrança PIX com QR code e confirmação por consulta
+- [x] Saldo derivado das perguntas respondidas; taxa da plataforma por `calculatePayout`
+- [x] Saque para a chave PIX cadastrada, em transação, sem sacar a mesma pergunta duas vezes
+- [x] Modo demonstração `PAYMENTS_SIMULATED` (`lib/payment-simulation.ts`)
+- [x] Aplicação completa em Docker com seed (`infra/docker-compose.demo.yaml`, `docs/docker.md`)
 
-## Fase 11 — Revisão de lógica, segurança e qualidade (concluída; ver `CHANGELOG.md`)
+### Administração
 
-Executada com as skills `graphify` (mapa do código), `security-and-hardening`, `test-driven-development`, `debugging-and-error-recovery`, `ponytail`, `code-simplification` e `git-workflow-and-versioning`.
+- [x] Conta admin no seed (`admin@gmail.com`) e painel `/admin` com totais por moeda, receita, compras e saques
+- [x] Seed de pagamentos de demonstração para o painel (`seed-payments-demo.service.ts`)
+- [x] Cron diário protegido por `CRON_SECRET`: limites, contas excluídas, rate limits vencidos
 
-- [x] Bugs críticos: layout renderizando páginas 2×; `ZodError.errors` (Zod 4); redirect concorrente no cadastro; e2e de cadastro reativado
-- [x] Controle de acesso (OWASP A01): saque, criação/resposta/exclusão/recusa/report/like/expiração de pergunta, seguir, aceitar/rejeitar seguidor, dados de pagamento. Identidade sempre via `lib/session.ts`
-- [x] Integridade de dinheiro: valor da pergunta vem do webhook; repasse calculado no servidor; saque e expiração atômicos (testes de integração, inclusive concorrência)
-- [x] Segredos: chave e webhook da AbacatePay server-only (confirmado com build + sentinela no bundle); `simulate-payment` só em modo teste; cron com `CRON_SECRET`; Turnstile consertado
-- [x] `bun audit` 26 → 1 (a restante está ignorada com justificativa no CI); jobs `lint`, `typecheck` e `security-audit` bloqueantes
-- [x] `tsc` 0 erros e `ignoreBuildErrors` removido; lint 0 erros em todo o código
-- [x] Código morto: 30 componentes shadcn, 28 dependências, actions/rotas/arquivos sem uso; comentários redundantes removidos
-- [x] Toasts de 5 telas que nunca apareciam (store duplicado)
+### Testes da fase
 
-### Pendências que dependem de decisão do usuário
+- [x] Unitários das funções puras (repasse, privacidade de pergunta, datas, utilitários)
+- [x] Integração: criação de pergunta, saque (inclusive concorrente), expiração, denúncia, feed, cadastro, senha
+- [x] Smoke: o build sobe e responde
 
-- [x] **Troca de senha sem pedir a senha atual** (A07): senha atual obrigatória; contas Google definem a primeira senha (`lib/services/password.service.ts`)
-- [x] **Rate limit** em login/cadastro/contato: feito em Postgres (tabela `rate_limits`, upsert atômico, testado com concorrência) em vez de Upstash, para não depender de serviço pago novo. Login por IP e por email; cadastro, contato e reset por IP; troca de senha por usuário. Validado contra servidor real (NextAuth e rotas)
-- [x] **Funcionalidades quebradas**: "reportar resposta" implementado (`lib/services/question-report.service.ts`, com teste); "sacar perguntas não respondidas" removido — não tinha tela, só um hook sem uso chamando rota inexistente. De quebra: o report de pergunta não checava o dono (corrigido)
-- [x] **Vercel**: projeto `respondeae` no time "Fitness Projects", Postgres do Marketplace como `DATABASE_URL`, env vars cadastradas pelo usuário. Produção no ar e validada (`/api/health`, páginas com banco, migrations aplicadas, headers, webhook/cron 401 sem secret)
+**Critério de saída:** o roteiro de `docs/docker.md` passa inteiro, do cadastro ao saque, sem conta externa.
 
-### Ações manuais que só o dono das credenciais pode fazer (não são código)
+---
 
-- [ ] Criar `CRON_SECRET` no projeto da Vercel (sem ela o cron diário recebe 401)
-- [ ] Criar `RESEND_FROM_EMAIL` com um remetente de domínio verificado na Resend (sem ele o reset de senha só chega ao dono da conta Resend)
-- [ ] **Rotacionar a chave da AbacatePay** (a antiga ficou exposta no bundle) e atualizar `ABACATEPAY_API_KEY`/`ABACATEPAY_WEBHOOK_SECRET`; cadastrar o webhook em `https://respondeae.vercel.app/api/webhook/abacatepay?webhookSecret=...`
-- [ ] Conferir que `NEXT_PUBLIC_TEST_MODE` é `false` em produção e remover `NODE_ENV`, `SEED_*` e `DANGER_MODE` das env vars da Vercel
-- [ ] Ativar "Deployment Checks" na Vercel exigindo os checks `CI` e `E2E`, para a produção só subir com o CI verde
+## Fase 3 — BETA (`0.9.0`)
 
-### Pendências técnicas menores
+Objetivo: dinheiro de verdade com usuários convidados. Nada que mova dinheiro ou exponha dado pode depender de confiança no cliente.
 
-- [x] Seed não roda no SQLite (`createMany({ skipDuplicates })`): `skipDuplicates` só fora do SQLite (validado nos dois bancos)
-- [x] Erro de hidratação no botão de tema (`Moon`/`Sun` dependem do tema, que só é conhecido no client)
-- [x] Páginas que têm `<main>` próprio dentro do `<main>` do layout (landmark duplicado, a11y): 13 páginas agora usam `<div>`
-- [x] Campo de nickname aceita só `a-z`, mas o schema aceita dígitos e `_`: alinhar
-- [x] O callback `session` do NextAuth carrega o usuário com todas as perguntas a cada leitura de sessão (performance): não grava mais `last_login_at` nem reativa conta a cada leitura (só no sign-in), e usuários relacionados vêm só com campos públicos (`publicUserSelect`). Tirar as relações da sessão de vez exige migrar ~10 telas para buscar por action; fica como melhoria futura
-- [x] 61 warnings do Biome: zerados, e `lint:ci` agora usa `--error-on-warnings`
+### Pagamentos reais
 
-## Fase 12 — README.md final
+- [x] PIX pela AbacatePay v2 com webhook assinado (HMAC sobre o corpo cru) e idempotente
+- [x] Créditos em dólar pela Stripe: Checkout hospedado, webhook assinado, crédito idempotente (`docs/payments-stripe.md`)
+- [x] Pergunta paga com créditos: débito condicional ao saldo na mesma transação
+- [x] Stripe Connect (Accounts v2, conta de recebimento): onboarding hospedado e repasse por transferência ao responder
+- [x] Devolução integral dos créditos em pergunta recusada, expirada ou denunciada
+- [x] Cron refaz liquidações pendentes e expira perguntas em créditos vencidas
+- [x] Script idempotente de configuração da Stripe (`infra/stripe-setup.ts`, `docs/stripe-setup.md`)
+- [ ] Tratar reembolso e disputa da compra de créditos (`charge.refunded`, `charge.dispute.created`)
+- [ ] Repasse PIX automático (hoje o saque só registra o pedido; o pagamento é manual)
+- [ ] Histórico de compras de créditos e de repasses Stripe na tela de Pagamentos
 
-- [x] Nome do app centralizado
-- [x] Badges/status (build, licença, versão)
-- [x] Introdução em português
-- [x] Tech stack
-- [x] Links para `setups/*`
-- [x] Links para `docs/*`
-- [x] Créditos + licença MIT (arquivo `LICENSE` criado; só o `package.json` dizia MIT)
-- [x] Commit (`docs: rewrite README following open source standard`)
+### Segurança
 
-## Fase 13 — Skills novas (.claude/skills/)
+- [x] Auditoria OWASP Top 10:2025 (`docs/security.md`), com achados corrigidos e riscos aceitos registrados
+- [x] Identidade sempre da sessão (`getSessionUser`); autorização por objeto dentro do próprio `where`
+- [x] Nenhuma linha inteira de `User` no browser; autor de pergunta anônima nunca sai do servidor
+- [x] Rate limit em Postgres para login, cadastro, contato, senha e compra de créditos
+- [x] Captcha verificado no servidor; sessões revogadas na troca de senha (`session_version`)
+- [x] Teste de guarda: `"use server"` proibido em `lib/`
+- [x] `SECURITY.md` com canal privado de reporte
+- [x] Guarda contra perguntar para si mesmo com créditos
+- [ ] Limites antifraude na compra de créditos (teto diário por conta, bloqueio de conta recém-criada)
 
-- [x] Avaliar necessidade de skills específicas do projeto: criadas `askedly-secure-endpoint` (checklist a partir dos achados reais da auditoria) e `askedly-local-verification` (validar como o CI: banco descartável, Node, chaves de teste do Turnstile, armadilhas do Prisma 7). Migrations ficaram cobertas pela segunda
+### Internacionalização
 
-## Fase 14 — [FINAL] Auditoria de segurança OWASP Top Ten (aplicação inteira)
+- [x] next-intl com inglês (padrão), português e espanhol; idioma por cookie ou navegador (`docs/i18n.md`)
+- [x] Chaves de tradução checadas pelo `tsc` nos três idiomas
+- [x] Interface, erros de API, metadata, textos legais e emails traduzidos
+- [x] Dinheiro formatado pela moeda do dado (`BRL` ou `USD`), datas pelo idioma
+- [ ] Revisão dos textos legais em inglês e espanhol por pessoa fluente (hoje são tradução do português)
+- [ ] E2E em inglês (hoje o Playwright roda só em `pt-BR`)
 
-> Última fase, depois de todas as outras. Diferente da Fase 11 (que revisa lógica pontualmente), aqui é uma passada completa e sistemática na aplicação como um todo.
+### Qualidade e operação
 
-- [x] Ler a versão vigente em <https://owasp.org/projects/top-ten> (não confiar em lista memorizada — categorias mudam entre edições) e montar checklist por categoria: **OWASP Top 10:2025**
-- [x] Rodar `graphify` no repo para mapear superfícies de ataque: API routes (`app/api/*`), Server Actions (`actions/`), webhook PIX, auth (NextAuth), uploads (UploadThing), cron (`/api/cronjob`), variáveis `NEXT_PUBLIC_*`
-- [x] Verificar cada categoria contra cada superfície usando as skills `security-and-hardening` (+ `.claude/references/security-checklist.md`) e o agente `.claude/agents/security-auditor.md`
-- [x] Registrar achados em `docs/security.md` (categoria OWASP, arquivo, severidade, correção) e linkar em `AGENTS.md`/`CLAUDE.md`
-- [x] Corrigir achados críticos/altos (1 commit por correção, com teste que prova a correção); médios/baixos viram itens no plano (ver "Riscos aceitos" em `docs/security.md`)
-- [x] `bun audit` sem vulnerabilidades altas/críticas; CI `security-audit` bloqueante
+- [x] Integração dos créditos: webhook repetido, gasto concorrente, devolução e repasse uma única vez
+- [x] E2E: home, login, cadastro, troca de senha, CSP sem violação em modo produção
+- [ ] E2E do fluxo de pergunta paga (PIX e créditos) em modo demonstração
+- [x] Logs de eventos de negócio e erros no Telegram
+- [~] Produção na Vercel validada (`/api/health`, migrations, headers, webhooks e cron recusando sem segredo)
 
-### Achados antecipados (encontrados antes da auditoria formal)
+### Ações que só o dono das credenciais pode fazer
 
-- [x] **Crítico:** repositórios com `"use server"` (endpoints públicos: dump de usuários, troca de senha de qualquer conta, webhook forjado). Corrigido + teste de guarda
-- [x] **Crítico:** linhas inteiras de `User` serializadas para o browser (feed, top curtidas, perfil, sessão) e autor de pergunta anônima revelado. Corrigido
-- [x] **Crítico:** chave da Resend hardcoded em `app/api/send-contact-email/route.ts` (bloqueava o push pelo Push Protection do GitHub). Removida do código e do histórico local; chave antiga revogada na Resend pelo usuário
-- [x] **Alto:** `getUserByNicknameAction` (perfil) e `/top-curtidas` ainda devolvem as respostas de perfil privado, respostas privadas e perguntas pendentes para o client filtrar: filtrado no servidor (`toPublicProfile`, `publicRankingOwner`)
-- [x] **Médio:** cadastro sem captcha no servidor: mitigado pelo rate limit por IP (5 cadastros/hora). Captcha no servidor exigiria um segundo token para o `signIn` logo depois (o token é de uso único); fica como melhoria opcional
-- [x] **Médio:** as consultas públicas de perguntas ainda devolvem campos internos da pergunta: removidos por `toPublicQuestion`, que também esconde o valor pago quando o dono não o tornou público
-- [x] Commit (`docs: add OWASP Top Ten security audit report`)
+- [ ] Rotacionar as chaves do repositório legado `askedly.com` (o `.env.example` de lá tinha valores com cara de reais: Stripe, banco, token do Telegram)
+- [ ] Rotacionar a chave da AbacatePay e cadastrar o webhook de produção
+- [ ] Criar `STRIPE_SECRET_KEY` e `STRIPE_WEBHOOK_SECRET` na Vercel e ativar o Connect (`docs/stripe-setup.md`)
+- [ ] Criar `CRON_SECRET` e `RESEND_FROM_EMAIL` na Vercel
+- [ ] Conferir `NEXT_PUBLIC_TEST_MODE=false` em produção e remover `NODE_ENV`, `SEED_*`, `DANGER_MODE`
+- [ ] Ativar Deployment Checks na Vercel exigindo `CI` e `E2E`
 
-### Melhorias futuras (não bloqueiam; detalhes em `docs/security.md`)
+**Critério de saída:** uma pergunta paga de verdade em cada trilho, respondida e repassada em produção; nenhum item de segurança aberto com severidade alta.
 
-- [x] Revogar sessões JWT depois de troca/reset de senha (`session_version`; e2e com dois navegadores)
-- [x] CSP completo com `script-src` e nonce (`proxy.ts` + `lib/csp.ts`; e2e em modo produção sem nenhuma violação)
-- [x] Captcha verificado no servidor também no cadastro (segundo token para o login; recusa provada com a chave de teste que sempre falha)
-- [x] Tirar as relações da sessão do NextAuth: cada tela busca por action (`actions/my-account-actions.ts`); de quebra, o feed escondia as próprias respostas do usuário ("bloqueado por" apontava para ele mesmo)
-- **Decisão de produto:** a tela de perfil só mostra respostas para o dono e seguidores, então a flag `privacy_show_questions_answered_only_to_followers` não muda nada ali. Confirmar se perfis públicos deveriam mostrar respostas a qualquer visitante
+---
+
+## Fase 4 — 1.0.0 STABLE (`1.0.0`)
+
+Objetivo: aberto ao público e mantido como projeto open source. Quem chega pela primeira vez consegue rodar, entender, contribuir e fazer o próprio deploy só com o repositório.
+
+### Open source
+
+- [x] `LICENSE.md` (MIT), `CONTRIBUTING.md`, `SECURITY.md`
+- [x] `README.md` com o que é, stack, como rodar e mapa da documentação
+- [ ] `CODE_OF_CONDUCT.md`
+- [ ] Modelos de issue e de pull request em `.github/`
+- [ ] README e documentação principal em inglês (hoje em português)
+
+### Documentação completa
+
+- [x] `docs/architecture.md`, `database.md`, `auth.md`, `security.md`, `testing.md`, `tooling.md`
+- [x] `docs/payments-pix.md`, `payments-stripe.md`, `stripe-setup.md`
+- [x] `docs/i18n.md`, `email.md`, `uploads.md`, `telegram-bot.md`
+- [x] `docs/deployment.md`, `vercel-deploy.md` (manual e com agentes de IA), `docker.md`
+- [ ] ADRs das decisões grandes (dois trilhos de pagamento, idioma sem prefixo, saldo derivado em vez de ledger)
+
+### Produto
+
+- [ ] Domínio próprio, com `metadataBase`, sitemap e emails apontando para ele (hoje `respondeae.com.br` e `respondeae.vercel.app`)
+- [ ] Nomes de rota em inglês com redirecionamento das atuais (`/entrar` para `/sign-in` etc.)
+- [ ] Decisão de produto: perfil público deve mostrar respostas a qualquer visitante? (a flag `privacy_show_questions_answered_only_to_followers` hoje não muda a tela)
+- [ ] Notificações (pergunta recebida, resposta recebida, repasse feito)
+- [ ] Acessibilidade revisada (WCAG AA) e Core Web Vitals medidos em produção
+
+### Confiabilidade
+
+- [ ] Ledger de movimentações (compras, débitos, devoluções, repasses) no lugar de saldos derivados, com conciliação contra a Stripe
+- [ ] Monitoramento e alertas (erros, falha de webhook, liquidação pendente há mais de 24 h)
+- [ ] Backup e teste de restauração do banco
+- [ ] Teste de carga do feed e da criação de pergunta
+- [ ] Plano de rollback documentado e ensaiado
+
+### Lançamento
+
+- [ ] Chaves live da Stripe e checklist de go-live da Stripe cumprido
+- [ ] Termos de uso e política de privacidade revisados por advogado (LGPD, GDPR)
+- [ ] Tag `v1.0.0`, release no GitHub com notas do `CHANGELOG.md`
+
+**Critério de saída:** uma pessoa de fora faz o deploy próprio seguindo só a documentação, e o projeto fica 30 dias em produção sem incidente de pagamento.

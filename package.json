@@ -17,6 +17,8 @@
     "lint:unsafe": "biome check app/ lib/ hooks/ contexts/ components/ i18n/ messages/ prisma/ emails/ actions/ types/ tests/ providers/ *.ts *.json --fix --unsafe",
     "lint:ci": "biome check --error-on-warnings app/ lib/ hooks/ contexts/ components/ i18n/ messages/ prisma/ emails/ actions/ types/ tests/ providers/ *.ts *.json",
     "format": "biome format app/ lib/ hooks/ contexts/ components/ i18n/ messages/ prisma/ emails/ actions/ types/ tests/ *.ts *.json --fix",
+    "lint:md": "markdownlint-cli2",
+    "lint:md:fix": "markdownlint-cli2 --fix",
     "format:ci": "biome format app/ lib/ hooks/ contexts/ components/ i18n/ messages/ prisma/ emails/ actions/ types/ tests/ *.ts *.json",
     "prepare": "husky",
     "test": "bun test lib/ hooks/ i18n/",
@@ -33,6 +35,9 @@
   "lint-staged": {
     "*.{js,ts,cjs,mjs,d.cts,d.mts,json,jsonc}": [
       "biome check --write --no-errors-on-unmatched"
+    ],
+    "*.md": [
+      "markdownlint-cli2 --fix"
     ]
   },
   "dependencies": {
@@ -96,6 +101,7 @@
     "dotenv": "18.0.7",
     "husky": "9.1.7",
     "lint-staged": "17.6.0",
+    "markdownlint-cli2": "0.23.3",
     "postcss": "8.5.29",
     "prisma": "7.10.0",
     "tailwindcss": "4.3.3",
