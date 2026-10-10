@@ -1,17 +1,17 @@
-<h1 align="center">RespondeAê</h1>
+<h1 align="center">Askedly Social Network</h1>
 
 <p align="center">Rede social de perguntas e respostas em que cada pergunta é paga via PIX.</p>
 
 <p align="center">
-	<a href="https://github.com/AlexGalhardo/respondeae/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/AlexGalhardo/respondeae/actions/workflows/ci.yml/badge.svg?branch=main"></a>
-	<a href="https://github.com/AlexGalhardo/respondeae/actions/workflows/e2e.yml"><img alt="E2E" src="https://github.com/AlexGalhardo/respondeae/actions/workflows/e2e.yml/badge.svg?branch=main"></a>
+	<a href="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/ci.yml/badge.svg?branch=main"></a>
+	<a href="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/e2e.yml"><img alt="E2E" src="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/e2e.yml/badge.svg?branch=main"></a>
 	<a href="LICENSE"><img alt="Licença MIT" src="https://img.shields.io/badge/licen%C3%A7a-MIT-blue.svg"></a>
-	<a href="CHANGELOG.md"><img alt="Versão" src="https://img.shields.io/badge/vers%C3%A3o-0.11.0-green.svg"></a>
+	<a href="CHANGELOG.md"><img alt="Versão" src="https://img.shields.io/badge/vers%C3%A3o-0.12.0-green.svg"></a>
 </p>
 
 ## Sobre
 
-No RespondeAê cada pessoa tem um perfil público onde recebe perguntas, como no Retrospectiva ou no NGL, com uma diferença: quem pergunta paga um valor via PIX. Quem responde recebe parte desse valor e pode sacar para a própria chave PIX; se não responder no prazo, a pergunta expira.
+No Askedly Social Network cada pessoa tem um perfil público onde recebe perguntas, como no Retrospectiva ou no NGL, com uma diferença: quem pergunta paga um valor via PIX. Quem responde recebe parte desse valor e pode sacar para a própria chave PIX; se não responder no prazo, a pergunta expira.
 
 - Perguntas públicas ou anônimas, com respostas públicas ou privadas
 - Pagamento via PIX pela [AbacatePay](https://abacatepay.com), confirmado por webhook
@@ -42,8 +42,8 @@ Pré-requisito: [Bun](https://bun.sh) 1.4.2. Escolha o script do seu sistema e b
 | **Linux/macOS** | [`setup-unix-using-sqlite.sh`](setups/setup-unix-using-sqlite.sh) | [`setup-unix-using-postgres.sh`](setups/setup-unix-using-postgres.sh) | [`setup-unix-using-postgres-with-docker.sh`](setups/setup-unix-using-postgres-with-docker.sh) |
 
 ```bash
-git clone git@github.com:AlexGalhardo/respondeae.git
-cd respondeae
+git clone git@github.com:AlexGalhardo/askedly-social-network.git
+cd askedly-social-network
 bash setups/setup-unix-using-postgres-with-docker.sh   # ou o script da tabela acima
 bun run dev
 ```

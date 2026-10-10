@@ -14,6 +14,8 @@ export default defineConfig({
 	use: {
 		baseURL,
 		trace: "on-first-retry",
+		// Os specs conferem textos em português; o padrão do site é inglês e segue o idioma do navegador.
+		locale: "pt-BR",
 	},
 	projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
 	webServer: {

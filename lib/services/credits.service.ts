@@ -23,7 +23,7 @@ export async function createCreditsCheckout(userId: string, amountCents: number)
 				price_data: {
 					currency: "usd",
 					unit_amount: amountCents,
-					product_data: { name: "RespondeAê credits" },
+					product_data: { name: "Askedly Social Network credits" },
 				},
 			},
 		],

@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 		const { error } = await resendClient().emails.send({
 			from: EMAIL_FROM,
 			to: email,
-			subject: "Crie Sua Nova Senha - Respondeae.com.br",
+			subject: "Crie Sua Nova Senha - Askedly Social Network",
 			react: ResetPasswordEmail({ name: reset.name, resetLink }),
 		});
 		if (error) await TelegramLog.error(`Reset de senha: falha ao enviar email: ${error.message}`);

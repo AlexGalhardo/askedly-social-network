@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.12.0] - 2026-10-10
+
+### Added
+
+- Rename app to askedly-social-network and add next-intl base (en, pt, es)
+
+### Changed
+
+- Add open source files and markdown lint
+
 ## [0.11.0] - 2026-10-10
 
 ### Added

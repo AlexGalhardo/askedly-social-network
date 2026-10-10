@@ -1,19 +1,19 @@
 import PoliticaDePrivacidadeClient from "./politica-de-privacidade";
 
 export const metadata = {
-	title: "Política de Privacidade - Respondeae.com.br",
-	description: "Veja as Política de Privacidade da plataforma Respondeae.com.br",
+	title: "Política de Privacidade - Askedly Social Network",
+	description: "Veja as Política de Privacidade da plataforma Askedly Social Network",
 	openGraph: {
-		title: "Política de Privacidade - Respondeae.com.br",
-		description: "Veja os Política de Privacidade da plataforma Respondeae.com.br",
+		title: "Política de Privacidade - Askedly Social Network",
+		description: "Veja os Política de Privacidade da plataforma Askedly Social Network",
 		url: "https://respondeae.com.br/politica-de-privacidade",
-		siteName: "Respondeae.com.br",
+		siteName: "Askedly Social Network",
 		images: [
 			{
 				url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
 				width: 1200,
 				height: 630,
-				alt: "RespondeAê",
+				alt: "Askedly Social Network",
 			},
 		],
 		locale: "pt_BR",
@@ -21,8 +21,8 @@ export const metadata = {
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "Feed - Respondeae.com.br",
-		description: "Veja as Política de Privacidade da plataforma Respondeae.com.br",
+		title: "Feed - Askedly Social Network",
+		description: "Veja as Política de Privacidade da plataforma Askedly Social Network",
 		images: ["https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"],
 	},
 	metadataBase: new URL("https://respondeae.com.br"),

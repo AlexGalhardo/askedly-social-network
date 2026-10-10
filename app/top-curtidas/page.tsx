@@ -8,21 +8,21 @@ import {
 import TopCurtidasClient from "./top-curtidas";
 
 export const metadata = {
-	title: "Top 10 Perguntas & Respostas Curtidas - Respondeae.com.br",
+	title: "Top 10 Perguntas & Respostas Curtidas - Askedly Social Network",
 	description:
-		"Veja o TOP 10 perguntas e respostas curtidas da platforma Respondeae.com.br por dia, semana, mês, ano e geral.",
+		"Veja o TOP 10 perguntas e respostas curtidas da platforma Askedly Social Network por dia, semana, mês, ano e geral.",
 	openGraph: {
-		title: "Top 10 Perguntas & Respostas Curtidas - Respondeae.com.br",
+		title: "Top 10 Perguntas & Respostas Curtidas - Askedly Social Network",
 		description:
-			"Veja o TOP 10 perguntas e respostas curtidas da platforma Respondeae.com.br por dia, semana, mês, ano e geral.",
+			"Veja o TOP 10 perguntas e respostas curtidas da platforma Askedly Social Network por dia, semana, mês, ano e geral.",
 		url: "https://respondeae.com.br/top-curtidas",
-		siteName: "Respondeae.com.br",
+		siteName: "Askedly Social Network",
 		images: [
 			{
 				url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
 				width: 1200,
 				height: 630,
-				alt: "RespondeAê",
+				alt: "Askedly Social Network",
 			},
 		],
 		locale: "pt_BR",
@@ -30,9 +30,9 @@ export const metadata = {
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "Top 10 Perguntas & Respostas Curtidas - Respondeae.com.br",
+		title: "Top 10 Perguntas & Respostas Curtidas - Askedly Social Network",
 		description:
-			"Veja o TOP 10 perguntas e respostas curtidas da platforma Respondeae.com.br por dia, semana, mês, ano e geral.",
+			"Veja o TOP 10 perguntas e respostas curtidas da platforma Askedly Social Network por dia, semana, mês, ano e geral.",
 		images: ["https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"],
 	},
 	metadataBase: new URL("https://respondeae.com.br"),

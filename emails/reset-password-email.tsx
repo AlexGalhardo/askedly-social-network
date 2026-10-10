@@ -17,7 +17,7 @@ export function ResetPasswordEmail({ name, resetLink }: ResetPasswordEmailProps)
 						<Text style={{ fontSize: "16px", lineHeight: "1.5", color: "#333333" }}>Olá {name},</Text>
 
 						<Text style={{ fontSize: "16px", lineHeight: "1.5", color: "#333333" }}>
-							Recebemos uma solicitação para redefinir a senha da sua conta no Respondeae.com.br
+							Recebemos uma solicitação para redefinir a senha da sua conta no Askedly Social Network
 						</Text>
 
 						<Text style={{ fontSize: "16px", lineHeight: "1.5", color: "#333333" }}>
@@ -62,7 +62,7 @@ export function ResetPasswordEmail({ name, resetLink }: ResetPasswordEmailProps)
 					</Section>
 
 					<Text style={{ fontSize: "12px", color: "#666666", textAlign: "center", marginTop: "20px" }}>
-						© 2025 Respondeae.com.br
+						© 2025 Askedly Social Network
 					</Text>
 				</Container>
 			</Body>

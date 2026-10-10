@@ -1,3 +1,5 @@
+import createNextIntlPlugin from "next-intl/plugin";
+
 // Headers que não dependem do conteúdo da página. Um CSP completo (script-src com nonce) exigiria liberar Turnstile,
 // UploadThing e os scripts inline do Next; fica registrado em docs/security.md como próximo passo.
 const securityHeaders = [
@@ -21,4 +23,4 @@ const nextConfig = {
 	},
 };
 
-export default nextConfig;
+export default createNextIntlPlugin("./i18n/request.ts")(nextConfig);

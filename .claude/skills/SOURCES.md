@@ -17,5 +17,5 @@ Skills copiadas (vendored) dos repositórios upstream. Para atualizar, clone o r
 
 ## Skills do próprio projeto
 
-`respondeae-secure-endpoint` e `respondeae-local-verification` foram escritas neste repositório (Fase 13 do `PLAN.md`), a partir dos achados da auditoria (`docs/security.md`) e das armadilhas de validação encontradas.
+`askedly-secure-endpoint` e `askedly-local-verification` foram escritas neste repositório (Fase 13 do `PLAN.md`), a partir dos achados da auditoria (`docs/security.md`) e das armadilhas de validação encontradas.
 

@@ -117,7 +117,7 @@ export function ProfileQuestionForm({ profile, session, onSubmitQuestion }: Ques
 							className="w-full bg-gradient-to-r from-green-700 to-green-600 hover:from-green-800 hover:to-green-700 text-white text-base py-4 md:py-6 dark:from-white dark:to-gray-100 dark:text-black dark:hover:from-gray-100 dark:hover:to-gray-200"
 							disabled={newQuestion.length < 32 || newQuestion.length > 512}
 						>
-							RESPONDE AÊ
+							ASKEDLY SOCIAL NETWORK
 						</Button>
 					</div>
 				</CardContent>

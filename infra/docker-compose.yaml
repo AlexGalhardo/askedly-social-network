@@ -1,17 +1,17 @@
 services:
-  perguntae_db:
+  askedly_db:
     image: postgres:17-alpine
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: perguntae_db
+      POSTGRES_DB: askedly_db
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d perguntae_db"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d askedly_db"]
       interval: 5s
       timeout: 5s
       retries: 10

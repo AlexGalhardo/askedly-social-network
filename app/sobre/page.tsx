@@ -1,19 +1,19 @@
 import SobreClient from "./sobre";
 
 export const metadata = {
-	title: "Sobre - Respondeae.com.br",
+	title: "Sobre - Askedly Social Network",
 	description: "Saiba mais sobre o respondeae.com.br",
 	openGraph: {
-		title: "Sobre - Respondeae.com.br",
+		title: "Sobre - Askedly Social Network",
 		description: "Saiba mais sobre o respondeae.com.br",
 		url: "https://respondeae.com.br/sobre",
-		siteName: "Respondeae.com.br",
+		siteName: "Askedly Social Network",
 		images: [
 			{
 				url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
 				width: 1200,
 				height: 630,
-				alt: "RespondeAê",
+				alt: "Askedly Social Network",
 			},
 		],
 		locale: "pt_BR",
@@ -21,7 +21,7 @@ export const metadata = {
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "Sobre - Respondeae.com.br",
+		title: "Sobre - Askedly Social Network",
 		description: "Saiba mais sobre o respondeae.com.br",
 		images: ["https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"],
 	},

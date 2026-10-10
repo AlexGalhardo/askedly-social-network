@@ -3,19 +3,19 @@ import LoadingScreen from "@/components/loading-screen";
 import CriarContaClient from "./criar-conta";
 
 export const metadata = {
-	title: "Crie Sua Conta - Respondeae.com.br",
-	description: "Crie Sua Conta na plataforma Respondeae.com.br",
+	title: "Crie Sua Conta - Askedly Social Network",
+	description: "Crie Sua Conta na plataforma Askedly Social Network",
 	openGraph: {
-		title: "Crie Sua Conta - Respondeae.com.br",
-		description: "Crie Sua Conta na plataforma Respondeae.com.br",
+		title: "Crie Sua Conta - Askedly Social Network",
+		description: "Crie Sua Conta na plataforma Askedly Social Network",
 		url: "https://respondeae.com.br/criar-conta",
-		siteName: "Respondeae.com.br",
+		siteName: "Askedly Social Network",
 		images: [
 			{
 				url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
 				width: 1200,
 				height: 630,
-				alt: "RespondeAê",
+				alt: "Askedly Social Network",
 			},
 		],
 		locale: "pt_BR",
@@ -23,8 +23,8 @@ export const metadata = {
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "Crie Sua Conta - Respondeae.com.br",
-		description: "Crie Sua Conta na plataforma Respondeae.com.br",
+		title: "Crie Sua Conta - Askedly Social Network",
+		description: "Crie Sua Conta na plataforma Askedly Social Network",
 		images: ["https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"],
 	},
 	metadataBase: new URL("https://respondeae.com.br"),
