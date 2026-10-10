@@ -12,7 +12,7 @@ const EMPTY_GRAPH: SocialGraph = {
 	blockedByUserIds: [],
 };
 
-/** Quem o usuário logado segue, bloqueou e por quem foi bloqueado (antes vinha dentro da sessão). */
+/** Who the logged-in user follows, has blocked and has been blocked by (it used to come inside the session). */
 export function useMySocialGraph(): SocialGraph {
 	const { data: session } = useSession();
 	const userId = session?.user?.id;

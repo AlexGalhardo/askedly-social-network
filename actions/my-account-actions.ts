@@ -12,7 +12,7 @@ import {
 } from "@/lib/services/my-account.service";
 import { getSessionUser } from "@/lib/session";
 
-// Cada tela busca só o que usa, com a identidade da sessão. Sem sessão, lista vazia (a tela já redireciona).
+// Each screen fetches only what it uses, with the session identity. Without a session, empty list (the screen already redirects).
 
 export async function getMyPendingQuestionsCount(): Promise<number> {
 	const user = await getSessionUser();

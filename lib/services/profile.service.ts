@@ -11,8 +11,8 @@ const PRIVATE_USER_FIELDS = new Set([
 	"confirm_email_token_expires_at",
 ]);
 
-// Remove em qualquer profundidade: perfil e sessão vêm com includes aninhados (seguidores, perguntas com dono e
-// autor) e cada um desses é uma linha inteira de User.
+// Removes at any depth: profile and session come with nested includes (followers, questions with owner and
+// author) and each of those is a whole User row.
 export function stripPrivateFields(value: unknown): unknown {
 	if (Array.isArray(value)) return value.map(stripPrivateFields);
 	if (value === null || typeof value !== "object" || value instanceof Date) return value;
@@ -57,7 +57,7 @@ export interface ProfileViewer {
 	isFollowing: boolean;
 }
 
-// Só o que os contadores do cabeçalho do perfil usam: sem texto, autor ou valor.
+// Only what the profile header counters use: no text, author or amount.
 function questionSkeleton(question: ProfileQuestion) {
 	const likesArePublic = question.question_answered && !question.asker_want_answer_to_be_private;
 	return {
@@ -71,10 +71,10 @@ function questionSkeleton(question: ProfileQuestion) {
 const idOnly = (row: unknown): { id: unknown } => ({ id: (row as { id?: unknown }).id });
 
 /**
- * Perfil como o visitante pode recebê-lo. Replica no servidor a regra que a tela aplicava depois de receber tudo:
- * conteúdo de pergunta só para o dono ou, se respondida e não privada, para quem o segue. O resto vira esqueleto
- * para os contadores, e só se o contador for público. O tipo de retorno mantém o shape de entrada por conveniência;
- * em runtime os campos removidos não existem.
+ * Profile as the visitor may receive it. Replicates on the server the rule the screen applied after receiving everything:
+ * question content only for the owner or, if answered and not private, for those who follow them. The rest becomes a skeleton
+ * for the counters, and only if the counter is public. The return type keeps the input shape for convenience;
+ * at runtime the removed fields do not exist.
  */
 export function toPublicProfile<T extends Profile>(user: T, { viewerId, isFollowing }: ProfileViewer): T {
 	if (viewerId === user.id) {

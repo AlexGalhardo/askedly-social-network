@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
 		return NextResponse.json({ success: true });
 	} catch (error: unknown) {
-		await TelegramLog.error(`Reset de senha: ${error instanceof Error ? error.message : error}`);
+		await TelegramLog.error(`Password reset: ${error instanceof Error ? error.message : error}`);
 		return NextResponse.json({ error: t("resetFailed") }, { status: 500 });
 	}
 }

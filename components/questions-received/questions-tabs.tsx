@@ -80,7 +80,7 @@ export function QuestionsTabs({
 
 	return (
 		<Tabs defaultValue="pending" className="w-full" onValueChange={() => onPageChange(1)}>
-			{/* CORREÇÃO: TabList mais responsivo para mobile */}
+			{/* FIX: more responsive TabList for mobile */}
 			<div className="w-full overflow-x-auto">
 				<TabsList className="w-full min-w-max flex h-auto p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
 					<TabsTrigger

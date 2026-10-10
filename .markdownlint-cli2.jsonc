@@ -1,15 +1,15 @@
 {
-	// Regras: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+	// Rules: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
 	"config": {
 		"default": true,
-		// Documentação técnica com tabelas e URLs longas: sem limite de largura de linha.
+		// Technical documentation with tables and long URLs: no line width limit.
 		"MD013": false,
-		// O README usa HTML para o cabeçalho centralizado e os badges.
+		// The README uses HTML for the centered header and the badges.
 		"MD033": { "allowed_elements": ["h1", "p", "a", "img", "br", "details", "summary"] },
 		"MD041": false,
-		// O bloco que o `next dev` reescreve em AGENTS.md/CLAUDE.md traz um segundo título de nível 1.
+		// The block that `next dev` rewrites in AGENTS.md/CLAUDE.md brings a second level-1 heading.
 		"MD025": false,
-		// O changelog (Keep a Changelog) repete "Added", "Fixed" etc. em cada versão.
+		// The changelog (Keep a Changelog) repeats "Added", "Fixed" etc. in every version.
 		"MD024": { "siblings_only": true }
 	},
 	"globs": ["*.md", "docs/**/*.md", ".github/**/*.md"],

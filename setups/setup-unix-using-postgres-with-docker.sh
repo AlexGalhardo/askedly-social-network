@@ -1,49 +1,49 @@
 #!/usr/bin/env bash
-# Setup local (Linux/macOS) usando Postgres via Docker Compose (infra/docker-compose.yaml).
-# Uso: bash setups/setup-unix-using-postgres-with-docker.sh
+# Local setup (Linux/macOS) using Postgres via Docker Compose (infra/docker-compose.yaml).
+# Usage: bash setups/setup-unix-using-postgres-with-docker.sh
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-echo "==> Verificando Bun..."
+echo "==> Checking Bun..."
 if ! command -v bun >/dev/null 2>&1; then
-	echo "Bun não encontrado. Instalando (curl -fsSL https://bun.sh/install | bash)..."
+	echo "Bun not found. Installing (curl -fsSL https://bun.sh/install | bash)..."
 	curl -fsSL https://bun.sh/install | bash
-	echo "Abra um novo terminal (ou rode 'source ~/.bashrc') e execute este script novamente."
+	echo "Open a new terminal (or run 'source ~/.bashrc') and run this script again."
 	exit 1
 fi
 
-echo "==> Verificando Docker..."
+echo "==> Checking Docker..."
 if ! command -v docker >/dev/null 2>&1; then
-	echo "Docker não encontrado. Instale o Docker Engine/Docker Desktop antes de continuar: https://docs.docker.com/get-docker/"
+	echo "Docker not found. Install Docker Engine/Docker Desktop before continuing: https://docs.docker.com/get-docker/"
 	exit 1
 fi
 
-echo "==> Instalando dependências (bun install)..."
+echo "==> Installing dependencies (bun install)..."
 bun install
 
 if [ ! -f .env ]; then
-	echo "==> Criando .env a partir de .env.example..."
+	echo "==> Creating .env from .env.example..."
 	cp .env.example .env
 fi
 
-echo "==> Subindo Postgres (infra/docker-compose.yaml)..."
+echo "==> Starting Postgres (infra/docker-compose.yaml)..."
 docker compose -f infra/docker-compose.yaml up -d
 
-echo "==> Aguardando Postgres ficar saudável..."
+echo "==> Waiting for Postgres to become healthy..."
 until [ "$(docker inspect -f '{{.State.Health.Status}}' "$(docker compose -f infra/docker-compose.yaml ps -q askedly_db)" 2>/dev/null)" = "healthy" ]; do
 	sleep 1
 done
 
-echo "==> Gerando client Prisma e aplicando migrations..."
+echo "==> Generating the Prisma client and applying migrations..."
 bun run prisma:generate
 bun run prisma:migrate
 
-echo "==> Populando banco com dados de seed..."
+echo "==> Populating the database with seed data..."
 bun run prisma:db:seed
 
 echo ""
-echo "✅ Setup Postgres+Docker concluído."
-echo "   Para parar o banco: docker compose -f infra/docker-compose.yaml down"
-echo "   Para rodar o app: bun run dev"
+echo "✅ Postgres+Docker setup complete."
+echo "   To stop the database: docker compose -f infra/docker-compose.yaml down"
+echo "   To run the app: bun run dev"

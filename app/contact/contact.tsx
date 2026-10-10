@@ -15,7 +15,7 @@ import { createContactSchema } from "@/lib/schemas/contact";
 import TelegramLog from "@/lib/telegram-logger";
 import { getTurnstile, TURNSTILE_ENABLED } from "@/lib/turnstile";
 
-export default function ContatoClient() {
+export default function ContactClient() {
 	const t = useTranslations("legal.contact");
 	const tValidation = useTranslations("legal.contact.validation");
 	const tCommon = useTranslations("common");
@@ -117,7 +117,7 @@ export default function ContatoClient() {
 				variant: "error",
 			});
 		} catch (error: any) {
-			await TelegramLog.error(`Error contato.tsx handleSubmit: ${error?.message}`);
+			await TelegramLog.error(`Error contact.tsx handleSubmit: ${error?.message}`);
 			toast({
 				title: t("errorTitle"),
 				description: tCommon("tryAgainLater"),

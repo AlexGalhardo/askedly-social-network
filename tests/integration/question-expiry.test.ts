@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { expireQuestion } from "@/lib/services/question-expiry.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
 const run = Date.now();
 const owner = `xowner${run}`;
 const asker = `xasker${run}`;
@@ -24,7 +24,7 @@ async function createQuestion(overrides: { created_at?: Date; question_answered?
 	});
 	const question = await prisma.question.create({
 		data: {
-			question_text: "Pergunta de teste de expiração",
+			question_text: "Expiry test question",
 			amount_paid: 500,
 			owner_user_nickname: owner,
 			asked_by_user_nickname: asker,

@@ -82,7 +82,7 @@ export interface QuestionInterface {
 	updated_at: string | Date;
 	deleted_at: string | null;
 	owner: User;
-	/** null quando a pergunta é anônima e quem vê não é o autor. */
+	/** null when the question is anonymous and the viewer is not the author. */
 	asked_by: User | null;
 }
 

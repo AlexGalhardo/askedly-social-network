@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
-import PagamentosClient from "./payments";
+import PaymentsClient from "./payments";
 
 const OPEN_GRAPH_LOCALES: Record<string, string> = { en: "en_US", pt: "pt_BR", es: "es_ES" };
 
@@ -41,6 +41,6 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function PagamentosPage() {
-	return <PagamentosClient />;
+export default async function PaymentsPage() {
+	return <PaymentsClient />;
 }

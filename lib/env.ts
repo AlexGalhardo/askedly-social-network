@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-// Validação das variáveis de ambiente, importada por next.config.ts: roda em todo build e em todo start.
-// Essencial faltando ou inválida derruba o build. Opcional faltando só desliga o recurso e avisa no log.
+// Environment variable validation, imported by next.config.ts: runs on every build and every start.
+// A missing or invalid essential one breaks the build. A missing optional one only turns the feature off and warns in the log.
 
 const url = z.string().url();
 
@@ -12,7 +12,7 @@ const essential = z.object({
 	NEXT_PUBLIC_APP_URL: url,
 });
 
-/** Recurso -> variáveis de que ele precisa. Todas ou nenhuma: metade configurada é erro de configuração. */
+/** Feature -> variables it needs. All or none: half configured is a configuration error. */
 const optionalFeatures: Record<string, string[]> = {
 	"PIX (AbacatePay)": ["ABACATEPAY_API_KEY", "ABACATEPAY_WEBHOOK_SECRET"],
 	"Credits and payouts (Stripe)": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"],
@@ -51,7 +51,7 @@ export function checkEnv(env: Record<string, string | undefined>): EnvReport {
 	return { errors, warnings };
 }
 
-/** `SKIP_ENV_VALIDATION=true` existe para o build da imagem Docker, que recebe as variáveis só em runtime. */
+/** `SKIP_ENV_VALIDATION=true` exists for the Docker image build, which only receives the variables at runtime. */
 export function validateEnv(env: Record<string, string | undefined> = process.env): void {
 	if (env.SKIP_ENV_VALIDATION === "true") return;
 

@@ -6,7 +6,7 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-// `SelectValue` mostra o valor cru; para exibir o rótulo do item, passe `items` ao `Select`.
+// `SelectValue` shows the raw value; to display the item's label, pass `items` to `Select`.
 const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;
@@ -67,7 +67,7 @@ function SelectContent({
 }: React.ComponentProps<typeof SelectPrimitive.Popup> & { className?: string }): React.ReactElement {
 	return (
 		<SelectPrimitive.Portal>
-			{/* `alignItemWithTrigger={false}` abre abaixo do gatilho, como o antigo `position="popper"`. */}
+			{/* `alignItemWithTrigger={false}` opens below the trigger, like the old `position="popper"`. */}
 			<SelectPrimitive.Positioner className="z-50" align="start" sideOffset={4} alignItemWithTrigger={false}>
 				<SelectPrimitive.Popup
 					className={cn(

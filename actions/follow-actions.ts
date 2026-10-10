@@ -12,7 +12,7 @@ export async function unfollowUser(followingId: string) {
 		const session = await getServerSession(authOptions);
 
 		if (!session?.user?.id) {
-			await TelegramLog.error(`Error follow-actions.ts usuário não autenticado`);
+			await TelegramLog.error(`Error follow-actions.ts user not authenticated`);
 			throw new Error((await getTranslations("errors"))("unauthorized"));
 		}
 

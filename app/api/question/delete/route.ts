@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 		const { questionId } = body;
 
 		if (!questionId) {
-			await TelegramLog.error("Question Delete: ❌ ID da pergunta é obrigatório");
+			await TelegramLog.error("Question Delete: ❌ Question ID is required");
 			return NextResponse.json({ error: t("questionIdRequired") }, { status: 400 });
 		}
 
@@ -35,20 +35,20 @@ export async function POST(request: NextRequest) {
 		});
 
 		if (!questionToDelete) {
-			await TelegramLog.error(`Question Delete: ❌ Pergunta com ID ${questionId} não encontrada.`);
+			await TelegramLog.error(`Question Delete: ❌ Question with ID ${questionId} not found.`);
 			return NextResponse.json({ error: t("questionNotFound") }, { status: 404 });
 		}
 
 		if (questionToDelete.owner.nickname !== nickname) {
 			await TelegramLog.warning(
-				`Question Delete: ❌ Usuário @${nickname} não autorizado a deletar a pergunta ${questionId}.`,
+				`Question Delete: ❌ User @${nickname} is not authorized to delete question ${questionId}.`,
 			);
 			return NextResponse.json({ error: t("deleteForbidden") }, { status: 403 });
 		}
 
 		if (!questionToDelete.question_answer_was_recused && !questionToDelete.question_answer_was_expired) {
 			await TelegramLog.warning(
-				`Question Delete: ❌ Pergunta ${questionId} não pode ser deletada. Status atual: aguardando ou respondida.`,
+				`Question Delete: ❌ Question ${questionId} cannot be deleted. Current status: waiting or answered.`,
 			);
 			return NextResponse.json({ error: t("onlyDeclinedOrExpired") }, { status: 400 });
 		}
@@ -63,11 +63,11 @@ export async function POST(request: NextRequest) {
 			},
 		});
 
-		TelegramLog.info(`PERGUNTA DELETADA:
-        ID da Pergunta: ${deletedQuestion.id}
-        Dono da Pergunta: @${questionToDelete.owner.nickname}
-        Deletada por (Nickname do Usuário): ${nickname}
-        Texto da Pergunta: ${deletedQuestion.question_text}
+		TelegramLog.info(`QUESTION DELETED:
+        Question ID: ${deletedQuestion.id}
+        Question Owner: @${questionToDelete.owner.nickname}
+        Deleted by (User Nickname): ${nickname}
+        Question Text: ${deletedQuestion.question_text}
         `);
 
 		return NextResponse.json(

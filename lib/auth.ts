@@ -28,7 +28,7 @@ interface ExtendedUser {
 	public_questions_remaining_today?: number;
 	anonymous_questions_remaining_today?: number;
 	pix_key?: string | null;
-	/** Só um booleano: o hash da senha nunca entra na sessão. */
+	/** Only a boolean: the password hash never enters the session. */
 	has_password?: boolean;
 	twitter?: string | null;
 	instagram?: string | null;
@@ -135,7 +135,7 @@ export const authOptions: NextAuthOptions = {
 			async authorize(credentials: Record<"email" | "password" | "captchaToken", string> | undefined, req) {
 				if (!credentials?.email || !credentials?.password) return null;
 
-				// Por IP, toda tentativa conta: esgotar a própria cota só prejudica quem tenta.
+				// Per IP, every attempt counts: exhausting your own quota only hurts the one trying.
 				if (!(await consumeRateLimit(`login:ip:${clientIp(req?.headers ?? {})}`, RATE_LIMITS.login)).allowed) {
 					throw new Error(AUTH_ERROR.rateLimited);
 				}
@@ -144,8 +144,8 @@ export const authOptions: NextAuthOptions = {
 					return null;
 				}
 
-				// Por email, só falhas depois do captcha contam, e um login certo zera o contador. Se toda tentativa
-				// contasse, qualquer um travaria o login da vítima errando a senha dela de propósito.
+				// Per email, only failures after the captcha count, and a correct login resets the counter. If every attempt
+				// counted, anyone could lock the victim's login by getting their password wrong on purpose.
 				const emailKey = `login:email:${credentials.email.trim().toLowerCase()}`;
 				if (await isRateLimited(emailKey, RATE_LIMITS.login)) throw new Error(AUTH_ERROR.rateLimited);
 
@@ -172,7 +172,7 @@ export const authOptions: NextAuthOptions = {
 					if (error instanceof Error && error.message === "no_password")
 						throw new Error(AUTH_ERROR.noPassword);
 					await TelegramLog.error(
-						`Erro na autenticação auth.ts providers authorize: ${error instanceof Error ? error.message : error}`,
+						`Authentication error auth.ts providers authorize: ${error instanceof Error ? error.message : error}`,
 					);
 					return null;
 				}
@@ -196,16 +196,16 @@ export const authOptions: NextAuthOptions = {
 			}
 
 			try {
-				// Só os campos da própria conta. Perguntas, seguidores e bloqueios são buscados por tela
-				// (actions/my-account-actions.ts): carregá-los aqui custava uma consulta pesada a cada leitura de sessão.
+				// Only the account's own fields. Questions, followers and blocks are fetched per screen
+				// (actions/my-account-actions.ts): loading them here cost a heavy query on every session read.
 				const dbUser = await getUserForSession(token.email);
 
 				if (!dbUser) return session;
 
-				// Reativar conta e registrar login acontecem no sign-in (authorize/jwt), não a cada leitura de sessão.
+				// Reactivating the account and recording the login happen at sign-in (authorize/jwt), not on every session read.
 				Object.assign(session.user, mapUserToSession(dbUser));
 			} catch (error: any) {
-				await TelegramLog.error(`Erro na autenticação auth.ts callbacks session: ${error?.message}`);
+				await TelegramLog.error(`Authentication error auth.ts callbacks session: ${error?.message}`);
 			}
 
 			return session;
@@ -237,14 +237,14 @@ export const authOptions: NextAuthOptions = {
 						token.avatar_url = (profile as any).picture;
 					}
 				} catch (error: any) {
-					await TelegramLog.error(`Erro na autenticação auth.ts callbacks jwt: ${error?.message}`);
-					throw new Error(`Erro na autenticação ${error?.message}`);
+					await TelegramLog.error(`Authentication error auth.ts callbacks jwt: ${error?.message}`);
+					throw new Error(`Authentication error ${error?.message}`);
 				}
 			}
 
 			if (user) {
-				// Sign-in: grava a versão de sessão atual. Toda leitura seguinte compara com o banco, e uma troca de
-				// senha (que sobe a versão) derruba este token em todos os aparelhos.
+				// Sign-in: stores the current session version. Every later read compares it with the database, and a password
+				// change (which bumps the version) invalidates this token on every device.
 				token.session_version = (await getSessionVersion(token.id as string)) ?? 0;
 				return token;
 			}

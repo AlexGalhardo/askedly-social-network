@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # O projeto usa Bun (bun.lock); o ecossistema npm_and_yarn não sabe atualizar esse lockfile.
+  # The project uses Bun (bun.lock); the npm_and_yarn ecosystem cannot update that lockfile.
   - package-ecosystem: "bun"
     directory: "/"
     schedule:

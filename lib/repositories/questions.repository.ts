@@ -1,8 +1,8 @@
 import { toPublicQuestion } from "@/lib/utils/question-privacy";
 import { prisma } from "@/prisma/prisma-client";
 
-// Estas consultas alimentam páginas públicas e vão serializadas para o browser: só campos públicos do usuário,
-// nunca `include: true` (que levaria hash de senha, email, chave PIX e api_key).
+// These queries feed public pages and go serialized to the browser: only public user fields,
+// never `include: true` (which would carry the password hash, email, PIX key and api_key).
 const publicQuestionInclude = {
 	owner: {
 		select: {
@@ -20,8 +20,8 @@ const publicQuestionInclude = {
 	asked_by: { select: { nickname: true, name: true, avatar_url: true } },
 } as const;
 
-// O ranking é uma página estática, sem saber quem está vendo: perfis restritos (privados ou com respostas só para
-// seguidores) ficam de fora de vez. O feed, que conhece o visitante, filtra em lib/services/feed.service.ts.
+// The ranking is a static page, unaware of who is viewing: restricted profiles (private or with answers for
+// followers only) are left out entirely. The feed, which knows the visitor, filters in lib/services/feed.service.ts.
 const publicRankingOwner = {
 	privacy_is_private_profile: false,
 	privacy_show_questions_answered_only_to_followers: false,
@@ -438,5 +438,5 @@ export async function getUserQuestionsSentPaymentDetails(nickname: string) {
 	return repo.getUserQuestionsSentPaymentDetails(nickname);
 }
 
-/** Pergunta como as páginas públicas (feed, top curtidas) a recebem. */
+/** Question as the public pages (feed, top liked) receive it. */
 export type PublicQuestion = Awaited<ReturnType<typeof getAllLatestDescPublicQuestionsAnswered>>[number];

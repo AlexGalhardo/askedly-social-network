@@ -10,7 +10,7 @@ export const followerService = {
 		});
 
 		if (!response.ok) {
-			throw new Error("Erro ao buscar solicitações");
+			throw new Error("Error fetching requests");
 		}
 
 		return response.json().then((data) => data.followRequests);

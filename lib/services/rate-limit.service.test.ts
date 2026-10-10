@@ -3,7 +3,7 @@ import { maskEmail } from "./rate-limit.service";
 
 describe("maskEmail", () => {
 	test("masks the email in a rate-limit key", () => {
-		expect(maskEmail("login:email:fulano@example.com")).toBe("login:email:f***@example.com");
+		expect(maskEmail("login:email:john@example.com")).toBe("login:email:j***@example.com");
 	});
 
 	test("leaves keys without an email alone", () => {

@@ -16,7 +16,7 @@ function FollowRequestsSkeleton() {
 	return (
 		<div className="space-y-4">
 			{Array.from({ length: 3 }).map((_, i) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: placeholders fixos de loading, nunca reordenados
+				// biome-ignore lint/suspicious/noArrayIndexKey: fixed loading placeholders, never reordered
 				<div key={i} className="p-4 border rounded-lg">
 					<div className="flex items-center justify-between">
 						<div className="flex items-center space-x-3">

@@ -21,7 +21,7 @@ import TelegramLog from "@/lib/telegram-logger";
 import { isQuestionExpired } from "@/lib/utils/question-utils";
 import { QuestionInterface } from "@/types/QuestionInterface";
 
-export default function PerguntasRecebidasPage() {
+export default function ReceivedQuestionsClient() {
 	const router = useRouter();
 	const { data: session, status } = useSession();
 	const { data: questions, setData: setQuestions, isLoading } = useReceivedQuestions();
@@ -82,7 +82,7 @@ export default function PerguntasRecebidasPage() {
 				),
 			);
 		} catch (error: any) {
-			await TelegramLog.error(`Error perguntas-recebidas.ts handleConfirmAnswer: ${error?.message}`);
+			await TelegramLog.error(`Error received-questions.tsx handleConfirmAnswer: ${error?.message}`);
 			toast({
 				title: t("received.errors.answer"),
 				variant: "error",
@@ -124,7 +124,7 @@ export default function PerguntasRecebidasPage() {
 				),
 			);
 		} catch (error: any) {
-			await TelegramLog.error(`Error perguntas-recebidas.ts handleConfirmDecline: ${error?.message}`);
+			await TelegramLog.error(`Error received-questions.tsx handleConfirmDecline: ${error?.message}`);
 			toast({
 				title: t("received.errors.decline"),
 				variant: "error",
@@ -154,7 +154,7 @@ export default function PerguntasRecebidasPage() {
 
 			setQuestions((prev) => prev.filter((q) => q.id !== selectedQuestion.id));
 		} catch (error: any) {
-			await TelegramLog.error(`Error perguntas-recebidas.ts handleConfirmDelete: ${error?.message}`);
+			await TelegramLog.error(`Error received-questions.tsx handleConfirmDelete: ${error?.message}`);
 			toast({
 				title: t("received.errors.delete"),
 				variant: "error",
@@ -204,7 +204,7 @@ export default function PerguntasRecebidasPage() {
 				),
 			);
 		} catch (error: any) {
-			await TelegramLog.error(`Error perguntas-recebidas.ts handleConfirmReport: ${error?.message}`);
+			await TelegramLog.error(`Error received-questions.tsx handleConfirmReport: ${error?.message}`);
 			toast({
 				title: t("received.errors.report"),
 				variant: "error",

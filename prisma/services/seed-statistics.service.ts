@@ -5,25 +5,25 @@ export class SeedStatisticsService {
 	constructor(private readonly prisma: PrismaClient) {}
 
 	async generateReport(): Promise<void> {
-		SeedLogger.header("ESTATÍSTICAS FINAIS DO SEED");
+		SeedLogger.header("FINAL SEED STATISTICS");
 
 		const users = await this.prisma.user.count();
 		const followers = await this.prisma.follower.count();
 		const questions = await this.prisma.question.count();
 		const webhooks = await this.prisma.webhookAbacatePay.count();
 
-		SeedLogger.info(`Concluído em: ${new Date().toISOString()}`);
-		SeedLogger.info(`👥 Total de usuários criados: ${users}`);
-		SeedLogger.info(`🔗 Total de relações de seguidores: ${followers}`);
-		SeedLogger.info(`❓ Total de perguntas criadas: ${questions}`);
-		SeedLogger.info(`💳 Total de webhooks criados: ${webhooks}`);
+		SeedLogger.info(`Finished at: ${new Date().toISOString()}`);
+		SeedLogger.info(`👥 Total users created: ${users}`);
+		SeedLogger.info(`🔗 Total follower relations: ${followers}`);
+		SeedLogger.info(`❓ Total questions created: ${questions}`);
+		SeedLogger.info(`💳 Total webhooks created: ${webhooks}`);
 
 		await this.generateQuestionStatistics();
 		await this.generateUserStatistics();
 		await this.generateIntegrityCheck();
 
 		SeedLogger.separator();
-		SeedLogger.success("🎊 SEED FINALIZADO COM SUCESSO! 🎊");
+		SeedLogger.success("🎊 SEED FINISHED SUCCESSFULLY! 🎊");
 		SeedLogger.separator();
 	}
 
@@ -46,17 +46,17 @@ export class SeedStatisticsService {
 
 		const total = answered + waiting + refused + expired;
 
-		SeedLogger.info("\n📈 DISTRIBUIÇÃO DE ESTADOS DAS PERGUNTAS:");
-		SeedLogger.info(`✅ Perguntas respondidas: ${answered} (${Math.round((answered / total) * 100)}%)`);
-		SeedLogger.info(`⏳ Perguntas aguardando: ${waiting} (${Math.round((waiting / total) * 100)}%)`);
-		SeedLogger.info(`❌ Perguntas recusadas: ${refused} (${Math.round((refused / total) * 100)}%)`);
-		SeedLogger.info(`⏰ Perguntas expiradas: ${expired} (${Math.round((expired / total) * 100)}%)`);
+		SeedLogger.info("\n📈 QUESTION STATE DISTRIBUTION:");
+		SeedLogger.info(`✅ Answered questions: ${answered} (${Math.round((answered / total) * 100)}%)`);
+		SeedLogger.info(`⏳ Waiting questions: ${waiting} (${Math.round((waiting / total) * 100)}%)`);
+		SeedLogger.info(`❌ Declined questions: ${refused} (${Math.round((refused / total) * 100)}%)`);
+		SeedLogger.info(`⏰ Expired questions: ${expired} (${Math.round((expired / total) * 100)}%)`);
 
 		const totalValue = await this.prisma.question.aggregate({
 			_sum: { amount_paid: true },
 		});
 
-		SeedLogger.info(`💰 Valor total das perguntas: R$ ${((totalValue._sum.amount_paid || 0) / 100).toFixed(2)}`);
+		SeedLogger.info(`💰 Total value of questions: R$ ${((totalValue._sum.amount_paid || 0) / 100).toFixed(2)}`);
 	}
 
 	private async generateUserStatistics(): Promise<void> {
@@ -70,22 +70,22 @@ export class SeedStatisticsService {
 
 		const totalUsers = await this.prisma.user.count();
 
-		SeedLogger.info("\n👤 ESTATÍSTICAS DE USUÁRIOS:");
-		SeedLogger.info(`📝 Usuários que receberam perguntas: ${usersWithQuestions.length}/${totalUsers}`);
-		SeedLogger.info(`❓ Usuários que fizeram perguntas: ${usersWhoAsked.length}/${totalUsers}`);
+		SeedLogger.info("\n👤 USER STATISTICS:");
+		SeedLogger.info(`📝 Users who received questions: ${usersWithQuestions.length}/${totalUsers}`);
+		SeedLogger.info(`❓ Users who asked questions: ${usersWhoAsked.length}/${totalUsers}`);
 	}
 
 	private async generateIntegrityCheck(): Promise<void> {
 		const questionsCount = await this.prisma.question.count();
 		const webhooksCount = await this.prisma.webhookAbacatePay.count();
 
-		SeedLogger.info("\n🔍 VERIFICAÇÃO DE INTEGRIDADE:");
-		SeedLogger.info(`🔗 Perguntas: ${questionsCount} | Webhooks: ${webhooksCount}`);
+		SeedLogger.info("\n🔍 INTEGRITY CHECK:");
+		SeedLogger.info(`🔗 Questions: ${questionsCount} | Webhooks: ${webhooksCount}`);
 
 		if (questionsCount === webhooksCount) {
-			SeedLogger.success("✅ Todos os webhooks estão corretamente vinculados às perguntas!");
+			SeedLogger.success("✅ All webhooks are correctly linked to the questions!");
 		} else {
-			SeedLogger.warning("⚠️ Alguns webhooks podem não estar vinculados corretamente!");
+			SeedLogger.warning("⚠️ Some webhooks may not be linked correctly!");
 		}
 	}
 }

@@ -9,7 +9,7 @@ const Tabs = TabsPrimitive.Root;
 
 function TabsList({
 	className,
-	// Como antes: as setas do teclado já ativam a aba focada.
+	// As before: the arrow keys already activate the focused tab.
 	activateOnFocus = true,
 	...props
 }: React.ComponentProps<typeof TabsPrimitive.List> & { className?: string }): React.ReactElement {

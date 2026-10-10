@@ -2,13 +2,13 @@
 
 import { Suspense } from "react";
 import LoadingScreen from "@/components/loading-screen";
-import ResetarSenhaComponent from "./change-password";
+import ChangePasswordComponent from "./change-password";
 
-export default function ResetarSenhaPage() {
+export default function ChangePasswordPage() {
 	return (
 		<div>
 			<Suspense fallback={<LoadingScreen />}>
-				<ResetarSenhaComponent />
+				<ChangePasswordComponent />
 			</Suspense>
 		</div>
 	);

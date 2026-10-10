@@ -19,7 +19,7 @@ test("a public profile renders for its owner and for an anonymous visitor", asyn
 	await page.goto(`/${nickname}`);
 	await expect(page.getByRole("heading", { name: "Perfil Visitado" })).toBeVisible();
 
-	// Visitante sem sessão recebe o perfil já filtrado pelo servidor (esqueletos no lugar do conteúdo).
+	// A visitor without a session receives the profile already filtered by the server (skeletons in place of the content).
 	const visitor = await browser.newPage();
 	await visitor.goto(`/${nickname}`);
 	await expect(visitor.getByRole("heading", { name: "Perfil Visitado" })).toBeVisible();

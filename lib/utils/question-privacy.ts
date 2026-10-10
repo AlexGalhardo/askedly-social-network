@@ -14,7 +14,7 @@ export function hideAnonymousAsker<T extends AnonymizableQuestion>(question: T):
 		: question;
 }
 
-// Campos da pergunta que só servem ao servidor (pagamento, saque, moderação).
+// Question fields that only serve the server (payment, withdrawal, moderation).
 const INTERNAL_QUESTION_FIELDS = [
 	"webhook_id",
 	"payment_withdraw_id",
@@ -38,8 +38,8 @@ export type PublicQuestionView<T extends PublicQuestionInput> = Omit<
 > & { amount_paid: number | null };
 
 /**
- * Pergunta como qualquer visitante pode recebê-la: sem autor se anônima, sem campos internos e sem valor pago
- * quando o dono não o tornou público (a tela já escondia, mas o valor ia no JSON).
+ * Question as any visitor may receive it: no author if anonymous, no internal fields and no paid amount
+ * when the owner has not made it public (the screen already hid it, but the amount went in the JSON).
  */
 export function toPublicQuestion<T extends PublicQuestionInput>(question: T): PublicQuestionView<T> {
 	const amountIsPublic =

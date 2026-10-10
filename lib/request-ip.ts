@@ -7,8 +7,8 @@ function readHeader(headers: HeaderSource, name: string): string | undefined {
 }
 
 /**
- * IP do cliente para rate limit. Na Vercel o `x-forwarded-for` é reescrito pela plataforma, então o primeiro valor
- * é confiável; fora dela (dev local) pode ser forjado, o que só afeta o próprio dev.
+ * Client IP for rate limiting. On Vercel `x-forwarded-for` is rewritten by the platform, so the first value
+ * is trustworthy; outside it (local dev) it can be forged, which only affects the dev themselves.
  */
 export function clientIp(headers: HeaderSource): string {
 	return (

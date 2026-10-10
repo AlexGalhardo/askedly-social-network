@@ -21,4 +21,4 @@ export interface WithdrawParams {
 	questions: any[];
 }
 
-export type PaymentTab = "respondidas" | "enviadas";
+export type PaymentTab = "answered" | "sent";

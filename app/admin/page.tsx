@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AdminPage() {
 	const user = await getSessionUser();
-	// 404 para quem não é admin: a página nem revela que existe.
+	// 404 for non-admins: the page does not even reveal that it exists.
 	if (!user || !(await isAdmin(user.id))) notFound();
 
 	const [t, format, data] = await Promise.all([getTranslations("admin"), getFormatter(), getAdminDashboard()]);

@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-// Qualquer erro ao renderizar uma página cai aqui, dentro do layout (sidebar e idioma continuam funcionando),
-// em vez de virar a tela de erro 500 do servidor.
+// Any error while rendering a page lands here, inside the layout (sidebar and locale keep working),
+// instead of becoming the server's 500 error screen.
 export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
 	const t = useTranslations("common.errorPage");
 

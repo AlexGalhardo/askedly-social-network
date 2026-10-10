@@ -6,7 +6,7 @@ export interface SessionUser {
 	nickname: string;
 }
 
-/** Usuário autenticado da requisição atual. Rotas e Server Actions devem usar isto, nunca ids/nicknames do body. */
+/** Authenticated user of the current request. Routes and Server Actions must use this, never ids/nicknames from the body. */
 export async function getSessionUser(): Promise<SessionUser | null> {
 	const session = await getServerSession(authOptions);
 	const user = session?.user;

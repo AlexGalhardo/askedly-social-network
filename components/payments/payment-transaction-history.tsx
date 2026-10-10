@@ -36,7 +36,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
 											year: "numeric",
 											hour: "2-digit",
 											minute: "2-digit",
-											// Sem isto o next-intl usaria o fuso do servidor em vez do fuso de quem está vendo.
+											// Without this next-intl would use the server's time zone instead of the viewer's.
 											timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 										})}
 									</p>

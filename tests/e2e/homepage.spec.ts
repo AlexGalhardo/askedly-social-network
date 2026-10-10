@@ -12,8 +12,8 @@ test("login page renders the credentials form", async ({ page }) => {
 	await expect(page.locator("#password")).toBeVisible();
 });
 
-// Regressão: o layout raiz já renderizou {children} duas vezes (uma árvore por breakpoint),
-// duplicando ids, efeitos e chamadas de API em todas as páginas.
+// Regression: the root layout once rendered {children} twice (one tree per breakpoint),
+// duplicating ids, effects and API calls on every page.
 test("page content is rendered only once", async ({ page }) => {
 	await page.goto("/login");
 	await expect(page.locator("main")).toHaveCount(1);

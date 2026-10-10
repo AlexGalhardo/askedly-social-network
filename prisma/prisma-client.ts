@@ -4,16 +4,16 @@ import { PrismaClient } from "./generated/prisma/client";
 
 function createPrismaClient(): PrismaClient {
 	const url = process.env.DATABASE_URL;
-	if (!url) throw new Error("DATABASE_URL não definida (veja .env.example)");
+	if (!url) throw new Error("DATABASE_URL is not set (see .env.example)");
 
-	// `file:` = SQLite local (setups/*-sqlite.sh), com client gerado de schema.sqlite.prisma.
-	// libSQL em vez de better-sqlite3 porque este não roda no Bun (seed e scripts).
+	// `file:` = local SQLite (setups/*-sqlite.sh), with the client generated from schema.sqlite.prisma.
+	// libSQL instead of better-sqlite3 because the latter does not run on Bun (seed and scripts).
 	const adapter = url.startsWith("file:") ? new PrismaLibSql({ url }) : new PrismaPg({ connectionString: url });
 
 	return new PrismaClient({ adapter });
 }
 
-// O `next dev` reavalia módulos a cada hot reload; sem isso cada edição abriria um pool de conexões novo.
+// `next dev` re-evaluates modules on every hot reload; without this each edit would open a new connection pool.
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();

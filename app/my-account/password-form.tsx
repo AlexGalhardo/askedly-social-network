@@ -57,8 +57,8 @@ export function PasswordForm() {
 		}
 	}, [newPassword]);
 
-	// onSubmit em vez de <form action>: o React reseta o DOM do form após uma action, e numa senha atual
-	// errada os campos sumiriam da tela embora o estado ainda os tenha.
+	// onSubmit instead of <form action>: React resets the form DOM after an action, so on a wrong current
+	// password the fields would vanish from the screen even though state still holds them.
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
@@ -66,8 +66,8 @@ export function PasswordForm() {
 			updatePasswordMutation.mutate(formData, {
 				onSuccess: (data) => {
 					if (!data.error) {
-						// A troca de senha revoga todas as sessões, inclusive esta: entrar de novo com a senha nova.
-						signOut({ callbackUrl: "/login?senha-alterada=1" });
+						// Changing the password revokes every session, including this one: log in again with the new password.
+						signOut({ callbackUrl: "/login?password-changed=1" });
 						setCurrentPassword("");
 						setNewPassword("");
 						setConfirmPassword("");

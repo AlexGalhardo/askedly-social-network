@@ -36,7 +36,7 @@ export async function acceptFollowRequest(requestId: string) {
 		const session = await getServerSession(authOptions);
 
 		if (!session?.user?.id) {
-			await TelegramLog.error(`Error follower-actions.ts usuário não autenticado`);
+			await TelegramLog.error(`Error follower-actions.ts user not authenticated`);
 			throw new Error((await getTranslations("errors"))("unauthorized"));
 		}
 
@@ -45,7 +45,7 @@ export async function acceptFollowRequest(requestId: string) {
 		});
 
 		if (!request) {
-			await TelegramLog.error(`Error follower-actions.ts solicitação não encontrada`);
+			await TelegramLog.error(`Error follower-actions.ts request not found`);
 			throw new Error((await getTranslations("account.errors"))("followRequestNotFound"));
 		}
 
@@ -70,7 +70,7 @@ export async function acceptFollowRequest(requestId: string) {
 			receiverId: request.receiverId,
 		};
 	} catch (error: any) {
-		await TelegramLog.error(`Error follower-actions.ts erro ao aceitar solicitação ${error?.message}`);
+		await TelegramLog.error(`Error follower-actions.ts error accepting request ${error?.message}`);
 		throw new Error(error?.message);
 	}
 }
@@ -80,7 +80,7 @@ export async function rejectFollowRequest(requestId: string) {
 		const session = await getServerSession(authOptions);
 
 		if (!session?.user?.id) {
-			await TelegramLog.error(`Error follower-actions.ts usuário não autenticado`);
+			await TelegramLog.error(`Error follower-actions.ts user not authenticated`);
 			throw new Error((await getTranslations("errors"))("unauthorized"));
 		}
 
@@ -89,7 +89,7 @@ export async function rejectFollowRequest(requestId: string) {
 		});
 
 		if (!request) {
-			await TelegramLog.error(`Error follower-actions.ts solicitação não encontrada`);
+			await TelegramLog.error(`Error follower-actions.ts request not found`);
 			throw new Error((await getTranslations("account.errors"))("followRequestNotFound"));
 		}
 
@@ -106,7 +106,7 @@ export async function rejectFollowRequest(requestId: string) {
 			receiverId: request.receiverId,
 		};
 	} catch (error: any) {
-		await TelegramLog.error(`Catch Error follower-actions.ts erro ao rejeitar solicitação ${error?.message}`);
+		await TelegramLog.error(`Catch Error follower-actions.ts error rejecting request ${error?.message}`);
 		throw new Error(error?.message);
 	}
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import LoadingScreen from "@/components/loading-screen";
-import CriarContaClient from "./signup";
+import SignupClient from "./signup";
 
 const OG_LOCALE = { en: "en_US", pt: "pt_BR", es: "es_ES" } as const;
 
@@ -43,11 +43,11 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default function CadastroPage() {
+export default function SignupPage() {
 	return (
 		<div>
 			<Suspense fallback={<LoadingScreen />}>
-				<CriarContaClient />
+				<SignupClient />
 			</Suspense>
 		</div>
 	);

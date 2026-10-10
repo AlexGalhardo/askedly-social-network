@@ -6,8 +6,8 @@ import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(request: Request) {
-	// Simular pagamento só existe no modo de teste (chave sandbox); em produção marcaria um PIX como pago sem dinheiro.
-	// VERCEL_ENV é definido pela própria Vercel: mesmo com TEST_MODE ligado por engano, produção nunca simula.
+	// Simulating a payment only exists in test mode (sandbox key); in production it would mark a PIX as paid with no money.
+	// VERCEL_ENV is set by Vercel itself: even with TEST_MODE turned on by mistake, production never simulates.
 	if (process.env.NEXT_PUBLIC_TEST_MODE !== "true" || process.env.VERCEL_ENV === "production") {
 		return NextResponse.json({ error: (await getTranslations("errors"))("notFound") }, { status: 404 });
 	}
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
 		return NextResponse.json(await simulatePixPayment(pixId));
 	} catch (error: unknown) {
-		await TelegramLog.error(`Catch ERRO ao simular pagamento PIX: ${(error as Error)?.message}`);
+		await TelegramLog.error(`Catch ERROR simulating PIX payment: ${(error as Error)?.message}`);
 		return NextResponse.json({ error: (await getTranslations("errors"))("internal") }, { status: 500 });
 	}
 }

@@ -20,7 +20,7 @@ export async function uploadImage(file: File, type: "avatar" | "banner", userId:
 			const errorData = await response.json();
 			return {
 				success: false,
-				error: errorData.error ?? "Erro no upload da imagem",
+				error: errorData.error ?? "Image upload error",
 			};
 		}
 
@@ -30,10 +30,10 @@ export async function uploadImage(file: File, type: "avatar" | "banner", userId:
 			url: data.url,
 		};
 	} catch (error: any) {
-		console.error("Erro no upload:", error);
+		console.error("Upload error:", error);
 		return {
 			success: false,
-			error: "Erro de conexão durante o upload",
+			error: "Connection error during upload",
 		};
 	}
 }
@@ -45,7 +45,7 @@ export function validateImageFile(
 	if (!file.type.startsWith("image/")) {
 		return {
 			valid: false,
-			error: "Apenas arquivos de imagem são permitidos",
+			error: "Only image files are allowed",
 		};
 	}
 
@@ -53,7 +53,7 @@ export function validateImageFile(
 		const maxSizeMB = maxSizeBytes / (1024 * 1024);
 		return {
 			valid: false,
-			error: `Arquivo muito grande. Tamanho máximo: ${maxSizeMB}MB`,
+			error: `File too large. Maximum size: ${maxSizeMB}MB`,
 		};
 	}
 
@@ -61,7 +61,7 @@ export function validateImageFile(
 	if (!allowedTypes.includes(file.type)) {
 		return {
 			valid: false,
-			error: "Formato não suportado. Use JPG, PNG ou WebP",
+			error: "Unsupported format. Use JPG, PNG or WebP",
 		};
 	}
 
@@ -103,7 +103,7 @@ export function resizeImage(file: File, maxWidth: number, maxHeight: number, qua
 						});
 						resolve(resizedFile);
 					} else {
-						reject(new Error("Erro ao redimensionar imagem"));
+						reject(new Error("Error resizing image"));
 					}
 				},
 				file.type,
@@ -111,13 +111,13 @@ export function resizeImage(file: File, maxWidth: number, maxHeight: number, qua
 			);
 		};
 
-		img.onerror = () => reject(new Error("Erro ao carregar imagem"));
+		img.onerror = () => reject(new Error("Error loading image"));
 		img.src = URL.createObjectURL(file);
 	});
 }
 
 /**
- * Cria um preview da imagem
+ * Creates an image preview
  */
 export function createImagePreview(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
@@ -127,11 +127,11 @@ export function createImagePreview(file: File): Promise<string> {
 			if (e.target?.result) {
 				resolve(e.target.result as string);
 			} else {
-				reject(new Error("Erro ao criar preview"));
+				reject(new Error("Error creating preview"));
 			}
 		};
 
-		reader.onerror = () => reject(new Error("Erro ao ler arquivo"));
+		reader.onerror = () => reject(new Error("Error reading file"));
 		reader.readAsDataURL(file);
 	});
 }

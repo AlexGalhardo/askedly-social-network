@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 		}
 		return NextResponse.json({ success: true, valid: true });
 	} catch (error: unknown) {
-		await TelegramLog.error(`Reset de senha (verify): ${error instanceof Error ? error.message : error}`);
+		await TelegramLog.error(`Password reset (verify): ${error instanceof Error ? error.message : error}`);
 		return NextResponse.json({ error: t("verifyTokenFailed") }, { status: 500 });
 	}
 }

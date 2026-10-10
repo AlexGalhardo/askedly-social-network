@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import TelegramLog from "@/lib/telegram-logger";
 
-export default function EsqueciSenhaClient() {
+export default function ForgotPasswordClient() {
 	const router = useRouter();
 	const t = useTranslations("auth");
 	const { data: session } = useSession();
@@ -57,7 +57,7 @@ export default function EsqueciSenhaClient() {
 			setSuccessAlert(true);
 			setEmail("");
 		} catch (error: any) {
-			await TelegramLog.error(`Error esqueci-senha.ts handleSubmitForgetPassword: ${error.message}`);
+			await TelegramLog.error(`Error forgot-password.tsx handleSubmitForgetPassword: ${error.message}`);
 			setError(t("forgotPassword.sendError"));
 		} finally {
 			setLoading(false);

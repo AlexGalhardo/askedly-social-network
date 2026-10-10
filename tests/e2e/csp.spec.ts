@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { useUniqueClientIp, waitForCaptcha } from "./helpers";
 
-// Com CSP estrito, qualquer script/origem esquecido quebra a página em silêncio. Este teste percorre as telas
-// principais e falha em qualquer violação (lista de origens em lib/csp.ts).
+// With a strict CSP, any forgotten script/origin silently breaks the page. This test walks through the main
+// screens and fails on any violation (origin list in lib/csp.ts).
 test("pages run under the nonce CSP without violations", async ({ page, request }) => {
 	await page.addInitScript(() => {
 		const store = window as unknown as { __cspViolations: string[] };
@@ -21,7 +21,7 @@ test("pages run under the nonce CSP without violations", async ({ page, request 
 	const unique = Date.now();
 	await useUniqueClientIp(page);
 	await page.goto("/signup");
-	await page.locator("#name").fill("Conta CSP");
+	await page.locator("#name").fill("CSP Account");
 	await page.locator("#nickname").fill(`c_${unique}`);
 	await page.locator("#email").fill(`csp-${unique}@example.com`);
 	await page.locator("#password").fill("Sup3r!Secret");

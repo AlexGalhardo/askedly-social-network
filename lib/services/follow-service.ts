@@ -10,7 +10,7 @@ export const followService = {
 		});
 
 		if (!response.ok) {
-			throw new Error("Erro ao buscar seguindo");
+			throw new Error("Error fetching following");
 		}
 
 		return response.json();
@@ -27,7 +27,7 @@ export const followService = {
 
 		if (!response.ok) {
 			const error = await response.json();
-			throw new Error(error.message || "Erro ao deixar de seguir");
+			throw new Error(error.message || "Error unfollowing");
 		}
 	},
 };

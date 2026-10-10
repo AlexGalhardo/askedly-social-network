@@ -1,10 +1,10 @@
 import TelegramLog from "./telegram-logger";
 import { TURNSTILE_ENABLED } from "./turnstile";
 
-// Falha fechada: se a Cloudflare não responder, a requisição não passa sem captcha.
+// Fail closed: if Cloudflare does not respond, the request does not pass without captcha.
 export async function isCaptchaValid(token: string | undefined): Promise<boolean> {
-	// Captcha só vale com as duas chaves: sem a site key o frontend não mostra o widget e não há token para conferir.
-	// Não configurado = recurso desligado. Configurado, falha fechado.
+	// Captcha only applies with both keys: without the site key the frontend does not show the widget and there is no token to check.
+	// Not configured = feature off. Configured, it fails closed.
 	if (!TURNSTILE_ENABLED || !process.env.CLOUDFLARE_TURNSTILE_SECRET) return true;
 	if (!token) return false;
 	try {
@@ -16,7 +16,7 @@ export async function isCaptchaValid(token: string | undefined): Promise<boolean
 		const data: { success?: boolean } = await res.json();
 		return data.success === true;
 	} catch (error: unknown) {
-		await TelegramLog.error(`Erro ao validar captcha: ${error instanceof Error ? error.message : error}`);
+		await TelegramLog.error(`Error validating captcha: ${error instanceof Error ? error.message : error}`);
 		return false;
 	}
 }

@@ -7,7 +7,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function SobreClient() {
+export default function AboutClient() {
 	const { data: session } = useSession();
 	const t = useTranslations("legal.about");
 	const format = useFormatter();

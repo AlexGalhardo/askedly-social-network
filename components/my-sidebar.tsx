@@ -59,8 +59,8 @@ export function MySidebar() {
 		staleTime: 60_000,
 	});
 	const [sidebarOpen, setSidebarOpen] = useState(false);
-	// O tema só é conhecido no client: o markup não pode depender dele (hydration), então os dois ícones
-	// são renderizados e o CSS `dark:` escolhe qual aparece.
+	// The theme is only known on the client: the markup cannot depend on it (hydration), so both icons
+	// are rendered and the `dark:` CSS picks which one shows.
 	const { resolvedTheme, setTheme } = useTheme();
 	const pathname = usePathname();
 

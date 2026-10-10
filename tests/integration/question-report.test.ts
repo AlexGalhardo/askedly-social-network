@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { reportAnswer, reportQuestion } from "@/lib/services/question-report.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
 const run = Date.now();
 const owner = `rowner${run}`;
 const asker = `rasker${run}`;
@@ -23,13 +23,13 @@ async function createQuestion(answered: boolean): Promise<string> {
 	});
 	const question = await prisma.question.create({
 		data: {
-			question_text: "Pergunta de teste de report",
+			question_text: "Report test question",
 			amount_paid: 500,
 			owner_user_nickname: owner,
 			asked_by_user_nickname: asker,
 			webhook_id: webhook.id,
 			...(answered && {
-				answer_text: "Resposta",
+				answer_text: "Answer",
 				answered_at: new Date(),
 				question_answered: true,
 				question_is_awaiting_answer: false,

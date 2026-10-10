@@ -10,16 +10,16 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 max_line_length = 120
 
-# A spec do YAML proíbe tab para indentação.
+# The YAML spec forbids tabs for indentation.
 [*.{yml,yaml}]
 indent_style = space
 indent_size = 2
 
-# Espaços no fim da linha são quebra de linha forçada em Markdown.
+# Trailing spaces are a forced line break in Markdown.
 [*.md]
 trim_trailing_whitespace = false
 
-# package.json é reescrito pelo Bun/npm com 2 espaços; forçar tab geraria diff a cada install.
+# package.json is rewritten by Bun/npm with 2 spaces; forcing tabs would produce a diff on every install.
 [package.json]
 indent_style = space
 indent_size = 2

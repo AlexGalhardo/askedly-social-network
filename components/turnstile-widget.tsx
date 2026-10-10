@@ -5,8 +5,8 @@ import { useRef } from "react";
 import { getTurnstile, TURNSTILE_ENABLED, TURNSTILE_SITE_KEY } from "@/lib/turnstile";
 
 /**
- * Captcha do Cloudflare. `onReady` roda quando o script carrega e de novo a cada montagem se ele já estiver na
- * página, então o widget aparece tanto no primeiro acesso quanto em navegação client-side.
+ * Cloudflare captcha. `onReady` runs when the script loads and again on every mount if it is already on the
+ * page, so the widget shows up both on first load and on client-side navigation.
  */
 export function TurnstileWidget() {
 	const container = useRef<HTMLDivElement>(null);

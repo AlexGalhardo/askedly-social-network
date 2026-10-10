@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildContentSecurityPolicy } from "@/lib/csp";
 
-// Rotas antigas em português: links e buscadores antigos continuam funcionando.
+// Old Portuguese routes: old links and search engines keep working.
 const legacyRoutes: Record<string, string> = {
 	entrar: "login",
 	"criar-conta": "signup",
@@ -30,8 +30,8 @@ export default function proxy(request: NextRequest) {
 		return NextResponse.redirect(url, 301);
 	}
 
-	// Nonce novo a cada requisição. O Next lê o CSP do header da requisição e aplica o nonce nos próprios scripts;
-	// o layout repassa `x-nonce` para os scripts inline (tema, analytics).
+	// New nonce on every request. Next reads the CSP from the request header and applies the nonce to its own scripts;
+	// the layout forwards `x-nonce` to the inline scripts (theme, analytics).
 	const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
 	const csp = buildContentSecurityPolicy(nonce, process.env.NODE_ENV === "development");
 
@@ -47,7 +47,7 @@ export default function proxy(request: NextRequest) {
 export const config = {
 	matcher: [
 		{
-			// API, arquivos estáticos e prefetch não renderizam HTML: não precisam de nonce.
+			// API, static files and prefetch do not render HTML: they do not need a nonce.
 			source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
 			missing: [
 				{ type: "header", key: "next-router-prefetch" },

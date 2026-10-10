@@ -68,7 +68,7 @@ function AlertDialogDescription({
 	return <AlertDialogPrimitive.Description className={cn("text-sm text-muted-foreground", className)} {...props} />;
 }
 
-// O Base UI só tem `Close`: confirmar e cancelar fecham o diálogo, como antes, e diferem só no estilo.
+// Base UI only has `Close`: confirm and cancel both close the dialog, as before, and differ only in styling.
 function AlertDialogAction({
 	className,
 	...props

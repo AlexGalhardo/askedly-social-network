@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 		const { questionId } = body;
 
 		if (!questionId) {
-			await TelegramLog.error("Question Recused: ❌ ID da pergunta é obrigatório.");
+			await TelegramLog.error("Question Recused: ❌ Question ID is required.");
 			return NextResponse.json({ error: t("questionIdRequired") }, { status: 400 });
 		}
 
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 		});
 
 		if (!recusingUser) {
-			await TelegramLog.error(`Question Recused: ❌ Usuário com nickname '${nickname}' não encontrado.`);
+			await TelegramLog.error(`Question Recused: ❌ User with nickname '${nickname}' not found.`);
 			return NextResponse.json({ error: t("userNotFound") }, { status: 404 });
 		}
 
@@ -46,31 +46,33 @@ export async function POST(request: NextRequest) {
 		});
 
 		if (!questionToRecuse) {
-			await TelegramLog.error(`Question Recused: ❌ Pergunta com ID ${questionId} não encontrada.`);
+			await TelegramLog.error(`Question Recused: ❌ Question with ID ${questionId} not found.`);
 			return NextResponse.json({ error: t("questionNotFound") }, { status: 404 });
 		}
 
 		if (questionToRecuse.owner.nickname !== nickname) {
 			await TelegramLog.warning(
-				`Question Recused: ❌ Usuário @${nickname} não autorizado a recusar a pergunta ${questionId}.`,
+				`Question Recused: ❌ User @${nickname} is not authorized to decline question ${questionId}.`,
 			);
 			return NextResponse.json({ error: t("declineForbidden") }, { status: 403 });
 		}
 
 		if (questionToRecuse.answered_at) {
 			await TelegramLog.warning(
-				`Question Recused: ❌ Pergunta ${questionId} já foi respondida. Não pode ser recusada.`,
+				`Question Recused: ❌ Question ${questionId} has already been answered. It cannot be declined.`,
 			);
 			return NextResponse.json({ error: t("answeredCannotDecline") }, { status: 400 });
 		}
 
 		if (questionToRecuse.question_answer_was_expired) {
-			await TelegramLog.warning(`Question Recused: ❌ Pergunta ${questionId} já expirou. Não pode ser recusada.`);
+			await TelegramLog.warning(
+				`Question Recused: ❌ Question ${questionId} has already expired. It cannot be declined.`,
+			);
 			return NextResponse.json({ error: t("expiredCannotDecline") }, { status: 400 });
 		}
 
 		if (questionToRecuse.question_answer_was_recused) {
-			await TelegramLog.warning(`Question Recused: ❌ Pergunta ${questionId} já foi recusada.`);
+			await TelegramLog.warning(`Question Recused: ❌ Question ${questionId} has already been declined.`);
 			return NextResponse.json({ error: t("alreadyDeclined") }, { status: 400 });
 		}
 
@@ -85,11 +87,11 @@ export async function POST(request: NextRequest) {
 
 		await settleCreditQuestion(questionId);
 
-		TelegramLog.info(`PERGUNTA RECUSADA:
-        ID da Pergunta: ${updatedQuestion.id}
-        Dono da Pergunta: @${questionToRecuse.owner.nickname}
-        Recusada por (Nickname do Usuário): @${nickname}
-        Texto da Pergunta: ${updatedQuestion.question_text}
+		TelegramLog.info(`QUESTION DECLINED:
+        Question ID: ${updatedQuestion.id}
+        Question Owner: @${questionToRecuse.owner.nickname}
+        Declined by (User Nickname): @${nickname}
+        Question Text: ${updatedQuestion.question_text}
         `);
 
 		return NextResponse.json(

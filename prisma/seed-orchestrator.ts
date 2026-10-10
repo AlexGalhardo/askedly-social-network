@@ -23,9 +23,9 @@ export class SeedOrchestrator {
 
 	async execute(): Promise<void> {
 		try {
-			SeedLogger.header("INICIANDO PROCESSO DE SEED DO BANCO DE DADOS");
+			SeedLogger.header("STARTING DATABASE SEED PROCESS");
 			SeedLogger.info(`Timestamp: ${new Date().toISOString()}`);
-			SeedLogger.info(`Configuração: ${JSON.stringify(this.config, null, 2)}`);
+			SeedLogger.info(`Configuration: ${JSON.stringify(this.config, null, 2)}`);
 
 			await this.databaseCleaner.cleanAll();
 
@@ -44,16 +44,16 @@ export class SeedOrchestrator {
 
 			await this.statisticsService.generateReport();
 		} catch (error: any) {
-			SeedLogger.error("ERRO DURANTE O PROCESSO DE SEED:");
-			SeedLogger.error(`Detalhes: ${error}`);
+			SeedLogger.error("ERROR DURING THE SEED PROCESS:");
+			SeedLogger.error(`Details: ${error}`);
 			SeedLogger.error(`Stack trace: ${(error as Error).stack}`);
 			SeedLogger.error(`Timestamp: ${new Date().toISOString()}`);
 			process.exit(1);
 		} finally {
-			SeedLogger.info("Desconectando do banco de dados...");
+			SeedLogger.info("Disconnecting from the database...");
 			await SeedDatabaseConfig.disconnect();
-			SeedLogger.success("Desconexão realizada com sucesso!");
-			SeedLogger.info("👋 Processo finalizado!");
+			SeedLogger.success("Disconnected successfully!");
+			SeedLogger.info("👋 Process finished!");
 		}
 	}
 }

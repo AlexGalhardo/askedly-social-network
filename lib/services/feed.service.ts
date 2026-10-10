@@ -15,8 +15,8 @@ async function getFollowingNicknames(viewerNickname: string): Promise<Set<string
 }
 
 /**
- * Respostas públicas do feed. Perfis restritos (privados ou com respostas só para seguidores) são filtrados aqui, e não no client, para que as respostas deles
- * nunca cheguem ao browser de quem não os segue.
+ * Public feed answers. Restricted profiles (private or with answers for followers only) are filtered here, not in the client, so that their answers
+ * never reach the browser of someone who does not follow them.
  */
 export async function getFeedQuestions(feedType: FeedType, viewerNickname: string | null) {
 	if (feedType === "following") {

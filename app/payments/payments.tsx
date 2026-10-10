@@ -12,7 +12,7 @@ import TelegramLog from "@/lib/telegram-logger";
 import { canWithdraw } from "@/lib/utils/payment-utils";
 import { PaymentTab } from "@/types/PaymentInterface";
 
-export default function PagamentosPage() {
+export default function PaymentsClient() {
 	const t = useTranslations("payments");
 	const router = useRouter();
 	const { data: session, status } = useSession();
@@ -23,7 +23,7 @@ export default function PagamentosPage() {
 
 	const withdrawMutation = useProcessWithdraw();
 
-	const [activeTab, setActiveTab] = useState<PaymentTab>("respondidas");
+	const [activeTab, setActiveTab] = useState<PaymentTab>("answered");
 	const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
 	useEffect(() => {
@@ -39,7 +39,7 @@ export default function PagamentosPage() {
 	const handleConfirmWithdraw = async () => {
 		if (!session?.user) return;
 
-		const currentData = activeTab === "respondidas" ? answeredData : sentData;
+		const currentData = activeTab === "answered" ? answeredData : sentData;
 		if (!currentData || !canWithdraw(currentData.paymentToWithdraw)) return;
 
 		try {
@@ -49,7 +49,7 @@ export default function PagamentosPage() {
 
 			setIsWithdrawModalOpen(false);
 		} catch (error: any) {
-			await TelegramLog.error(`Erro payment-actions.ts handleConfirmWithdraw: ${error?.message}`);
+			await TelegramLog.error(`Error payments.tsx handleConfirmWithdraw: ${error?.message}`);
 		}
 	};
 
@@ -72,7 +72,7 @@ export default function PagamentosPage() {
 		);
 	}
 
-	const currentData = activeTab === "respondidas" ? answeredData : sentData;
+	const currentData = activeTab === "answered" ? answeredData : sentData;
 
 	return (
 		<div className="p-4 lg:p-6">

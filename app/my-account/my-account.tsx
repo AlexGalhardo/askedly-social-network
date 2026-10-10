@@ -13,7 +13,7 @@ import { PrivacySettingsForm } from "./privacy-settings-form";
 import { SocialMediaForm } from "./social-media-form";
 import { StripeForm } from "./stripe-form";
 
-export default function MinhaContaClient() {
+export default function MyAccountClient() {
 	const router = useRouter();
 	const { session, isAuthenticated, isLoading } = useSessionVerification();
 

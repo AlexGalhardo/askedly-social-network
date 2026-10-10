@@ -59,9 +59,9 @@ export const useQuestions = (feedType: FeedType = "community", userNickname?: st
 		},
 		getNextPageParam: (lastPage: QuestionsPageData) => lastPage.nextCursor,
 		initialPageParam: 0,
-		staleTime: 1000 * 60 * 5, // 5 minutos
+		staleTime: 1000 * 60 * 5, // 5 minutes
 		refetchOnWindowFocus: true,
-		refetchInterval: 1000 * 60 * 2, // 2 minutos
+		refetchInterval: 1000 * 60 * 2, // 2 minutes
 		retry: 3,
 		retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000),
 		throwOnError: false,
@@ -401,13 +401,13 @@ export function useMarkQuestionExpired() {
 			});
 
 			if (!response.ok) {
-				throw new Error("Erro ao marcar pergunta como expirada");
+				throw new Error("Error marking question as expired");
 			}
 
 			return { success: true };
 		},
 		onError: (error) => {
-			console.error("Erro ao marcar pergunta como expirada:", error);
+			console.error("Error marking question as expired:", error);
 		},
 	});
 }

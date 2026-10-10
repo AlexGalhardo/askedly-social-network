@@ -1,13 +1,13 @@
 #!/bin/sh
-# Usado pelo serviço `setup` de infra/docker-compose.demo.yaml.
+# Used by the `setup` service in infra/docker-compose.demo.yaml.
 set -eu
 
 bunx prisma migrate deploy
 
-# O seed apaga tudo antes de popular: só roda em banco vazio, para não zerar a demonstração a cada `up`.
+# The seed wipes everything before populating: it only runs on an empty database, so the demo is not reset on every `up`.
 USERS=$(bun -e 'import { prisma } from "./prisma/prisma-client"; console.log(await prisma.user.count()); await prisma.$disconnect();')
 if [ "$USERS" = "0" ]; then
 	bun prisma/seed.ts
 else
-	echo "Banco já populado ($USERS usuários): seed ignorado."
+	echo "Database already populated ($USERS users): seed skipped."
 fi

@@ -5,7 +5,7 @@ import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
-/** Saldo de créditos e situação da conta de recebimento do usuário da sessão. */
+/** Credit balance and payout account status of the session user. */
 export async function GET() {
 	try {
 		const user = await getSessionUser();

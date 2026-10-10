@@ -14,7 +14,7 @@ export function isValidCreditsPurchase(amountCents: unknown): amountCents is num
 	);
 }
 
-/** Abre um Checkout da Stripe para comprar créditos (1 crédito = 1 centavo de dólar) e devolve a URL. */
+/** Opens a Stripe Checkout to buy credits (1 credit = 1 US dollar cent) and returns the URL. */
 export async function createCreditsCheckout(userId: string, amountCents: number): Promise<string> {
 	if (PAYMENTS_SIMULATED) {
 		const sessionId = `sim_${randomUUID()}`;
@@ -51,8 +51,8 @@ export async function createCreditsCheckout(userId: string, amountCents: number)
 }
 
 /**
- * Credita uma compra paga. Idempotente: o filtro em `status` faz retentativas e eventos duplicados do webhook
- * encontrarem count 0, e o crédito sai na mesma transação. O valor é o gravado ao criar o Checkout.
+ * Credits a paid purchase. Idempotent: the filter on `status` makes retries and duplicate webhook events
+ * find count 0, and the credit is applied in the same transaction. The amount is the one recorded when creating the Checkout.
  */
 export async function fulfillCreditsPurchase(checkoutSessionId: string): Promise<boolean> {
 	return prisma.$transaction(async (tx) => {

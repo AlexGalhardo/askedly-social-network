@@ -17,7 +17,7 @@ function RadioGroupItem({
 }: React.ComponentProps<typeof Radio.Root> & { className?: string }): React.ReactElement {
 	return (
 		<Radio.Root
-			// <button> nativo: o `id` fica no controle visível, então `<Label htmlFor>` e seletores por id continuam valendo.
+			// Native <button>: the `id` stays on the visible control, so `<Label htmlFor>` and id selectors keep working.
 			nativeButton
 			render={<button type="button" />}
 			className={cn(

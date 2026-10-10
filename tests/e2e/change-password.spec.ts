@@ -24,7 +24,7 @@ test("changing the password requires the current password and ends every session
 	await submit.click();
 	await expect(page.getByText("Senha atual incorreta", { exact: true })).toBeVisible();
 
-	// Outro aparelho logado na mesma conta, antes da troca.
+	// Another device logged into the same account, before the change.
 	const otherDevice = await browser.newPage();
 	await useUniqueClientIp(otherDevice);
 	await logIn(otherDevice, `pw-${unique}@example.com`, "Old!Pass123");
@@ -32,10 +32,10 @@ test("changing the password requires the current password and ends every session
 
 	await page.locator("#current-password").fill("Old!Pass123");
 	await submit.click();
-	await page.waitForURL(/\/login\?senha-alterada=1/, { timeout: 15_000 });
+	await page.waitForURL(/\/login\?password-changed=1/, { timeout: 15_000 });
 	await expect(page.getByText(/todas as sessões foram encerradas/)).toBeVisible();
 
-	// O token do outro aparelho foi emitido antes da troca: deixou de valer.
+	// The other device's token was issued before the change: it is no longer valid.
 	await otherDevice.goto("/my-account");
 	await otherDevice.waitForURL(/\/login/, { timeout: 15_000 });
 	await otherDevice.close();

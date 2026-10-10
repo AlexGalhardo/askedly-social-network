@@ -2,12 +2,12 @@ import { z } from "./zod";
 
 type ContactValidationKey = "nameMin" | "nameMax" | "emailInvalid" | "emailRequired" | "subjectInvalid" | "messageMin";
 
-/** `t` é o tradutor do namespace `legal.contact.validation`. */
+/** `t` is the translator of the `legal.contact.validation` namespace. */
 export function createContactSchema(t: (key: ContactValidationKey) => string) {
 	return z.object({
 		name: z.string().min(4, t("nameMin")).max(24, t("nameMax")).trim(),
 		email: z.string().email(t("emailInvalid")).min(1, t("emailRequired")),
-		// Valores enviados no email de contato: só os rótulos exibidos no formulário são traduzidos.
+		// Values sent in the contact email: only the labels shown in the form are translated.
 		subject: z.enum(
 			[
 				"Problemas Técnicos",

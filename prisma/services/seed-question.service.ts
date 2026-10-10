@@ -10,7 +10,7 @@ export class SeedQuestionService {
 	constructor(private readonly prisma: PrismaClient) {}
 
 	async createGuaranteedQuestions(users: SeedUserInterface[]): Promise<void> {
-		SeedLogger.info("Criando perguntas garantidas para cada usuário...");
+		SeedLogger.info("Creating guaranteed questions for each user...");
 
 		const questionStates: SeedQuestionStateType[] = ["answered", "waiting", "refused", "expired"];
 		const questionsPerState = 3;
@@ -19,11 +19,11 @@ export class SeedQuestionService {
 
 		for (let userIndex = 0; userIndex < users.length; userIndex++) {
 			const ownerUser = users[userIndex];
-			SeedLogger.info(`👤 Processando usuário ${userIndex + 1}/${users.length}: @${ownerUser.nickname}`);
+			SeedLogger.info(`👤 Processing user ${userIndex + 1}/${users.length}: @${ownerUser.nickname}`);
 
 			for (let stateIndex = 0; stateIndex < questionStates.length; stateIndex++) {
 				const state = questionStates[stateIndex];
-				SeedLogger.info(`  📊 Criando 3 perguntas no estado: ${state}`);
+				SeedLogger.info(`  📊 Creating 3 questions in state: ${state}`);
 
 				for (let i = 0; i < questionsPerState; i++) {
 					const askerUser = this.getRandomAskerUser(users, ownerUser);
@@ -31,11 +31,11 @@ export class SeedQuestionService {
 					const pixId = SeedHelpers.generatePixId();
 
 					SeedLogger.info(
-						`    🔄 Pergunta ${created + 1}/${totalQuestions}: @${askerUser.nickname} → @${ownerUser.nickname} (${state}) - R$ ${(amount / 100).toFixed(2)}`,
+						`    🔄 Question ${created + 1}/${totalQuestions}: @${askerUser.nickname} → @${ownerUser.nickname} (${state}) - R$ ${(amount / 100).toFixed(2)}`,
 					);
 
 					const webhookData = SeedWebhookFactory.create(pixId, amount);
-					SeedLogger.info(`      💳 Criando webhook: ${pixId}`);
+					SeedLogger.info(`      💳 Creating webhook: ${pixId}`);
 
 					const webhook = await this.prisma.webhookAbacatePay.create({
 						data: {
@@ -50,7 +50,7 @@ export class SeedQuestionService {
 						},
 					});
 
-					SeedLogger.success(`      ✅ Webhook criado: ${webhook.id}`);
+					SeedLogger.success(`      ✅ Webhook created: ${webhook.id}`);
 
 					const questionData = SeedQuestionFactory.create(
 						ownerUser,
@@ -61,7 +61,7 @@ export class SeedQuestionService {
 						users,
 					);
 
-					SeedLogger.info(`      ❓ Criando pergunta: "${questionData.question_text.substring(0, 50)}..."`);
+					SeedLogger.info(`      ❓ Creating question: "${questionData.question_text.substring(0, 50)}..."`);
 
 					const { owner_user_nickname, asked_by_user_nickname, webhook_id, ...questionDataWithoutNickname } =
 						questionData;
@@ -75,20 +75,20 @@ export class SeedQuestionService {
 					});
 
 					created++;
-					SeedLogger.success(`      ✅ Pergunta ${created}/${totalQuestions} criada com sucesso!`);
+					SeedLogger.success(`      ✅ Question ${created}/${totalQuestions} created successfully!`);
 
 					if (created % 100 === 0) {
-						SeedLogger.progress(created, totalQuestions, "Perguntas garantidas criadas");
+						SeedLogger.progress(created, totalQuestions, "Guaranteed questions created");
 					}
 				}
 			}
 		}
 
-		SeedLogger.success(`${created} perguntas garantidas criadas!`);
+		SeedLogger.success(`${created} guaranteed questions created!`);
 	}
 
 	async createRandomQuestions(users: SeedUserInterface[], count: number): Promise<void> {
-		SeedLogger.info(`Criando ${count} perguntas aleatórias...`);
+		SeedLogger.info(`Creating ${count} random questions...`);
 
 		let created = 0;
 
@@ -100,11 +100,11 @@ export class SeedQuestionService {
 			const pixId = SeedHelpers.generatePixId();
 
 			SeedLogger.info(
-				`🔄 Pergunta aleatória ${i + 1}/${count}: @${askerUser.nickname} → @${ownerUser.nickname} (${state}) - R$ ${(amount / 100).toFixed(2)}`,
+				`🔄 Random question ${i + 1}/${count}: @${askerUser.nickname} → @${ownerUser.nickname} (${state}) - R$ ${(amount / 100).toFixed(2)}`,
 			);
 
 			const webhookData = SeedWebhookFactory.create(pixId, amount);
-			SeedLogger.info(`  💳 Criando webhook: ${pixId}`);
+			SeedLogger.info(`  💳 Creating webhook: ${pixId}`);
 
 			const webhook = await this.prisma.webhookAbacatePay.create({
 				data: {
@@ -119,10 +119,10 @@ export class SeedQuestionService {
 				},
 			});
 
-			SeedLogger.success(`  ✅ Webhook criado: ${webhook.id}`);
+			SeedLogger.success(`  ✅ Webhook created: ${webhook.id}`);
 
 			const questionData = SeedQuestionFactory.create(ownerUser, askerUser, webhook.id, amount, state, users);
-			SeedLogger.info(`  ❓ Criando pergunta: "${questionData.question_text.substring(0, 50)}..."`);
+			SeedLogger.info(`  ❓ Creating question: "${questionData.question_text.substring(0, 50)}..."`);
 
 			const { owner_user_nickname, asked_by_user_nickname, webhook_id, ...questionDataWithoutNickname } =
 				questionData;
@@ -136,14 +136,14 @@ export class SeedQuestionService {
 			});
 
 			created++;
-			SeedLogger.success(`  ✅ Pergunta aleatória ${created}/${count} criada com sucesso!`);
+			SeedLogger.success(`  ✅ Random question ${created}/${count} created successfully!`);
 
 			if (created % 50 === 0) {
-				SeedLogger.progress(created, count, "Perguntas aleatórias criadas");
+				SeedLogger.progress(created, count, "Random questions created");
 			}
 		}
 
-		SeedLogger.success(`${created} perguntas aleatórias criadas!`);
+		SeedLogger.success(`${created} random questions created!`);
 	}
 
 	private getRandomAskerUser(users: SeedUserInterface[], ownerUser: SeedUserInterface): SeedUserInterface {

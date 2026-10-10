@@ -3,8 +3,8 @@ import { hideAnonymousAsker } from "@/lib/utils/question-privacy";
 import { markExpiredQuestions, QUESTION_ANSWER_WINDOW_HOURS } from "@/lib/utils/question-utils";
 import { prisma } from "@/prisma/prisma-client";
 
-// Dados da conta do próprio usuário, buscados por tela (antes iam todos dentro da sessão do NextAuth a cada leitura).
-// Todas as funções recebem a identidade da sessão; nunca chame com id/nickname vindo do client.
+// The user's own account data, fetched per screen (it all used to go inside the NextAuth session on every read).
+// Every function receives the session identity; never call it with an id/nickname coming from the client.
 
 const questionUsers = { owner: { select: publicUserSelect }, asked_by: { select: publicUserSelect } } as const;
 
@@ -26,7 +26,7 @@ export async function getMyReceivedQuestions(nickname: string) {
 		include: questionUsers,
 		orderBy: { created_at: "desc" },
 	});
-	// Nem o dono da pergunta vê quem mandou uma anônima.
+	// Not even the question owner sees who sent an anonymous one.
 	return markExpiredQuestions(questions).map(hideAnonymousAsker);
 }
 
@@ -70,7 +70,7 @@ export interface SocialGraph {
 	blockedByUserIds: string[];
 }
 
-/** O que feed e perfil precisam para filtrar: quem eu sigo, quem eu bloqueei e quem me bloqueou. */
+/** What feed and profile need to filter: who I follow, who I blocked and who blocked me. */
 export async function getMySocialGraph(userId: string): Promise<SocialGraph> {
 	const [following, blocked, blockedBy] = await Promise.all([
 		prisma.follower.findMany({

@@ -105,7 +105,7 @@ export function SentQuestionCard({ question, onReport, isReporting = false }: Se
 					)}
 				</div>
 
-				{/* Resposta */}
+				{/* Answer */}
 				{question.answer_text && status === "answered" && (
 					<>
 						<div className="flex items-start gap-2 sm:gap-3 mb-3">
@@ -156,7 +156,7 @@ export function SentQuestionCard({ question, onReport, isReporting = false }: Se
 					</>
 				)}
 
-				{/* Status para perguntas não respondidas */}
+				{/* Status for unanswered questions */}
 				{status !== "answered" && (
 					<div className="flex items-start gap-2 sm:gap-3 mb-3">
 						<Avatar className="h-8 w-8 flex-shrink-0">

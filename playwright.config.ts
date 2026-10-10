@@ -9,18 +9,18 @@ export default defineConfig({
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
 	workers: 1,
-	// No CI o relatório HTML é publicado como artifact quando a suíte falha (ver .github/workflows/e2e.yml).
+	// In CI the HTML report is published as an artifact when the suite fails (see .github/workflows/e2e.yml).
 	reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
 	use: {
 		baseURL,
 		trace: "on-first-retry",
-		// Os specs conferem textos em português; o padrão do site é inglês e segue o idioma do navegador.
+		// The specs check Portuguese texts; the site defaults to English and follows the browser language.
 		locale: "pt-BR",
 	},
 	projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
 	webServer: {
-		// Node, não Bun: o Turbopack externaliza @prisma/client e pg por aliases que o resolver do Bun não acha
-		// (e a Vercel roda em Node). No CI, servidor de produção (o job roda `bun run build` antes).
+		// Node, not Bun: Turbopack externalizes @prisma/client and pg through aliases that Bun's resolver cannot find
+		// (and Vercel runs on Node). In CI, production server (the job runs `bun run build` first).
 		command: `node node_modules/next/dist/bin/next ${process.env.CI ? "start" : "dev"} -p ${PORT}`,
 		url: baseURL,
 		reuseExistingServer: !process.env.CI,

@@ -17,19 +17,19 @@ import { AUTH_ERROR } from "@/lib/auth-errors";
 import TelegramLog from "@/lib/telegram-logger";
 import { getTurnstile, TURNSTILE_ENABLED } from "@/lib/turnstile";
 
-export default function EntrarClient() {
+export default function LoginClient() {
 	const router = useRouter();
 	const t = useTranslations("auth");
 	const [email, setEmail] = useState("");
 	const [error, setError] = useState("");
 	const [notice, setNotice] = useState("");
 
-	// Lido do window (e não useSearchParams) para a página continuar estática, sem Suspense.
+	// Read from window (not useSearchParams) so the page stays static, without Suspense.
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
-		if (params.has("senha-alterada")) {
+		if (params.has("password-changed")) {
 			setNotice(t("login.passwordChanged"));
-		} else if (params.has("conta-criada")) {
+		} else if (params.has("account-created")) {
 			setNotice(t("login.accountCreated"));
 		}
 	}, [t]);
@@ -101,7 +101,7 @@ export default function EntrarClient() {
 				return;
 			}
 		} catch (error: any) {
-			await TelegramLog.error(`Error entrar.ts: ${error.message}`);
+			await TelegramLog.error(`Error login.tsx: ${error.message}`);
 			setError(t("login.genericError"));
 		} finally {
 			setLoading(false);

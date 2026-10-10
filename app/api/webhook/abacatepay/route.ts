@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Invalid webhook secret" }, { status: 401 });
 	}
 
-	// A assinatura cobre o corpo cru: ler como texto antes de qualquer parse.
+	// The signature covers the raw body: read it as text before any parsing.
 	const rawBody = await req.text();
 	if (!verifyWebhookSignature(rawBody, req.headers.get("x-webhook-signature"))) {
 		return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
@@ -27,15 +27,15 @@ export async function POST(req: NextRequest) {
 		const event = JSON.parse(rawBody) as TransparentCompletedEvent;
 		const charge = event.data?.transparent;
 
-		// Outros eventos são aceitos (2xx) para a AbacatePay não reenviar, mas não mudam nada aqui.
+		// Other events are accepted (2xx) so AbacatePay does not resend them, but they change nothing here.
 		if (event.event !== "transparent.completed" || !charge?.id) return NextResponse.json({ received: true });
 
 		if (await markChargePaid(charge.id, rawBody)) {
-			await TelegramLog.info(`PIX PAGO (webhook AbacatePay):
+			await TelegramLog.info(`PIX PAID (AbacatePay webhook):
 
 		PIX_ID: ${charge.id}
-		PAGOU: ${formatCurrency(charge.paidAmount ?? 0)}
-		TAXA: ${formatCurrency(charge.platformFee ?? 0)}
+		PAID: ${formatCurrency(charge.paidAmount ?? 0)}
+		FEE: ${formatCurrency(charge.platformFee ?? 0)}
 		DEV_MODE: ${event.devMode}
 		`);
 		}

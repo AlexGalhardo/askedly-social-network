@@ -3,8 +3,8 @@ import { prisma } from "@/prisma/prisma-client";
 export type ReportReason = "offensive" | "inappropriate";
 
 /**
- * O dono denuncia a pergunta recebida, o que também a tira da fila de resposta. A condição de dono vai no próprio
- * `updateMany`, então checagem e escrita são uma operação só.
+ * The owner reports the received question, which also removes it from the answer queue. The ownership condition goes in the
+ * `updateMany` itself, so check and write are a single operation.
  */
 export async function reportQuestion(
 	questionId: string,
@@ -24,7 +24,7 @@ export async function reportQuestion(
 	return count === 1;
 }
 
-/** Quem perguntou denuncia a resposta recebida: uma vez só, e só depois de respondida. */
+/** The asker reports the received answer: only once, and only after it is answered. */
 export async function reportAnswer(questionId: string, askerNickname: string, reason: ReportReason): Promise<boolean> {
 	const { count } = await prisma.question.updateMany({
 		where: {

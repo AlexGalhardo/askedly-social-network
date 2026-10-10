@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { prisma } from "@/prisma/prisma-client";
 import TelegramLog from "../telegram-logger";
 
-// Hash bcrypt (custo 12, igual ao das senhas reais) de um texto qualquer. Não é segredo.
+// bcrypt hash (cost 12, same as real passwords) of an arbitrary text. Not a secret.
 const TIMING_EQUALIZER_HASH = "$2b$12$mSx8ohkXxZyBI9lbal7z6ePPNVgi/w.u6q.gnM3fCfcafHUxQk./O";
 
 export const publicUserSelect = {
@@ -50,8 +50,8 @@ class UsersRepository {
 		return bcrypt.hash(password, 12);
 	}
 
-	// Usuários relacionados só com campos públicos: esses includes alimentam a sessão e o perfil, que vão para o
-	// browser, e carregar linhas inteiras de todo seguidor/autor a cada leitura de sessão também custava caro.
+	// Related users with public fields only: these includes feed the session and the profile, which go to the
+	// browser, and loading whole rows of every follower/author on each session read was also expensive.
 	private readonly userIncludeRelations = {
 		followers: { include: { follower: { select: publicUserSelect } } },
 		following: { include: { following: { select: publicUserSelect } } },
@@ -95,7 +95,7 @@ class UsersRepository {
 		const api_key = this.generateApiKey(UsersRepository.API_KEY_PERGUNTAE_PREFIX);
 		const hashedPassword = password ? await this.hashPassword(password) : null;
 
-		await TelegramLog.info(`Novo usuário registrado: 
+		await TelegramLog.info(`New user registered: 
 			Name: ${name}
 			Nickname: ${nickname}
 			Email: ${email}
@@ -117,7 +117,7 @@ class UsersRepository {
 	async verifyCredentials(email: string, password: string) {
 		const user = await this.getUserByEmail(email);
 		if (!user) {
-			// Mesmo custo de bcrypt de uma senha errada: sem isso o tempo de resposta diz quais emails têm conta.
+			// Same bcrypt cost as a wrong password: without this the response time reveals which emails have an account.
 			await bcrypt.compare(password, TIMING_EQUALIZER_HASH);
 			return null;
 		}

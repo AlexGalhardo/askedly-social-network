@@ -1,6 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 
-/** No CI o e2e roda com `next start` (produção), onde o captcha é obrigatório; espera o Turnstile emitir o token. */
+/** In CI the e2e runs with `next start` (production), where the captcha is mandatory; waits for Turnstile to issue the token. */
 export async function waitForCaptcha(page: Page): Promise<void> {
 	if (!process.env.CI) return;
 	await expect
@@ -15,8 +15,8 @@ export async function waitForCaptcha(page: Page): Promise<void> {
 }
 
 /**
- * Cada teste como um cliente diferente: o rate limit (por IP) continua ligado, mas rodadas repetidas da suíte, e os
- * retries do CI, não esgotam a cota de cadastro de um IP só.
+ * Each test as a different client: the rate limit (per IP) stays on, but repeated suite runs, and the
+ * CI retries, do not exhaust a single IP's signup quota.
  */
 export async function useUniqueClientIp(page: Page): Promise<void> {
 	const octet = (): number => Math.floor(Math.random() * 254) + 1;

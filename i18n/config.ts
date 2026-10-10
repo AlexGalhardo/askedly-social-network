@@ -7,7 +7,7 @@ export function isLocale(value: unknown): value is Locale {
 	return locales.includes(value as Locale);
 }
 
-/** Primeiro idioma suportado do header Accept-Language ("pt-BR,pt;q=0.9,en;q=0.8" vira "pt"). */
+/** First supported language from the Accept-Language header ("pt-BR,pt;q=0.9,en;q=0.8" becomes "pt"). */
 export function localeFromAcceptLanguage(header: string | null): Locale {
 	const preferred = (header ?? "")
 		.split(",")

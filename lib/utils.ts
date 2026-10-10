@@ -18,7 +18,7 @@ const INVALID_DATE: Record<string, string> = { en: "Invalid date", pt: "Data inv
 export function formatDate(dateString: string, locale: string = "en"): string {
 	try {
 		const date = new DateTime(dateString);
-		return date.formatarRelativo(locale);
+		return date.formatRelative(locale);
 	} catch (error: any) {
 		TelegramLog.error(`Catch Error utils.ts formatDate: ${error?.message}`);
 		return INVALID_DATE[locale] ?? INVALID_DATE.en;

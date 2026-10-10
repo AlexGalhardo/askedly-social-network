@@ -247,7 +247,7 @@ export function QuestionCard({
 					</div>
 				)}
 
-				{/* CORREÇÃO: Perguntas respondidas NÃO devem mostrar badge "Pergunta Expirada" nem botão "Deletar" */}
+				{/* FIX: answered questions must NOT show the "Question Expired" badge or the "Delete" button */}
 				{status !== "answered" && (status === "declined" || status === "expired" || status === "reported") && (
 					<div className="mt-4">
 						{status === "expired" && (

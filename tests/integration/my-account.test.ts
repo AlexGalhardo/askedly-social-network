@@ -10,7 +10,7 @@ import {
 } from "@/lib/services/my-account.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
 const run = Date.now();
 const nick = { me: `mme${run}`, fan: `mfan${run}`, idol: `midol${run}`, enemy: `menemy${run}`, pest: `mpest${run}` };
 const id: Record<keyof typeof nick, string> = { me: "", fan: "", idol: "", enemy: "", pest: "" };
@@ -54,9 +54,9 @@ describe("my-account.service (integration)", () => {
 		await prisma.userBlock.create({ data: { blocker_id: id.me, blocked_id: id.pest } });
 		await prisma.userBlock.create({ data: { blocker_id: id.enemy, blocked_id: id.me } });
 
-		await question(nick.me, nick.fan); // pendente
-		await question(nick.me, nick.fan, { asker_sent_anonymous_question: true }); // pendente, anônima
-		await question(nick.me, nick.fan, { created_at: eightDaysAgo }); // venceu o prazo
+		await question(nick.me, nick.fan); // pending
+		await question(nick.me, nick.fan, { asker_sent_anonymous_question: true }); // pending, anonymous
+		await question(nick.me, nick.fan, { created_at: eightDaysAgo }); // past the deadline
 		await question(nick.me, nick.fan, { question_answered: true, question_is_awaiting_answer: false });
 		await question(nick.idol, nick.me);
 	});

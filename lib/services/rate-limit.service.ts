@@ -1,7 +1,7 @@
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
-// "login:email:fulano@x.com" → "login:email:f***@x.com": o alerta vai para o Telegram.
+// "login:email:john@x.com" → "login:email:j***@x.com": the alert goes to Telegram.
 export function maskEmail(key: string): string {
 	return key.replace(/([^:@]+)(@[^:]+)$/, (_, user: string, domain: string) => `${user.charAt(0)}***${domain}`);
 }
@@ -28,11 +28,11 @@ export interface RateLimitResult {
 }
 
 /**
- * Janela fixa em Postgres, compartilhada por todas as instâncias serverless. O upsert conta e reinicia a janela
- * numa única instrução, então requisições simultâneas não passam do limite.
+ * Fixed window in Postgres, shared by every serverless instance. The upsert counts and restarts the window
+ * in a single statement, so simultaneous requests do not exceed the limit.
  */
 export async function consumeRateLimit(key: string, rule: RateLimitRule): Promise<RateLimitResult> {
-	// SQLite só existe no dev local (setups/*-sqlite.sh); ali não há o que proteger.
+	// SQLite only exists in local dev (setups/*-sqlite.sh); there is nothing to protect there.
 	if (process.env.DATABASE_URL?.startsWith("file:")) return { allowed: true, retryAfterSeconds: 0 };
 
 	const now = new Date();
@@ -44,10 +44,10 @@ export async function consumeRateLimit(key: string, rule: RateLimitRule): Promis
 			reset_at = CASE WHEN rate_limits.reset_at <= ${now} THEN ${resetAt} ELSE rate_limits.reset_at END
 		RETURNING count, reset_at`;
 
-	// Alerta só na primeira requisição acima do limite em cada janela, para um ataque não virar enxurrada de mensagens.
+	// Alert only on the first request above the limit in each window, so an attack does not become a flood of messages.
 	if (row.count === rule.limit + 1) {
 		await TelegramLog.warning(
-			`🚦 Rate limit atingido: ${maskEmail(key)} (${rule.limit} em ${rule.windowMs / 60_000} min)`,
+			`🚦 Rate limit reached: ${maskEmail(key)} (${rule.limit} in ${rule.windowMs / 60_000} min)`,
 		);
 	}
 
@@ -57,7 +57,7 @@ export async function consumeRateLimit(key: string, rule: RateLimitRule): Promis
 	};
 }
 
-/** Só consulta, sem gastar a cota: para limites que contam apenas falhas (ver login em lib/auth.ts). */
+/** Only checks, without spending the quota: for limits that count only failures (see login in lib/auth.ts). */
 export async function isRateLimited(key: string, rule: RateLimitRule): Promise<boolean> {
 	if (process.env.DATABASE_URL?.startsWith("file:")) return false;
 	const row = await prisma.rateLimit.findUnique({ where: { key } });
@@ -74,7 +74,7 @@ export async function deleteExpiredRateLimits(): Promise<number> {
 	return count;
 }
 
-/** Minutos até poder tentar de novo, para a mensagem traduzida `errors.rateLimited`. */
+/** Minutes until it can be tried again, for the translated `errors.rateLimited` message. */
 export function rateLimitMinutes(retryAfterSeconds: number): number {
 	return Math.max(1, Math.ceil(retryAfterSeconds / 60));
 }
