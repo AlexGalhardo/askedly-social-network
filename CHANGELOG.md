@@ -5,6 +5,15 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.17.1] - 2026-10-10
+
+### Fixed
+
+- Seed profiles were all "answers for followers only", so the public feed was empty for visitors; seed users are public now
+- The seed required a unique avatar per user, which capped it at about 200 users and made larger seeds retry forever
+- Card border and shadow on the contact page
+- E2E: the sign-in link assertion matched the route name instead of the link text, and the wrong-password message now also shows as a toast
+
 ## [0.17.0] - 2026-10-10
 
 ### Changed

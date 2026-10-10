@@ -166,7 +166,7 @@ export default function ContactClient() {
 					<p className="text-lg text-muted-foreground">{t("intro")}</p>
 				</div>
 
-				<Card>
+				<Card className="border-none bg-transparent shadow-none">
 					<CardContent className="p-6">
 						<form onSubmit={handleSubmit} className="space-y-6">
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">

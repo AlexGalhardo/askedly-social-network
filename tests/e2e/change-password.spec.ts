@@ -22,7 +22,8 @@ test("changing the password requires the current password and ends every session
 	await page.locator("#new-password").fill("New!Pass456");
 	await page.locator("#confirm-password").fill("New!Pass456");
 	await submit.click();
-	await expect(page.getByText("Senha atual incorreta", { exact: true })).toBeVisible();
+	// The error shows twice on purpose: inline in the form and as a toast.
+	await expect(page.getByText("Senha atual incorreta", { exact: true }).first()).toBeVisible();
 
 	// Another device logged into the same account, before the change.
 	const otherDevice = await browser.newPage();

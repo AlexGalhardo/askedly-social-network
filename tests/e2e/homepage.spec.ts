@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("homepage loads and offers a way to sign in", async ({ page }) => {
 	await page.goto("/");
 	await expect(page).toHaveTitle(/.+/);
-	await expect(page.getByRole("link", { name: /login/i }).first()).toBeVisible();
+	await expect(page.getByRole("link", { name: /entrar/i }).first()).toBeVisible();
 });
 
 test("login page renders the credentials form", async ({ page }) => {

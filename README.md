@@ -6,7 +6,7 @@
  <a href="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/ci.yml/badge.svg?branch=main"></a>
  <a href="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/e2e.yml"><img alt="E2E" src="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/e2e.yml/badge.svg?branch=main"></a>
  <a href="LICENSE.md"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
- <a href="CHANGELOG.md"><img alt="Version" src="https://img.shields.io/badge/version-0.17.0-green.svg"></a>
+ <a href="CHANGELOG.md"><img alt="Version" src="https://img.shields.io/badge/version-0.17.1-green.svg"></a>
 </p>
 
 ## About
