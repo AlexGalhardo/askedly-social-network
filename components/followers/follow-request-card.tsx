@@ -2,6 +2,7 @@
 
 import { UserCheck, UserX } from "lucide-react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +21,8 @@ interface FollowRequestCardProps {
 }
 
 export function FollowRequestCard({ request, onAccept, onReject }: FollowRequestCardProps) {
+	const t = useTranslations("common");
+	const locale = useLocale();
 	const acceptMutation = useAcceptFollowRequest();
 	const rejectMutation = useRejectFollowRequest();
 	const isMobile = useIsMobile();
@@ -31,8 +34,8 @@ export function FollowRequestCard({ request, onAccept, onReject }: FollowRequest
 		} catch (error: any) {
 			await TelegramLog.error(`Error follower-actions.ts ${error?.message}`);
 			toast({
-				title: "Erro ao aceitar solicitação",
-				description: "Tente novamente mais tarde",
+				title: t("followers.acceptError"),
+				description: t("tryAgainLater"),
 				variant: "error",
 			});
 		}
@@ -45,8 +48,8 @@ export function FollowRequestCard({ request, onAccept, onReject }: FollowRequest
 		} catch (error: any) {
 			await TelegramLog.error(`Error follower-actions.ts ${error?.message}`);
 			toast({
-				title: "Erro ao rejeitar solicitação",
-				description: "Tente novamente mais tarde",
+				title: t("followers.rejectError"),
+				description: t("tryAgainLater"),
 				variant: "error",
 			});
 		}
@@ -77,7 +80,7 @@ export function FollowRequestCard({ request, onAccept, onReject }: FollowRequest
 								</p>
 							)}
 							<span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block">
-								{formatDate(request.created_at)}
+								{formatDate(request.created_at, locale)}
 							</span>
 						</div>
 					</div>
@@ -90,7 +93,9 @@ export function FollowRequestCard({ request, onAccept, onReject }: FollowRequest
 						>
 							<UserCheck className="h-4 w-4" />
 							{!isMobile && (
-								<span className="ml-1">{acceptMutation.isPending ? "Aceitando..." : "Aceitar"}</span>
+								<span className="ml-1">
+									{acceptMutation.isPending ? t("followers.accepting") : t("followers.accept")}
+								</span>
 							)}
 						</Button>
 						<Button
@@ -102,7 +107,9 @@ export function FollowRequestCard({ request, onAccept, onReject }: FollowRequest
 						>
 							<UserX className="h-4 w-4" />
 							{!isMobile && (
-								<span className="ml-1">{rejectMutation.isPending ? "Rejeitando..." : "Rejeitar"}</span>
+								<span className="ml-1">
+									{rejectMutation.isPending ? t("followers.rejecting") : t("followers.reject")}
+								</span>
 							)}
 						</Button>
 					</div>

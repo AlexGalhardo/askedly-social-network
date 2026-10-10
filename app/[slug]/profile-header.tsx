@@ -2,6 +2,7 @@
 
 import { Clock, Loader, UserCheck, UserPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUnblockSuccess }: ProfileHeaderProps) {
 	const { data: session } = useSession();
 	const { toast } = useToast();
+	const t = useTranslations("profile");
 	const followMutation = useFollowUser() as ReturnType<typeof useFollowUser>;
 
 	const [localIsFollowing, setLocalIsFollowing] = useState(profile.isFollowing || false);
@@ -41,8 +43,8 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 	const handleFollow = async () => {
 		if (!session?.user?.id) {
 			toast({
-				title: "Login necessário",
-				description: "Você precisa estar logado para seguir usuários",
+				title: t("follow.loginRequiredTitle"),
+				description: t("follow.loginRequiredDescription"),
 				variant: "error",
 			});
 			return;
@@ -56,7 +58,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 
 			if (result.error) {
 				toast({
-					title: "Erro",
+					title: t("follow.errorTitle"),
 					description: result.error,
 					variant: "error",
 				});
@@ -73,8 +75,8 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 		} catch (error: any) {
 			await TelegramLog.error(`Catch Error file profile-header.ts handleFollow: ${error?.message}`);
 			toast({
-				title: `Erro ao seguir @${profile?.nickname}`,
-				description: "Tente novamente mais tarde",
+				title: t("follow.failed", { nickname: profile?.nickname }),
+				description: t("follow.tryAgain"),
 				variant: "error",
 			});
 		}
@@ -95,7 +97,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 			return (
 				<>
 					<Loader className="h-4 w-4 animate-spin" />
-					Carregando...
+					{t("follow.loading")}
 				</>
 			);
 		}
@@ -104,7 +106,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 			return (
 				<>
 					<UserCheck className="h-4 w-4" />
-					Seguindo
+					{t("follow.following")}
 				</>
 			);
 		}
@@ -113,7 +115,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 			return (
 				<>
 					<Clock className="h-4 w-4" />
-					Solicitado
+					{t("follow.requested")}
 				</>
 			);
 		}
@@ -121,7 +123,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 		return (
 			<>
 				<UserPlus className="h-4 w-4" />
-				Seguir
+				{t("follow.follow")}
 			</>
 		);
 	};
@@ -177,7 +179,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 									onClick={handleFollow}
 									disabled={followMutation.isPending || !session}
 									className="px-3 py-1 text-sm font-medium flex items-center gap-1"
-									title={!session ? "Faça login para seguir usuários" : ""}
+									title={!session ? t("follow.loginTitle") : ""}
 								>
 									{getFollowButtonContent()}
 								</Button>
@@ -207,7 +209,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 									{profile.questions_received?.filter((q: any) => q.question_answered).length || 0}
 								</div>
 								<div className="text-xs sm:text-sm text-muted-foreground dark:text-gray-400">
-									respondidas
+									{t("stats.answered")}
 								</div>
 							</div>
 						)}
@@ -218,7 +220,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 									{profile.questions_received?.length || 0}
 								</div>
 								<div className="text-xs sm:text-sm text-muted-foreground dark:text-gray-400">
-									recebidas
+									{t("stats.received")}
 								</div>
 							</div>
 						)}
@@ -229,7 +231,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 									{profile.questions_sent?.length || 0}
 								</div>
 								<div className="text-xs sm:text-sm text-muted-foreground dark:text-gray-400">
-									enviadas
+									{t("stats.sent")}
 								</div>
 							</div>
 						)}
@@ -240,7 +242,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 									{profile.followers?.length || 0}
 								</div>
 								<div className="text-xs sm:text-sm text-muted-foreground dark:text-gray-400">
-									seguidores
+									{t("stats.followers")}
 								</div>
 							</div>
 						)}
@@ -251,7 +253,7 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 									{profile.following?.length || 0}
 								</div>
 								<div className="text-xs sm:text-sm text-muted-foreground dark:text-gray-400">
-									seguindo
+									{t("stats.following")}
 								</div>
 							</div>
 						)}
@@ -267,7 +269,9 @@ export function ProfileHeader({ profile, isBlocked = false, onBlockSuccess, onUn
 											0,
 										) || 0}
 								</div>
-								<div className="text-xs sm:text-sm text-muted-foreground dark:text-gray-400">Likes</div>
+								<div className="text-xs sm:text-sm text-muted-foreground dark:text-gray-400">
+									{t("stats.likes")}
+								</div>
 							</div>
 						)}
 					</div>

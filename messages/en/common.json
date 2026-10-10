@@ -1,4 +1,60 @@
 {
 	"language": "Language",
-	"locales": { "en": "English", "pt": "Português", "es": "Español" }
+	"locales": { "en": "English", "pt": "Português", "es": "Español" },
+	"meta": {
+		"title": "Askedly Social Network - Get Questions, Monetize Your Answers.",
+		"description": "Share your knowledge and experiences with people who want to hear what you have to say.",
+		"twitterDescription": "Askedly Social Network is a platform where you can send and receive questions from other profiles and monetize your answers.",
+		"keywords": "respondeae.com.br, questions, monetization, answers, social platform, make money"
+	},
+	"loading": "Loading...",
+	"loadingProgress": "{progress}% Loading...",
+	"close": "Close",
+	"tryAgainLater": "Please try again later.",
+	"anonymousQuestion": "Anonymous Question",
+	"notFound": {
+		"metaTitle": "Page Not Found - Askedly Social Network",
+		"metaDescription": "This page does not exist on Askedly Social Network",
+		"title": "Page not found",
+		"description": "The page you are looking for does not exist or has been removed.",
+		"redirecting": "Redirecting in <count>{seconds}</count> {seconds, plural, one {second} other {seconds}}..."
+	},
+	"offline": {
+		"title": "Down for Maintenance",
+		"metaDescription": "The system is temporarily unavailable for maintenance.",
+		"description": "We are performing maintenance on the platform. We will be back soon!",
+		"status": "Status: Offline",
+		"lastUpdate": "Last update: {date}"
+	},
+	"footer": {
+		"rights": "© 2024 Askedly Social Network. All rights reserved."
+	},
+	"questionList": {
+		"empty": "No questions yet. Be the first to ask!",
+		"title": "Recent questions",
+		"amountPaid": "Amount paid: {amount}"
+	},
+	"followers": {
+		"tabFollowers": "Your Followers ({count})",
+		"tabRequests": "Follow Requests ({count})",
+		"empty": "You don't have any followers yet.",
+		"noRequests": "No follow requests.",
+		"remove": "Remove Follower",
+		"removing": "Removing...",
+		"removeError": "Could not remove follower",
+		"accept": "Accept",
+		"accepting": "Accepting...",
+		"acceptError": "Could not accept request",
+		"reject": "Reject",
+		"rejecting": "Rejecting...",
+		"rejectError": "Could not reject request"
+	},
+	"following": {
+		"header": "You are following {count, plural, one {# person} other {# people}}",
+		"empty": "You are not following anyone yet.",
+		"emptyHint": "Start following people to see their activity in your feed!",
+		"unfollow": "Unfollow",
+		"unfollowing": "Unfollowing...",
+		"unfollowError": "Could not unfollow"
+	}
 }

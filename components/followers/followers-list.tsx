@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { FollowerUserInterface } from "@/types/FollowerUserInterface";
 import { FollowerCard } from "./follower-card";
 
@@ -9,10 +10,12 @@ interface FollowersListProps {
 }
 
 export function FollowersList({ followers, onRemove }: FollowersListProps) {
+	const t = useTranslations("common.followers");
+
 	if (followers.length === 0) {
 		return (
 			<div className="text-center py-12 text-gray-500">
-				<p className="text-base">Você ainda não tem seguidores.</p>
+				<p className="text-base">{t("empty")}</p>
 			</div>
 		);
 	}

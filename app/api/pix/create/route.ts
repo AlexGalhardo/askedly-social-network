@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { AbacatePayError, createPixCharge } from "@/lib/abacatepay";
 import { registerCharge } from "@/lib/services/pix-charge.service";
 import { getSessionUser } from "@/lib/session";
@@ -11,12 +12,20 @@ const PIX_EXPIRES_IN_SECONDS = 600;
 export async function POST(request: Request) {
 	try {
 		const user = await getSessionUser();
-		if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+		if (!user)
+			return NextResponse.json({ error: (await getTranslations("errors"))("unauthorized") }, { status: 401 });
 
 		const { amount, nickname } = await request.json();
 
 		if (!Number.isInteger(amount) || amount < MIN_AMOUNT_CENTS || amount > MAX_AMOUNT_CENTS) {
-			return NextResponse.json({ error: "O valor mínimo é R$ 2,00 reais" }, { status: 400 });
+			const minimum = (await getFormatter()).number(MIN_AMOUNT_CENTS / 100, {
+				style: "currency",
+				currency: "BRL",
+			});
+			return NextResponse.json(
+				{ error: (await getTranslations("payments"))("api.minimumAmount", { amount: minimum }) },
+				{ status: 400 },
+			);
 		}
 
 		const charge = await createPixCharge({
@@ -38,6 +47,6 @@ export async function POST(request: Request) {
 	} catch (error: unknown) {
 		await TelegramLog.error(`Catch ERRO ao gerar PIX para pagar: ${(error as Error)?.message}`);
 		const status = error instanceof AbacatePayError ? 502 : 500;
-		return NextResponse.json({ error: "Não foi possível gerar o PIX" }, { status });
+		return NextResponse.json({ error: (await getTranslations("payments"))("api.pixCreateFailed") }, { status });
 	}
 }

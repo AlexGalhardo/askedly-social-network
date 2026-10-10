@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PaymentData, PaymentTab } from "@/types/PaymentInterface";
 import { PaymentTabContent } from "./payment-tab-content";
@@ -23,12 +24,13 @@ export function PaymentTabs({
 	isProcessingWithdraw = false,
 	isLoading = false,
 }: PaymentTabsProps) {
+	const t = useTranslations("payments");
 	const currentData = activeTab === "respondidas" ? answeredData : sentData;
 
 	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center py-12">
-				<div className="text-muted-foreground">Carregando dados de pagamento...</div>
+				<div className="text-muted-foreground">{t("loading")}</div>
 			</div>
 		);
 	}
@@ -36,7 +38,7 @@ export function PaymentTabs({
 	if (!currentData) {
 		return (
 			<div className="text-center py-12">
-				<p className="text-muted-foreground">Erro ao carregar dados de pagamento</p>
+				<p className="text-muted-foreground">{t("loadError")}</p>
 			</div>
 		);
 	}
@@ -48,13 +50,13 @@ export function PaymentTabs({
 					value="respondidas"
 					className="flex-1 text-xs sm:text-sm py-2 px-2 rounded-md text-center font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=inactive]:opacity-70 dark:data-[state=active]:bg-white dark:data-[state=active]:text-black dark:data-[state=inactive]:bg-neutral-700 dark:data-[state=inactive]:text-neutral-300"
 				>
-					Perguntas Respondidas
+					{t("tabs.answered")}
 				</TabsTrigger>
 				<TabsTrigger
 					value="enviadas"
 					className="flex-1 text-xs sm:text-sm py-2 px-2 rounded-md text-center font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=inactive]:opacity-70 dark:data-[state=active]:bg-white dark:data-[state=active]:text-black dark:data-[state=inactive]:bg-neutral-700 dark:data-[state=inactive]:text-neutral-300"
 				>
-					Perguntas Enviadas
+					{t("tabs.sent")}
 				</TabsTrigger>
 			</TabsList>
 

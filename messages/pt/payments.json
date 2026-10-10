@@ -1,1 +1,114 @@
-{}
+{
+	"meta": {
+		"title": "Pagamentos - Askedly Social Network",
+		"description": "Veja os seus pagamentos da plataforma Askedly Social Network"
+	},
+	"loading": "Carregando dados de pagamento...",
+	"loadError": "Erro ao carregar dados de pagamento",
+	"loadErrorRetry": "Erro ao carregar dados de pagamento. Tente novamente.",
+	"tabs": {
+		"answered": "Perguntas Respondidas",
+		"sent": "Perguntas Enviadas"
+	},
+	"answered": {
+		"withdrawTitle": "Pronto Para Sacar",
+		"withdrawDescription": "Valor das perguntas que você respondeu e foram aprovadas",
+		"pendingTitle": "Valor Pendente Para Responder",
+		"pendingDescription": "Valor das perguntas aguardando sua resposta"
+	},
+	"sent": {
+		"withdrawTitle": "Disponível Para Saque",
+		"withdrawDescription": "Perguntas pagas que você enviou e foram expiradas ou recusadas a responder",
+		"pendingTitle": "Valor Aguardando Resposta",
+		"pendingDescription": "Valor total que você pagou fazendo perguntas que ainda estão esperando resposta.",
+		"paidTitle": "Total Pago em Perguntas Respondidas",
+		"paidDescription": "Valor total que você pagou para fazer perguntas e foram respondidas adequadamente."
+	},
+	"minimumWithdraw": "Você precisa acumular pelo menos {amount} para poder sacar o dinheiro",
+	"withdraw": {
+		"button": "Sacar Dinheiro",
+		"processing": "Processando...",
+		"noPixKeyTitle": "Chave Pix não configurada",
+		"noPixKeyDescription": "Você precisa configurar sua chave Pix na sua conta antes de poder sacar.",
+		"understood": "Entendi",
+		"title": "Sacar {amount}",
+		"confirmKey": "Confirme o saque nessa Chave PIX configurada na sua conta:",
+		"typeKey": "Digite a chave PIX acima para confirmar o saque:",
+		"processingWithdraw": "Processando Saque...",
+		"confirm": "Confirmar Saque Nessa Chave PIX",
+		"successTitle": "Saque realizado com sucesso",
+		"successDescription": "Valor de {amount} será enviado para a conta associada a essa chave PIX em breve.",
+		"errorTitle": "Erro ao realizar saque",
+		"errorFallback": "Por favor, tente novamente mais tarde."
+	},
+	"history": {
+		"title": "Histórico de Transações",
+		"empty": "Nenhuma transação encontrada",
+		"withdrawal": "Saque realizado",
+		"pixKey": "PIX: {key}"
+	},
+	"withdrawErrors": {
+		"noQuestions": "Nenhuma pergunta selecionada para saque.",
+		"userNotFound": "Usuário não encontrado.",
+		"noPixKey": "Cadastre uma chave PIX antes de sacar.",
+		"invalidQuestions": "Algumas perguntas são inválidas ou já foram sacadas.",
+		"failed": "Erro ao processar saque. Tente novamente."
+	},
+	"api": {
+		"missingPaymentId": "ID do pagamento não fornecido.",
+		"missingPixId": "Pix id não enviado",
+		"paymentNotFound": "Pagamento não encontrado",
+		"minimumAmount": "O valor mínimo é {amount}",
+		"pixCreateFailed": "Não foi possível gerar o PIX",
+		"invalidAmount": "Valor inválido",
+		"checkoutFailed": "Não foi possível iniciar a compra de créditos",
+		"stripeStatusFailed": "Não foi possível consultar a Stripe",
+		"invalidCountry": "País inválido",
+		"onboardingFailed": "Não foi possível abrir o cadastro na Stripe"
+	},
+	"modal": {
+		"title": "Quanto você quer pagar para fazer essa pergunta?",
+		"anonymousNotAccepted": "Esse perfil não aceita perguntas anônimas",
+		"anonymousRemaining": "{count, plural, =0 {0 perguntas anônimas restantes hoje} one {# pergunta anônima restante hoje} other {# perguntas anônimas restantes hoje}}",
+		"anonymousLabel": "Enviar pergunta anonimamente?",
+		"anonymousHint": "Sua identidade não será revelada",
+		"privateAnswerLabel": "Quero que a resposta seja privada",
+		"privateAnswerHint": "A resposta não será mostrada publicamente",
+		"privateAmountLabel": "Não quero que o valor que paguei nessa pergunta seja público",
+		"privateAmountHint": "O valor que você pagou por fazer essa pergunta não será mostrado publicamente",
+		"pix": "PIX",
+		"credits": "Créditos",
+		"balance": "Saldo: {amount}. <link>Comprar créditos</link>",
+		"other": "Outro",
+		"customAmountLabel": "Digite o valor",
+		"sending": "Enviando...",
+		"generatingPix": "Gerando PIX...",
+		"payWithCredits": "Pagar com créditos",
+		"generatePix": "Gerar PIX para Pagar",
+		"pixTitle": "Pague com PIX",
+		"paidTitle": "Pagamento Confirmado!",
+		"questionSent": "Sua pergunta foi enviada com sucesso!",
+		"autoClose": "Esse modal se fechará automaticamente em {seconds, plural, one {# segundo} other {# segundos}}.",
+		"qrCodeAlt": "QR Code PIX",
+		"status": {
+			"paid": "Pagamento confirmado!",
+			"expired": "PIX expirado",
+			"cancelled": "PIX cancelado",
+			"refunded": "PIX reembolsado",
+			"pending": "Aguardando pagamento..."
+		},
+		"amountDue": "Valor a Pagar: {amount}",
+		"timeRemaining": "Tempo restante: <b>{time}</b>",
+		"copied": "Copiado!",
+		"copyCode": "Copiar código PIX",
+		"scanHint": "Escaneie o QR code ou copie o código PIX para pagar.",
+		"testMode": "Você está em modo de teste. Esse PIX será pago automaticamente em alguns segundos.",
+		"closeAndRetry": "Fechar e tentar novamente",
+		"pixErrorTitle": "Erro ao gerar PIX",
+		"pixErrorDescription": "Tente novamente mais tarde",
+		"pixErrorFallback": "Não foi possível gerar o código PIX. Tente novamente.",
+		"questionErrorTitle": "Erro ao enviar pergunta",
+		"questionErrorDescription": "Houve um erro ao enviar sua pergunta.",
+		"questionSentDescription": "Sua pergunta foi enviada com sucesso."
+	}
+}

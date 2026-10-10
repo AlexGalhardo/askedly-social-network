@@ -1,13 +1,15 @@
 import { Body, Container, Head, Heading, Html, Section, Text } from "@react-email/components";
+import type { EmailTranslator } from "@/lib/email";
 
 interface ContactEmailProps {
 	name: string;
 	email: string;
 	subject: string;
 	message: string;
+	t: EmailTranslator;
 }
 
-export function ContactEmail({ name, email, subject, message }: ContactEmailProps) {
+export function ContactEmail({ name, email, subject, message, t }: ContactEmailProps) {
 	return (
 		<Html>
 			<Head />
@@ -15,21 +17,21 @@ export function ContactEmail({ name, email, subject, message }: ContactEmailProp
 				<Container style={{ padding: "20px", maxWidth: "600px" }}>
 					<Section style={{ marginBottom: "20px" }}>
 						<Heading className="font-semibold text-[24px] text-indigo-400 leading-[32px]">
-							Formulário de Contato do Askedly Social Network
+							{t("contact.heading")}
 						</Heading>
 					</Section>
 					<Section style={{ marginBottom: "10px" }}>
 						<Text style={{ margin: "0 0 10px 0", fontSize: "16px" }}>
-							<strong>Nome:</strong> {name}
+							<strong>{t("contact.name")}</strong> {name}
 						</Text>
 						<Text style={{ margin: "0 0 10px 0", fontSize: "16px" }}>
-							<strong>Email:</strong> {email}
+							<strong>{t("contact.email")}</strong> {email}
 						</Text>
 						<Text style={{ margin: "0 0 10px 0", fontSize: "16px" }}>
-							<strong>Assunto:</strong> {subject}
+							<strong>{t("contact.subject")}</strong> {subject}
 						</Text>
 						<Text style={{ margin: "0 0 10px 0", fontSize: "16px" }}>
-							<strong>Mensagem:</strong>
+							<strong>{t("contact.message")}</strong>
 						</Text>
 						<Text style={{ margin: "0", fontSize: "16px", whiteSpace: "pre-wrap" }}>{message}</Text>
 					</Section>

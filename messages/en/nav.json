@@ -1,1 +1,23 @@
-{}
+{
+	"feed": "Feed",
+	"topLikes": "Top 10 Most Liked",
+	"myProfile": "My Profile",
+	"myAccount": "My Account",
+	"receivedQuestions": "Received Questions",
+	"sentQuestions": "Sent Questions",
+	"payments": "Payments",
+	"followers": "Followers",
+	"following": "Following",
+	"about": "About",
+	"contact": "Contact",
+	"privacyPolicy": "Privacy Policy",
+	"termsOfUse": "Terms of Use",
+	"darkMode": "Dark Mode",
+	"lightMode": "Light Mode",
+	"signOut": "Sign Out",
+	"signIn": "Sign In to My Account",
+	"signInShort": "Sign In",
+	"sessionError": "Could not load your session data.",
+	"retry": "Try again",
+	"closeMenu": "Close menu"
+}

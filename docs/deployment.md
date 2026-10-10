@@ -39,7 +39,7 @@ Produção responde em **`https://respondeae.vercel.app`** (público). O projeto
 
 - `lint` roda `bun run lint:ci`, que falha também com **warning** do Biome (`--error-on-warnings`).
 - `typecheck` (`tsc --noEmit`, sem `ignoreBuildErrors` no `next.config`).
-- `security-audit` (`bun audit --audit-level=high`). A única exceção (`--ignore=GHSA-ggr8-5vv4-36mx`) é o `deepmerge-ts`, que só existe no CLI do Prisma e nunca roda em produção.
+- `security-audit` (`bun audit --audit-level=high`). Duas exceções, ambas em ferramenta de desenvolvimento que nunca roda em produção: `GHSA-ggr8-5vv4-36mx` (`deepmerge-ts`, só no CLI do Prisma) e `GHSA-vfj7-8cjw-p6xm` (`braces`, só no markdownlint; sem versão corrigida publicada, e os padrões de glob vêm da nossa própria configuração). O `seroval` (via devtools do React Query) é fixado em `overrides` numa versão corrigida.
 - `unit-tests` roda `prisma:generate` antes: alguns testes unitários importam services que importam o client.
 - O e2e roda contra `next build` + `next start` (produção), com as chaves de teste oficiais da Cloudflare para o Turnstile (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA`), que sempre passam.
 - Smoke e e2e sobem o Next com **Node**, como na Vercel: sob o runtime do Bun os módulos que o Turbopack externaliza (`@prisma/client`, `pg`) não resolvem.

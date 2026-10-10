@@ -1,13 +1,13 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { formatCurrency } from "@/lib/utils";
 
 const CREDIT_AMOUNTS = [5, 10, 20, 50, 100];
 
@@ -18,6 +18,8 @@ interface StripeAccount {
 
 export function StripeForm() {
 	const { toast } = useToast();
+	const t = useTranslations("account.stripe");
+	const format = useFormatter();
 	const [account, setAccount] = useState<StripeAccount | null>(null);
 	const [country, setCountry] = useState("");
 	const [isRedirecting, setIsRedirecting] = useState(false);
@@ -43,8 +45,8 @@ export function StripeForm() {
 			window.location.assign(result.url);
 		} catch (error: unknown) {
 			toast({
-				title: "Erro",
-				description: (error as Error)?.message || "Não foi possível abrir a Stripe. Tente novamente.",
+				title: t("errorTitle"),
+				description: (error as Error)?.message || t("openError"),
 				variant: "error",
 			});
 			setIsRedirecting(false);
@@ -54,12 +56,18 @@ export function StripeForm() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Créditos e recebimentos (Stripe)</CardTitle>
+				<CardTitle>{t("title")}</CardTitle>
 			</CardHeader>
 			<CardContent className="space-y-6">
 				<div className="space-y-2">
 					<p className="text-sm">
-						Saldo de créditos: <strong>{formatCurrency(account?.credits ?? 0, "USD")}</strong>
+						{t.rich("balance", {
+							amount: format.number((account?.credits ?? 0) / 100, {
+								style: "currency",
+								currency: "USD",
+							}),
+							strong: (chunks) => <strong>{chunks}</strong>,
+						})}
 					</p>
 					<div className="flex flex-wrap gap-2">
 						{CREDIT_AMOUNTS.map((amount) => (
@@ -69,7 +77,7 @@ export function StripeForm() {
 								disabled={isRedirecting}
 								onClick={() => redirectToStripe("/api/stripe/checkout", { amount: amount * 100 })}
 							>
-								{formatCurrency(amount * 100, "USD")}
+								{format.number(amount, { style: "currency", currency: "USD" })}
 							</Button>
 						))}
 					</div>
@@ -77,17 +85,13 @@ export function StripeForm() {
 
 				<div className="space-y-2">
 					{account?.payoutStatus === "active" ? (
-						<p className="text-sm text-green-600 font-medium">
-							Conta de recebimento ativa: perguntas pagas com créditos são transferidas ao responder.
-						</p>
+						<p className="text-sm text-green-600 font-medium">{t("payoutActive")}</p>
 					) : (
 						<>
-							<p className="text-sm text-gray-500 dark:text-gray-400">
-								Para receber por perguntas pagas com créditos, conclua o cadastro na Stripe.
-							</p>
+							<p className="text-sm text-gray-500 dark:text-gray-400">{t("payoutSetup")}</p>
 							{account?.payoutStatus !== "pending" && (
 								<div className="space-y-2">
-									<Label htmlFor="stripe-country">País (código de 2 letras, ex.: US, BR)</Label>
+									<Label htmlFor="stripe-country">{t("countryLabel")}</Label>
 									<Input
 										id="stripe-country"
 										value={country}
@@ -104,9 +108,7 @@ export function StripeForm() {
 								onClick={() => redirectToStripe("/api/stripe/connect", { country: country || "US" })}
 							>
 								{isRedirecting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-								{account?.payoutStatus === "pending"
-									? "Continuar cadastro na Stripe"
-									: "Cadastrar na Stripe"}
+								{account?.payoutStatus === "pending" ? t("continueOnboarding") : t("startOnboarding")}
 							</Button>
 						</>
 					)}

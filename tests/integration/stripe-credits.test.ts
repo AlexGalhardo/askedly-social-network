@@ -66,6 +66,15 @@ describe("créditos Stripe (integration)", () => {
 	test("recusa valor abaixo do mínimo e saldo insuficiente sem debitar", async () => {
 		await expect(ask(100)).rejects.toBeInstanceOf(CreateQuestionError);
 		await expect(ask(501)).rejects.toBeInstanceOf(CreateQuestionError);
+		await expect(
+			createCreditQuestion({
+				askerId,
+				ownerId: askerId,
+				amountCents: 200,
+				questionText: "Para mim",
+				isAnonymous: false,
+			}),
+		).rejects.toMatchObject({ message: "cannotAskYourself" });
 		expect(await credits()).toBe(500);
 	});
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { getMyBlockedUsers } from "@/actions/my-account-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,6 +11,7 @@ import TelegramLog from "@/lib/telegram-logger";
 
 export default function BlockedUsersCard() {
 	const { update } = useSession();
+	const t = useTranslations("account.blocked");
 	const { data: blockedUsers, setData: setBlockedUsers } = useSessionBoundList(getMyBlockedUsers);
 	const [unblockingUsers, setUnblockingUsers] = useState<Set<string>>(new Set());
 	const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +35,7 @@ export default function BlockedUsersCard() {
 			const data = await response.json();
 
 			if (!response.ok) {
-				throw new Error(data.message || "Erro ao desbloquear usuário");
+				throw new Error(data.message || t("unblockError"));
 			}
 
 			setBlockedUsers((prev) => prev.filter((user) => user.id !== userId));
@@ -41,13 +43,13 @@ export default function BlockedUsersCard() {
 			await update();
 
 			toast({
-				title: "Usuário Desbloqueado",
+				title: t("unblocked"),
 				variant: "success",
 			});
 		} catch (error: any) {
 			await TelegramLog.error(`Error blocked-users-card.ts handleUnblockUser: ${error?.message}`);
 			toast({
-				title: "Erro ao desbloquear usuário",
+				title: t("unblockError"),
 				variant: "error",
 			});
 		} finally {
@@ -68,7 +70,7 @@ export default function BlockedUsersCard() {
 				aria-expanded={isOpen}
 			>
 				<div className="flex items-center gap-2">
-					<span className="font-medium text-gray-900">Usuários Bloqueados</span>
+					<span className="font-medium text-gray-900">{t("title")}</span>
 					<span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
 						{blockedUsers.length}
 					</span>
@@ -102,7 +104,7 @@ export default function BlockedUsersCard() {
 									d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"
 								/>
 							</svg>
-							<p className="text-sm">Nenhum usuário bloqueado</p>
+							<p className="text-sm">{t("empty")}</p>
 						</div>
 					) : (
 						<div className="divide-y divide-gray-100">
@@ -115,7 +117,7 @@ export default function BlockedUsersCard() {
 										<Avatar className="w-10 h-10">
 											<AvatarImage
 												src={user?.blocked?.avatar_url ?? undefined}
-												alt={`Avatar de ${user?.blocked?.name}`}
+												alt={t("avatarAlt", { name: user?.blocked?.name })}
 											/>
 											<AvatarFallback className="bg-gray-200 text-gray-500 text-sm font-medium">
 												{user?.blocked?.name?.charAt(0).toUpperCase()}
@@ -155,10 +157,10 @@ export default function BlockedUsersCard() {
 														d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
 													/>
 												</svg>
-												Desbloqueando...
+												{t("unblocking")}
 											</div>
 										) : (
-											"Desbloquear"
+											t("unblock")
 										)}
 									</button>
 								</div>

@@ -2,13 +2,15 @@
 
 import { Flag, HelpCircle, Lock, UserX } from "lucide-react";
 import Link from "next/link";
+import { useFormatter, useNow, useTranslations } from "next-intl";
+
 import { FaMoneyBillWave } from "react-icons/fa6";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { getInitials } from "@/lib/functions";
-import { formatCurrency, formatDate } from "@/lib/utils";
+
 import { getSentQuestionStatus } from "@/lib/utils/sent-question-utils";
 import { SentQuestionInterface } from "@/types/SentQuestion";
 
@@ -20,19 +22,22 @@ interface SentQuestionCardProps {
 
 export function SentQuestionCard({ question, onReport, isReporting = false }: SentQuestionCardProps) {
 	const status = getSentQuestionStatus(question);
+	const t = useTranslations("questions");
+	const format = useFormatter();
+	const now = useNow();
 
 	const getStatusBadge = () => {
 		switch (status) {
 			case "answered":
-				return <Badge className="bg-green-100 text-green-700">Respondida</Badge>;
+				return <Badge className="bg-green-100 text-green-700">{t("sent.status.answered")}</Badge>;
 			case "declined":
-				return <Badge className="bg-red-100 text-red-700">Recusada</Badge>;
+				return <Badge className="bg-red-100 text-red-700">{t("sent.status.declined")}</Badge>;
 			case "expired":
-				return <Badge className="bg-gray-100 text-gray-700">Expirada</Badge>;
+				return <Badge className="bg-gray-100 text-gray-700">{t("sent.status.expired")}</Badge>;
 			case "pending":
-				return <Badge className="bg-yellow-100 text-yellow-700">Aguardando</Badge>;
+				return <Badge className="bg-yellow-100 text-yellow-700">{t("sent.status.pending")}</Badge>;
 			default:
-				return <Badge className="bg-yellow-100 text-yellow-700">Aguardando</Badge>;
+				return <Badge className="bg-yellow-100 text-yellow-700">{t("sent.status.pending")}</Badge>;
 		}
 	};
 
@@ -42,15 +47,16 @@ export function SentQuestionCard({ question, onReport, isReporting = false }: Se
 				<div className="flex justify-between items-start">
 					<div className="flex items-center gap-2">
 						<Badge className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-800 border-green-200 dark:border-green-700">
-							Você Pagou {formatCurrency(question.amount_paid, question.currency)}
+							{t("sent.youPaid", {
+								amount: format.number(question.amount_paid / 100, {
+									style: "currency",
+									currency: question.currency || "BRL",
+								}),
+							})}
 						</Badge>
 						<span className="text-gray-500 dark:text-gray-400">
 							{" "}
-							{formatDate(
-								typeof question.created_at === "string"
-									? question.created_at
-									: question.created_at.toISOString(),
-							)}
+							{format.relativeTime(new Date(question.created_at), now)}
 						</span>
 					</div>
 				</div>
@@ -61,7 +67,7 @@ export function SentQuestionCard({ question, onReport, isReporting = false }: Se
 					{question.asker_sent_anonymous_question && (
 						<>
 							<UserX className="h-4 w-4" />
-							<span>Enviada anonimamente</span>
+							<span>{t("sent.sentAnonymously")}</span>
 							<span>•</span>
 						</>
 					)}
@@ -71,7 +77,7 @@ export function SentQuestionCard({ question, onReport, isReporting = false }: Se
 					<div className="flex items-start gap-2 text-gray-800 dark:text-gray-200">
 						<HelpCircle className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-1" />
 						<p className="text-lg leading-snug">
-							<strong className="text-blue-600 dark:text-blue-400">Você Perguntou</strong>:{" "}
+							<strong className="text-blue-600 dark:text-blue-400">{t("sent.youAsked")}</strong>:{" "}
 							{question.question_text}
 						</p>
 					</div>
@@ -81,7 +87,7 @@ export function SentQuestionCard({ question, onReport, isReporting = false }: Se
 							<Lock className="w-5 h-5 text-yellow-500 dark:text-yellow-400 mt-1" />
 							<p className="text-base leading-snug">
 								<strong className="text-yellow-600 dark:text-yellow-400">
-									Essa Resposta É Privada
+									{t("card.privateAnswer")}
 								</strong>
 							</p>
 						</div>
@@ -92,7 +98,7 @@ export function SentQuestionCard({ question, onReport, isReporting = false }: Se
 							<FaMoneyBillWave className="w-5 h-5 text-green-600 dark:text-green-400 mt-1" />
 							<p className="text-base leading-snug">
 								<strong className="text-green-600 dark:text-green-400">
-									O valor pago por essa pergunta será privado
+									{t("card.privateAmount")}
 								</strong>
 							</p>
 						</div>
@@ -122,13 +128,11 @@ export function SentQuestionCard({ question, onReport, isReporting = false }: Se
 									</Link>
 								</div>
 								<div className="flex flex-col sm:flex-row sm:items-center gap-1 text-xs text-green-600 dark:text-green-400">
-									<span>respondeu</span>
+									<span>{t("card.answered")}</span>
 									<span className="text-gray-500 dark:text-gray-400">
-										{formatDate(
-											typeof question.answered_at === "string"
-												? question.answered_at
-												: question.answered_at?.toISOString() || "",
-										)}
+										{question.answered_at
+											? format.relativeTime(new Date(question.answered_at), now)
+											: ""}
 									</span>
 								</div>
 								<div className="rounded bg-green-50 dark:bg-green-900/20 px-6 py-6 mt-6 mb-3 border border-green-200 dark:border-green-800">
@@ -146,7 +150,7 @@ export function SentQuestionCard({ question, onReport, isReporting = false }: Se
 								disabled={isReporting}
 							>
 								<Flag className="h-4 w-4 mr-1" />
-								{isReporting ? "Reportando..." : "Reportar resposta"}
+								{isReporting ? t("sent.reporting") : t("sent.reportAnswer")}
 							</Button>
 						</div>
 					</>

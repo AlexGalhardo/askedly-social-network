@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import { useUpdatePrivacySettings } from "@/hooks/use-account-mutations";
 
 export function PrivacySettingsForm({ user }: any) {
 	const [isPending, startTransition] = useTransition();
+	const t = useTranslations("account");
 	const updatePrivacySettingsMutation = useUpdatePrivacySettings();
 
 	const [isPrivateProfile, setIsPrivateProfile] = useState(user.privacy_is_private_profile ?? false);
@@ -68,17 +70,15 @@ export function PrivacySettingsForm({ user }: any) {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Configurações de Privacidade</CardTitle>
+				<CardTitle>{t("privacy.title")}</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<form action={handleSubmit} className="space-y-6">
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Meu Perfil Será Privado</Label>
+							<Label>{t("privacy.privateProfile.label")}</Label>
 							<p className="text-sm text-gray-500">
-								Pessoas não poderão seguir você livremente, elas vão pedir uma soliticação para te
-								seguir primeiro. <br />
-								Apenas seguidores conseguem ver suas respostas públicas.
+								{t.rich("privacy.privateProfile.description", { br: () => <br /> })}
 							</p>
 						</div>
 						<Switch checked={isPrivateProfile} onCheckedChange={setIsPrivateProfile} />
@@ -86,10 +86,8 @@ export function PrivacySettingsForm({ user }: any) {
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Aceitar perguntas anônimas</Label>
-							<p className="text-sm text-gray-500">
-								Permitir que pessoas façam perguntas sem se identificar
-							</p>
+							<Label>{t("privacy.acceptAnonymous.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.acceptAnonymous.description")}</p>
 						</div>
 						<Switch checked={acceptAnonymousQuestions} onCheckedChange={setAcceptAnonymousQuestions} />
 					</div>
@@ -97,10 +95,8 @@ export function PrivacySettingsForm({ user }: any) {
 					{acceptAnonymousQuestions && (
 						<div className="flex items-center justify-between pl-4 border-l-2 border-green-200">
 							<div className="space-y-0.5">
-								<Label>Mostrar perguntas anônimas respondidas publicamente</Label>
-								<p className="text-sm text-gray-500">
-									Exibir suas respostas a perguntas anônimas no seu perfil público
-								</p>
+								<Label>{t("privacy.showAnonymousPublic.label")}</Label>
+								<p className="text-sm text-gray-500">{t("privacy.showAnonymousPublic.description")}</p>
 							</div>
 							<Switch
 								checked={showQuestionsAnonymousAnsweredPublic}
@@ -111,8 +107,8 @@ export function PrivacySettingsForm({ user }: any) {
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Mostrar perguntas respondidas apenas para seguidores</Label>
-							<p className="text-sm text-gray-500">Apenas seus seguidores poderão ver suas respostas</p>
+							<Label>{t("privacy.followersOnly.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.followersOnly.description")}</p>
 						</div>
 						<Switch
 							checked={showAnsweredToFollowersOnly}
@@ -122,11 +118,8 @@ export function PrivacySettingsForm({ user }: any) {
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Mostrar valor recebido para responder pergunta</Label>
-							<p className="text-sm text-gray-500">
-								Exibir quanto você recebeu R$ por cada resposta (se o usuario que enviou a pergunta não
-								quis mostrar o valor que ele pagou, essas respostas não exibirão o valor pago)
-							</p>
+							<Label>{t("privacy.showPaymentAmount.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.showPaymentAmount.description")}</p>
 						</div>
 						<Switch
 							checked={showPaymentAmountEachQuestion}
@@ -136,68 +129,64 @@ export function PrivacySettingsForm({ user }: any) {
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Mostrar data que pergunta foi respondida</Label>
-							<p className="text-sm text-gray-500">Exibir quando você respondeu cada pergunta</p>
+							<Label>{t("privacy.showAnswerDate.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.showAnswerDate.description")}</p>
 						</div>
 						<Switch checked={showAnswerDate} onCheckedChange={setShowAnswerDate} />
 					</div>
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Mostrar total de seguidores publicamente</Label>
-							<p className="text-sm text-gray-500">Exibir o número de seguidores no seu perfil</p>
+							<Label>{t("privacy.showFollowersCount.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.showFollowersCount.description")}</p>
 						</div>
 						<Switch checked={showFollowersCount} onCheckedChange={setShowFollowersCount} />
 					</div>
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Mostrar total de perguntas enviadas publicamente</Label>
-							<p className="text-sm text-gray-500">Exibir o número total de perguntas que você enviou</p>
+							<Label>{t("privacy.showQuestionsSent.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.showQuestionsSent.description")}</p>
 						</div>
 						<Switch checked={showTotalQuestionSent} onCheckedChange={setShowQuestionsSent} />
 					</div>
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Mostrar total de curtidas nas respostas individuais publicamente</Label>
-							<p className="text-sm text-gray-500">Exibir curtidas em cada resposta individual</p>
+							<Label>{t("privacy.showIndividualLikes.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.showIndividualLikes.description")}</p>
 						</div>
 						<Switch checked={showIndividualLikes} onCheckedChange={setShowIndividualLikes} />
 					</div>
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Mostrar total de descurtidas nas respostas individuais publicamente</Label>
-							<p className="text-sm text-gray-500">Exibir descurtidas em cada resposta individual</p>
+							<Label>{t("privacy.showIndividualDislikes.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.showIndividualDislikes.description")}</p>
 						</div>
 						<Switch checked={showIndividualDislikes} onCheckedChange={setShowIndividualDislikes} />
 					</div>
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Mostrar total de curtidas em todas suas respostas publicamente</Label>
-							<p className="text-sm text-gray-500">
-								Exibir o número total de curtidas em todas as respostas que você já respondeu
-							</p>
+							<Label>{t("privacy.showTotalLikes.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.showTotalLikes.description")}</p>
 						</div>
 						<Switch checked={showTotalLikes} onCheckedChange={setShowTotalLikes} />
 					</div>
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Mostrar total de perguntas que você já recebeu publicamente</Label>
-							<p className="text-sm text-gray-500">Exibir o número total de perguntas que você recebeu</p>
+							<Label>{t("privacy.showQuestionsReceived.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.showQuestionsReceived.description")}</p>
 						</div>
 						<Switch checked={showTotalQuestionsReceived} onCheckedChange={setShowTotalQuestionsReceived} />
 					</div>
 
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Mostrar total de perguntas que você já respondeu publicamente</Label>
-							<p className="text-sm text-gray-500">
-								Exibir o número total de perguntas que você respondeu
-							</p>
+							<Label>{t("privacy.showQuestionsAnswered.label")}</Label>
+							<p className="text-sm text-gray-500">{t("privacy.showQuestionsAnswered.description")}</p>
 						</div>
 						<Switch checked={showTotalQuestionsAnswered} onCheckedChange={setShowTotalQuestionsAnswered} />
 					</div>
@@ -210,10 +199,10 @@ export function PrivacySettingsForm({ user }: any) {
 						{isLoading ? (
 							<>
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								Atualizando...
+								{t("common.updating")}
 							</>
 						) : (
-							"Atualizar Configurações de Privacidade"
+							t("privacy.submit")
 						)}
 					</Button>
 				</form>

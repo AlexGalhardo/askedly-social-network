@@ -3,6 +3,7 @@
 import { Check, Clock, Copy, Loader } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -11,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import TelegramLog from "@/lib/telegram-logger";
-import { formatCurrency } from "@/lib/utils";
 
 const PRESET_AMOUNTS = [2, 5, 10, 20, 50];
 
@@ -33,6 +33,9 @@ export function ProfilePaymentModal({
 	update,
 }: PaymentModalProps) {
 	const { toast } = useToast();
+	const t = useTranslations("payments.modal");
+	const format = useFormatter();
+	const locale = useLocale();
 
 	const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 	const [customAmount, setCustomAmount] = useState<string>("");
@@ -41,6 +44,9 @@ export function ProfilePaymentModal({
 	const [payWithCredits, setPayWithCredits] = useState(false);
 	const [credits, setCredits] = useState<number | null>(null);
 	const currency = payWithCredits ? "USD" : "BRL";
+	const currencySymbol = new Intl.NumberFormat(locale, { style: "currency", currency })
+		.formatToParts(0)
+		.find((part) => part.type === "currency")?.value;
 
 	useEffect(() => {
 		if (currentStep !== "payment") return;
@@ -240,8 +246,8 @@ export function ProfilePaymentModal({
 
 			if (result.error) {
 				toast({
-					title: `Erro ao gerar PIX`,
-					description: "Tente novamente mais tarde",
+					title: t("pixErrorTitle"),
+					description: t("pixErrorDescription"),
 					variant: "error",
 				});
 				return;
@@ -253,8 +259,8 @@ export function ProfilePaymentModal({
 		} catch (error: any) {
 			await TelegramLog.error(`Erro ao gerar PIX: ${error?.message}`);
 			toast({
-				title: "Erro ao gerar PIX",
-				description: error?.message ?? "Não foi possível gerar o código PIX. Tente novamente.",
+				title: t("pixErrorTitle"),
+				description: error?.message ?? t("pixErrorFallback"),
 				variant: "error",
 			});
 		} finally {
@@ -283,16 +289,16 @@ export function ProfilePaymentModal({
 
 			if (!response.ok || result.error) {
 				toast({
-					title: "Erro ao enviar pergunta",
-					description: result?.error ?? "Houve um erro ao enviar sua pergunta.",
+					title: t("questionErrorTitle"),
+					description: result?.error ?? t("questionErrorDescription"),
 					variant: "error",
 				});
 				return;
 			}
 
 			toast({
-				title: "Pagamento confirmado!",
-				description: "Sua pergunta foi enviada com sucesso.",
+				title: t("status.paid"),
+				description: t("questionSentDescription"),
 				variant: "success",
 			});
 			onStepChange("closed");
@@ -300,8 +306,8 @@ export function ProfilePaymentModal({
 		} catch (error: any) {
 			TelegramLog.error(`Erro ao enviar pergunta com créditos: ${error?.message}`);
 			toast({
-				title: "Erro ao enviar pergunta",
-				description: "Houve um erro ao enviar sua pergunta.",
+				title: t("questionErrorTitle"),
+				description: t("questionErrorDescription"),
 				variant: "error",
 			});
 		} finally {
@@ -332,16 +338,16 @@ export function ProfilePaymentModal({
 
 			if (!response.ok || result.error) {
 				toast({
-					title: "Erro ao enviar pergunta",
-					description: result?.error ?? "Houve um erro ao enviar sua pergunta.",
+					title: t("questionErrorTitle"),
+					description: result?.error ?? t("questionErrorDescription"),
 					variant: "error",
 				});
 				return;
 			}
 
 			toast({
-				title: "Pagamento confirmado!",
-				description: "Sua pergunta foi enviada com sucesso.",
+				title: t("status.paid"),
+				description: t("questionSentDescription"),
 				variant: "success",
 			});
 
@@ -349,8 +355,8 @@ export function ProfilePaymentModal({
 		} catch (error: any) {
 			TelegramLog.error(`Erro ao enviar pergunta: ${error?.message}`);
 			toast({
-				title: "Erro ao enviar pergunta",
-				description: error?.message ?? "Houve um erro ao enviar sua pergunta.",
+				title: t("questionErrorTitle"),
+				description: error?.message ?? t("questionErrorDescription"),
 				variant: "error",
 			});
 		}
@@ -388,15 +394,15 @@ export function ProfilePaymentModal({
 	const getStatusText = () => {
 		switch (paymentStatus) {
 			case "PAID":
-				return "Pagamento confirmado!";
+				return t("status.paid");
 			case "EXPIRED":
-				return "PIX expirado";
+				return t("status.expired");
 			case "CANCELLED":
-				return "PIX cancelado";
+				return t("status.cancelled");
 			case "REFUNDED":
-				return "PIX reembolsado";
+				return t("status.refunded");
 			default:
-				return "Aguardando pagamento...";
+				return t("status.pending");
 		}
 	};
 
@@ -409,29 +415,26 @@ export function ProfilePaymentModal({
 			<Dialog open={currentStep === "payment"} onOpenChange={closeModal}>
 				<DialogContent className="sm:max-w-md">
 					<DialogHeader>
-						<DialogTitle className="text-center text-xl">
-							Quanto você quer pagar para fazer essa pergunta?
-						</DialogTitle>
+						<DialogTitle className="text-center text-xl">{t("title")}</DialogTitle>
 					</DialogHeader>
 
 					<div className="py-4">
 						<div className="flex items-center justify-between mb-6 p-4 rounded-lg bg-gray-100 text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
 							{!profile?.privacy_accept_anonymous_questions ? (
 								<span className="text-sm text-gray-500 dark:text-gray-400">
-									Esse perfil não aceita perguntas anônimas
+									{t("anonymousNotAccepted")}
 								</span>
 							) : session?.user?.anonymous_questions_remaining_today === 0 ? (
 								<span className="text-sm text-gray-500 dark:text-gray-400">
-									{session?.user?.anonymous_questions_remaining_today} perguntas anônimas restantes
-									hoje
+									{t("anonymousRemaining", {
+										count: session?.user?.anonymous_questions_remaining_today,
+									})}
 								</span>
 							) : (
 								<>
 									<div className="space-y-0.5">
-										<Label className="text-sm font-medium">Enviar pergunta anonimamente?</Label>
-										<p className="text-sm text-gray-500 dark:text-gray-400">
-											Sua identidade não será revelada
-										</p>
+										<Label className="text-sm font-medium">{t("anonymousLabel")}</Label>
+										<p className="text-sm text-gray-500 dark:text-gray-400">{t("anonymousHint")}</p>
 									</div>
 									<Switch
 										checked={isAnonymousNewQuestion}
@@ -444,10 +447,8 @@ export function ProfilePaymentModal({
 
 						<div className="flex items-center justify-between mb-6 p-4 rounded-lg bg-gray-100 text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
 							<div className="space-y-0.5">
-								<Label className="text-sm font-medium">Quero que a resposta seja privada</Label>
-								<p className="text-sm text-gray-500 dark:text-gray-400">
-									A resposta não será mostrada publicamente
-								</p>
+								<Label className="text-sm font-medium">{t("privateAnswerLabel")}</Label>
+								<p className="text-sm text-gray-500 dark:text-gray-400">{t("privateAnswerHint")}</p>
 							</div>
 							<Switch
 								checked={isPrivateAnswer}
@@ -458,12 +459,8 @@ export function ProfilePaymentModal({
 
 						<div className="flex items-center justify-between mb-6 p-4 rounded-lg bg-gray-100 text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
 							<div className="space-y-0.5">
-								<Label className="text-sm font-medium">
-									Não quero que o valor que paguei nessa pergunta seja público
-								</Label>
-								<p className="text-sm text-gray-500 dark:text-gray-400">
-									O valor que você pagou por fazer essa pergunta não será mostrado publicamente
-								</p>
+								<Label className="text-sm font-medium">{t("privateAmountLabel")}</Label>
+								<p className="text-sm text-gray-500 dark:text-gray-400">{t("privateAmountHint")}</p>
 							</div>
 							<Switch
 								checked={questionAmountPaidIsPrivate}
@@ -477,24 +474,25 @@ export function ProfilePaymentModal({
 								variant={payWithCredits ? "outline" : "default"}
 								onClick={() => setPayWithCredits(false)}
 							>
-								PIX
+								{t("pix")}
 							</Button>
 							<Button
 								variant={payWithCredits ? "default" : "outline"}
 								onClick={() => setPayWithCredits(true)}
 							>
-								Créditos
+								{t("credits")}
 							</Button>
 						</div>
 						<p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-							{payWithCredits && (
-								<>
-									Saldo: {formatCurrency(credits ?? 0, "USD")}.{" "}
-									<Link href="/minha-conta" className="underline">
-										Comprar créditos
-									</Link>
-								</>
-							)}
+							{payWithCredits &&
+								t.rich("balance", {
+									amount: format.number((credits ?? 0) / 100, { style: "currency", currency: "USD" }),
+									link: (chunks) => (
+										<Link href="/minha-conta" className="underline">
+											{chunks}
+										</Link>
+									),
+								})}
 						</p>
 
 						<div className="grid grid-cols-3 gap-2 mb-6">
@@ -506,7 +504,7 @@ export function ProfilePaymentModal({
 									disabled={useCustomAmount}
 									className="h-16 text-lg"
 								>
-									{formatCurrency(amount * 100, currency)}
+									{format.number(amount, { style: "currency", currency })}
 								</Button>
 							))}
 
@@ -515,23 +513,21 @@ export function ProfilePaymentModal({
 								onClick={handleCustomAmountClick}
 								className="h-16 text-lg"
 							>
-								Outro
+								{t("other")}
 							</Button>
 						</div>
 
 						{useCustomAmount && (
 							<div className="space-y-2 mb-6">
-								<Label htmlFor="custom-amount">Digite o valor</Label>
+								<Label htmlFor="custom-amount">{t("customAmountLabel")}</Label>
 								<div className="relative">
-									<span className="absolute left-3 top-1/2 -translate-y-1/2">
-										{payWithCredits ? "$" : "R$"}
-									</span>
+									<span className="absolute left-3 top-1/2 -translate-y-1/2">{currencySymbol}</span>
 									<Input
 										id="custom-amount"
 										value={customAmount}
 										onChange={(e) => handleCustomAmountChange(e.target.value)}
 										className="pl-10"
-										placeholder="0,00"
+										placeholder={format.number(0, { minimumFractionDigits: 2 })}
 										autoFocus
 									/>
 								</div>
@@ -550,12 +546,12 @@ export function ProfilePaymentModal({
 							{isLoadingPayment ? (
 								<>
 									<Loader className="h-4 w-4 animate-spin" />
-									{payWithCredits ? "Enviando..." : "Gerando PIX..."}
+									{payWithCredits ? t("sending") : t("generatingPix")}
 								</>
 							) : payWithCredits ? (
-								"Pagar com créditos"
+								t("payWithCredits")
 							) : (
-								"Gerar PIX para Pagar"
+								t("generatePix")
 							)}
 						</Button>
 					</div>
@@ -566,7 +562,7 @@ export function ProfilePaymentModal({
 				<DialogContent className="sm:max-w-md">
 					<DialogHeader>
 						<DialogTitle className="text-center text-xl text-green-500">
-							{paymentStatus === "PAID" ? "Pagamento Confirmado!" : "Pague com PIX"}
+							{paymentStatus === "PAID" ? t("paidTitle") : t("pixTitle")}
 						</DialogTitle>
 					</DialogHeader>
 
@@ -576,9 +572,9 @@ export function ProfilePaymentModal({
 								<div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
 									<Check className="w-8 h-8 text-green-600" />
 								</div>
-								<p className="text-orange-500 text-center">Sua pergunta foi enviada com sucesso!</p>
+								<p className="text-orange-500 text-center">{t("questionSent")}</p>
 								<p className="text-gray-600 text-center dark:text-white">
-									Esse modal se fechará automaticamente em {countdownSeconds} segundos.
+									{t("autoClose", { seconds: countdownSeconds })}
 								</p>
 							</div>
 						) : (
@@ -587,7 +583,7 @@ export function ProfilePaymentModal({
 									{pixData?.brCodeBase64 ? (
 										<Image
 											src={pixData.brCodeBase64}
-											alt="QR Code PIX"
+											alt={t("qrCodeAlt")}
 											width={240}
 											height={240}
 											// data URI: não há o que otimizar
@@ -595,7 +591,7 @@ export function ProfilePaymentModal({
 										/>
 									) : (
 										<div className="bg-gray-200 w-full h-full flex items-center justify-center">
-											<span className="text-gray-500">QR Code PIX</span>
+											<span className="text-gray-500">{t("qrCodeAlt")}</span>
 										</div>
 									)}
 								</div>
@@ -608,15 +604,22 @@ export function ProfilePaymentModal({
 
 									<div className="text-center">
 										<p className="text-sm text-gray-600 dark:text-white">
-											Valor a Pagar: {formatCurrency((selectedAmount ?? 0) * 100)}
+											{t("amountDue", {
+												amount: format.number(selectedAmount ?? 0, {
+													style: "currency",
+													currency: "BRL",
+												}),
+											})}
 										</p>
 									</div>
 
 									{paymentStatus === "PENDING" && (
 										<div className="text-center">
 											<p className="text-sm text-gray-600 dark:text-red-500">
-												Tempo restante:{" "}
-												<span className="font-bold">{formatTime(timeRemaining)}</span>
+												{t.rich("timeRemaining", {
+													time: formatTime(timeRemaining),
+													b: (chunks) => <span className="font-bold">{chunks}</span>,
+												})}
 											</p>
 										</div>
 									)}
@@ -629,27 +632,24 @@ export function ProfilePaymentModal({
 												onClick={handleCopyCode}
 											>
 												{copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-												{copied ? "Copiado!" : "Copiar código PIX"}
+												{copied ? t("copied") : t("copyCode")}
 											</Button>
 										</div>
 									)}
 
 									{paymentStatus === "PENDING" && (
 										<p className="text-sm text-center text-muted-foreground dark:text-white">
-											Escaneie o QR code ou copie o código PIX para pagar.
+											{t("scanHint")}
 										</p>
 									)}
 
 									{process.env.NEXT_PUBLIC_TEST_MODE === "true" && (
-										<p className="text-sm text-center text-muted-foreground">
-											Você está em teste mode. Esse PIX será pago automaticamente em alguns
-											segundos.
-										</p>
+										<p className="text-sm text-center text-muted-foreground">{t("testMode")}</p>
 									)}
 
 									{(paymentStatus === "EXPIRED" || paymentStatus === "CANCELLED") && (
 										<Button variant="destructive" className="w-full" onClick={closeModal}>
-											Fechar e tentar novamente
+											{t("closeAndRetry")}
 										</Button>
 									)}
 								</div>

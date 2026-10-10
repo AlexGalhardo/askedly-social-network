@@ -5,6 +5,17 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.14.0] - 2026-10-10
+
+### Added
+
+- Translate the interface, api errors, legal pages and emails to en, pt and es
+
+### Fixed
+
+- Make the docker demo build and add a demo check script
+- Patch vulnerable transitive packages and ignore local env files
+
 ## [0.13.0] - 2026-10-10
 
 ### Added

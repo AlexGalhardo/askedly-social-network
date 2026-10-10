@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {
+	const t = useTranslations("nav");
+
 	return (
 		<nav className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
 			<div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -17,7 +20,7 @@ export function Navbar() {
 						className="bg-gradient-to-r from-green-700 to-green-600 hover:from-green-800 hover:to-green-700"
 						asChild
 					>
-						<Link href="/entrar">Entrar</Link>
+						<Link href="/entrar">{t("signInShort")}</Link>
 					</Button>
 				</div>
 			</div>

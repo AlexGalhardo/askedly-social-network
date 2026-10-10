@@ -1,6 +1,8 @@
 "use client";
 
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+
 import { toast } from "sonner";
 import { getFeedQuestions } from "@/actions/feed-actions";
 import { getMyReceivedQuestions } from "@/actions/my-account-actions";
@@ -38,6 +40,7 @@ export type FeedType = "community" | "following";
 
 export const useQuestions = (feedType: FeedType = "community", userNickname?: string) => {
 	const { toast } = useToast();
+	const t = useTranslations("questions");
 
 	const queryResult = useInfiniteQuery<QuestionsPageData, QuestionsError>({
 		queryKey: ["questions", "public", "answered", feedType, userNickname],
@@ -67,8 +70,8 @@ export const useQuestions = (feedType: FeedType = "community", userNickname?: st
 
 	if (queryResult.error) {
 		toast({
-			title: "Erro ao carregar perguntas",
-			description: queryResult.error?.message || "Aconteceu um erro inesperado",
+			title: t("toasts.loadErrorTitle"),
+			description: queryResult.error?.message || t("toasts.unexpectedError"),
 			variant: "error",
 		});
 	}
@@ -162,6 +165,7 @@ export function useReceivedQuestions() {
 export const useLikeQuestion = () => {
 	const queryClient = useQueryClient();
 	const { toast } = useToast();
+	const t = useTranslations("questions");
 
 	return useMutation<ApiResponse, QuestionsError, LikeDislikeParams>({
 		mutationFn: async ({ questionId }: LikeDislikeParams): Promise<ApiResponse> => {
@@ -177,7 +181,7 @@ export const useLikeQuestion = () => {
 
 			if (!response.ok) {
 				const errorData = await response.json().catch(() => ({}));
-				throw new Error(errorData.message || "Erro ao curtir pergunta");
+				throw new Error(errorData.message || t("toasts.likeFailed"));
 			}
 
 			return response.json();
@@ -187,8 +191,8 @@ export const useLikeQuestion = () => {
 		},
 		onError: (error: QuestionsError) => {
 			toast({
-				title: "Erro ao curtir pergunta!",
-				description: error?.message || "Erro ao curtir pergunta",
+				title: t("card.likeError"),
+				description: error?.message || t("toasts.likeFailed"),
 				variant: "error",
 			});
 			queryClient.invalidateQueries({ queryKey: ["questions"] });
@@ -199,6 +203,7 @@ export const useLikeQuestion = () => {
 export const useDislikeQuestion = () => {
 	const queryClient = useQueryClient();
 	const { toast } = useToast();
+	const t = useTranslations("questions");
 
 	return useMutation<ApiResponse, QuestionsError, LikeDislikeParams>({
 		mutationFn: async ({ questionId }: LikeDislikeParams): Promise<ApiResponse> => {
@@ -214,7 +219,7 @@ export const useDislikeQuestion = () => {
 
 			if (!response.ok) {
 				const errorData = await response.json().catch(() => ({}));
-				throw new Error(errorData.message || "Erro ao descurtir pergunta");
+				throw new Error(errorData.message || t("toasts.dislikeFailed"));
 			}
 
 			return response.json();
@@ -224,8 +229,8 @@ export const useDislikeQuestion = () => {
 		},
 		onError: (error: QuestionsError) => {
 			toast({
-				title: "Erro ao descurtir pergunta!",
-				description: error?.message || "Erro ao descurtir pergunta",
+				title: t("card.dislikeError"),
+				description: error?.message || t("toasts.dislikeFailed"),
 				variant: "error",
 			});
 			queryClient.invalidateQueries({ queryKey: ["questions"] });
@@ -235,6 +240,7 @@ export const useDislikeQuestion = () => {
 
 export function useAnswerQuestion() {
 	const { toast } = useToast();
+	const t = useTranslations("questions");
 
 	return useMutation({
 		mutationFn: async ({
@@ -258,7 +264,7 @@ export function useAnswerQuestion() {
 
 			if (!response.ok) {
 				toast({
-					title: "Erro ao responder pergunta",
+					title: t("toasts.answerErrorTitle"),
 					variant: "error",
 				});
 			}
@@ -267,14 +273,14 @@ export function useAnswerQuestion() {
 		},
 		onError: (error) => {
 			toast({
-				title: "Erro ao responder pergunta",
-				description: error instanceof Error ? error.message : "Erro ao enviar resposta",
+				title: t("toasts.answerErrorTitle"),
+				description: error instanceof Error ? error.message : t("toasts.answerSendFailed"),
 				variant: "error",
 			});
 		},
 		onSuccess: () => {
 			toast({
-				title: "Pergunta respondida com sucesso!",
+				title: t("toasts.answerSuccess"),
 				variant: "success",
 			});
 		},
@@ -282,6 +288,8 @@ export function useAnswerQuestion() {
 }
 
 export function useDeclineQuestion() {
+	const t = useTranslations("questions");
+
 	return useMutation({
 		mutationFn: async ({ questionId }: { questionId: string; nickname: string }) => {
 			const response = await fetch("/api/question/recused", {
@@ -295,21 +303,23 @@ export function useDeclineQuestion() {
 			});
 
 			if (!response.ok) {
-				throw new Error("Erro ao recusar pergunta");
+				throw new Error(t("toasts.declineFailed"));
 			}
 
 			return { questionId };
 		},
 		onError: (error) => {
-			toast.error(error instanceof Error ? error.message : "Erro ao recusar pergunta");
+			toast.error(error instanceof Error ? error.message : t("toasts.declineFailed"));
 		},
 		onSuccess: () => {
-			toast.success("Pergunta recusada");
+			toast.success(t("toasts.declined"));
 		},
 	});
 }
 
 export function useDeleteQuestion() {
+	const t = useTranslations("questions");
+
 	return useMutation({
 		mutationFn: async ({ questionId }: { questionId: string; nickname: string }) => {
 			const response = await fetch("/api/question/delete", {
@@ -323,21 +333,23 @@ export function useDeleteQuestion() {
 			});
 
 			if (!response.ok) {
-				throw new Error("Erro ao deletar pergunta");
+				throw new Error(t("toasts.deleteFailed"));
 			}
 
 			return { questionId };
 		},
 		onError: (error) => {
-			toast.error(error instanceof Error ? error.message : "Erro ao deletar pergunta");
+			toast.error(error instanceof Error ? error.message : t("toasts.deleteFailed"));
 		},
 		onSuccess: () => {
-			toast.success("Pergunta deletada");
+			toast.success(t("toasts.deleted"));
 		},
 	});
 }
 
 export function useReportQuestion() {
+	const t = useTranslations("questions");
+
 	return useMutation({
 		mutationFn: async ({
 			questionId,
@@ -363,16 +375,16 @@ export function useReportQuestion() {
 
 			if (!response.ok) {
 				const errorData = await response.json();
-				throw new Error(errorData.error || "Erro ao reportar pergunta");
+				throw new Error(errorData.error || t("toasts.reportFailed"));
 			}
 
 			return { questionId, isOffensive, isInappropriate };
 		},
 		onError: (error) => {
-			toast.error(error instanceof Error ? error.message : "Erro ao reportar pergunta");
+			toast.error(error instanceof Error ? error.message : t("toasts.reportFailed"));
 		},
 		onSuccess: () => {
-			toast.success("Pergunta reportada com sucesso");
+			toast.success(t("toasts.reported"));
 		},
 	});
 }

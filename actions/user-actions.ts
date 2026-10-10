@@ -2,6 +2,7 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { getServerSession } from "next-auth";
+import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { publicErrorMessage } from "@/lib/errors";
@@ -9,28 +10,29 @@ import { getUserByNickname } from "@/lib/repositories/users.repository";
 import { type FollowToggleResult, toggleFollow } from "@/lib/services/follow-toggle.service";
 import { changePassword, PasswordChangeError } from "@/lib/services/password.service";
 import { toPublicProfile } from "@/lib/services/profile.service";
-import { consumeRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/services/rate-limit.service";
+import { consumeRateLimit, RATE_LIMITS, rateLimitMinutes } from "@/lib/services/rate-limit.service";
 import TelegramLog from "@/lib/telegram-logger";
+import type { Messages } from "@/messages/en";
 import { prisma } from "@/prisma/prisma-client";
 
-const personalInfoSchema = z.object({
-	name: z
-		.string()
-		.min(4, "O nome deve ter pelo menos 4 caracteres")
-		.max(24, "O nome deve ter no máximo 24 caracteres"),
-	website: z
-		.string()
-		.optional()
-		.refine((val) => !val || val.startsWith("https://"), {
-			message: "O website deve começar com https://",
-		}),
-	description: z
-		.string()
-		.optional()
-		.refine((val) => !val || (val.length >= 32 && val.length <= 256), {
-			message: "A descrição deve ter entre 32 e 256 caracteres",
-		}),
-});
+type ErrorTranslator = (key: keyof Messages["account"]["errors"]) => string;
+
+const createPersonalInfoSchema = (t: ErrorTranslator) =>
+	z.object({
+		name: z.string().min(4, t("nameMin")).max(24, t("nameMax")),
+		website: z
+			.string()
+			.optional()
+			.refine((val) => !val || val.startsWith("https://"), {
+				message: t("websiteHttps"),
+			}),
+		description: z
+			.string()
+			.optional()
+			.refine((val) => !val || (val.length >= 32 && val.length <= 256), {
+				message: t("descriptionLength"),
+			}),
+	});
 
 const socialMediaSchema = z.object({
 	instagram: z.string().optional(),
@@ -43,34 +45,35 @@ const socialMediaSchema = z.object({
 	github: z.string().optional(),
 });
 
-const pixSchema = z.object({
-	pixKey: z
-		.string()
-		.min(11, "A chave PIX deve ter pelo menos 11 caracteres")
-		.max(128, "A chave PIX deve ter no máximo 128 caracteres"),
-});
-
-const passwordSchema = z
-	.object({
-		newPassword: z
-			.string()
-			.min(8, "A senha deve ter pelo menos 8 caracteres")
-			.regex(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula")
-			.regex(/[a-z]/, "A senha deve conter pelo menos uma letra minúscula")
-			.regex(/[0-9]/, "A senha deve conter pelo menos um número")
-			.regex(/[^A-Za-z0-9]/, "A senha deve conter pelo menos um caractere especial"),
-		confirmPassword: z.string(),
-	})
-	.refine((data) => data.newPassword === data.confirmPassword, {
-		message: "As senhas não coincidem",
-		path: ["confirmPassword"],
+const createPixSchema = (t: ErrorTranslator) =>
+	z.object({
+		pixKey: z.string().min(11, t("pixKeyMin")).max(128, t("pixKeyMax")),
 	});
 
+const createPasswordSchema = (t: ErrorTranslator) =>
+	z
+		.object({
+			newPassword: z
+				.string()
+				.min(8, t("passwordMin"))
+				.regex(/[A-Z]/, t("passwordUppercase"))
+				.regex(/[a-z]/, t("passwordLowercase"))
+				.regex(/[0-9]/, t("passwordNumber"))
+				.regex(/[^A-Za-z0-9]/, t("passwordSpecial")),
+			confirmPassword: z.string(),
+		})
+		.refine((data) => data.newPassword === data.confirmPassword, {
+			message: t("passwordsMismatch"),
+			path: ["confirmPassword"],
+		});
+
 export async function updatePersonalInfo(data: FormData) {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account.errors");
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
-			return { error: "Não autorizado" };
+			return { error: te("unauthorized") };
 		}
 
 		const formData = {
@@ -79,7 +82,7 @@ export async function updatePersonalInfo(data: FormData) {
 			description: (data.get("description") as string) || undefined,
 		};
 
-		const validatedData = personalInfoSchema.parse(formData);
+		const validatedData = createPersonalInfoSchema(t).parse(formData);
 
 		const updatedUser = await prisma.user.update({
 			where: {
@@ -107,15 +110,16 @@ export async function updatePersonalInfo(data: FormData) {
 		};
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts update personal info: ${error?.message}`);
-		return { error: publicErrorMessage(error, "Erro interno do servidor") };
+		return { error: publicErrorMessage(error, te("internal")) };
 	}
 }
 
 export async function updateSocialMedia(data: FormData) {
+	const te = await getTranslations("errors");
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
-			return { error: "Não autorizado" };
+			return { error: te("unauthorized") };
 		}
 
 		const formData = {
@@ -154,19 +158,21 @@ export async function updateSocialMedia(data: FormData) {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts update social media: ${error?.message}`);
-		return { error: publicErrorMessage(error, "Erro interno do servidor") };
+		return { error: publicErrorMessage(error, te("internal")) };
 	}
 }
 
 export async function updatePixKey(data: FormData) {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account.errors");
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
-			return { error: "Não autorizado" };
+			return { error: te("unauthorized") };
 		}
 
 		const pixKey = data.get("pixKey") as string;
-		const validatedData = pixSchema.parse({ pixKey });
+		const validatedData = createPixSchema(t).parse({ pixKey });
 
 		await prisma.user.update({
 			where: {
@@ -184,15 +190,17 @@ export async function updatePixKey(data: FormData) {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts update pix key: ${error?.message}`);
-		return { error: publicErrorMessage(error, "Erro interno do servidor") };
+		return { error: publicErrorMessage(error, te("internal")) };
 	}
 }
 
 export async function updatePassword(data: FormData) {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account.errors");
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
-			return { error: "Não autorizado" };
+			return { error: te("unauthorized") };
 		}
 
 		const formData = {
@@ -200,27 +208,30 @@ export async function updatePassword(data: FormData) {
 			confirmPassword: data.get("confirmPassword") as string,
 		};
 
-		const validatedData = passwordSchema.parse(formData);
+		const validatedData = createPasswordSchema(t).parse(formData);
 		const currentPassword = (data.get("currentPassword") as string | null) || undefined;
 
 		const limit = await consumeRateLimit(`password-change:user:${session.user.id}`, RATE_LIMITS.passwordChange);
-		if (!limit.allowed) return { error: rateLimitMessage(limit.retryAfterSeconds) };
+		if (!limit.allowed) {
+			return { error: te("rateLimited", { minutes: rateLimitMinutes(limit.retryAfterSeconds) }) };
+		}
 
 		await changePassword(session.user.id, currentPassword, validatedData.newPassword);
 
 		return { success: true };
 	} catch (error: any) {
-		if (error instanceof PasswordChangeError) return { error: error.message };
+		if (error instanceof PasswordChangeError) return { error: t(error.message) };
 		await TelegramLog.error(`Catch Error file user-actions.ts update password: ${error?.message}`);
-		return { error: publicErrorMessage(error, "Erro interno do servidor") };
+		return { error: publicErrorMessage(error, te("internal")) };
 	}
 }
 
 export async function updatePrivacySettings(data: FormData) {
+	const te = await getTranslations("errors");
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
-			return { error: "Não autorizado" };
+			return { error: te("unauthorized") };
 		}
 
 		const privacyData = {
@@ -267,14 +278,16 @@ export async function updatePrivacySettings(data: FormData) {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts update privacy settings: ${error?.message}`);
-		return { error: publicErrorMessage(error, "Erro interno do servidor") };
+		return { error: publicErrorMessage(error, te("internal")) };
 	}
 }
 
 export async function deleteAccount() {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account.errors");
 	try {
 		const session = await getServerSession(authOptions);
-		if (!session?.user?.id) return { error: "Não autorizado" };
+		if (!session?.user?.id) return { error: te("unauthorized") };
 
 		const user = await prisma.user.findUnique({
 			where: { id: session.user.id },
@@ -288,7 +301,7 @@ export async function deleteAccount() {
 		});
 
 		if (!user) {
-			return { error: "Usuário não encontrado" };
+			return { error: t("userNotFound") };
 		}
 
 		await prisma.deletedAccount.create({
@@ -314,7 +327,7 @@ export async function deleteAccount() {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts delete account: ${error?.message}`);
-		return { error: publicErrorMessage(error, "Erro interno do servidor") };
+		return { error: publicErrorMessage(error, te("internal")) };
 	}
 }
 
@@ -351,29 +364,34 @@ export const getUserByNicknameAction = async (nickname: string) => {
 
 export const followUserAction = async (
 	followingId: string,
-): Promise<Partial<FollowToggleResult> & { success?: boolean; error?: string }> => {
+): Promise<Partial<Omit<FollowToggleResult, "message">> & { success?: boolean; error?: string; message?: string }> => {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account.errors");
 	try {
 		const session = await getServerSession(authOptions);
-		if (!session?.user?.id) return { error: "Não autorizado" };
+		if (!session?.user?.id) return { error: te("unauthorized") };
 
 		const result = await toggleFollow(session.user.id, followingId);
-		if (!result) return { error: "Usuário não encontrado" };
+		if (!result) return { error: t("userNotFound") };
 
 		updateTag("user-profile");
-		return { success: true, ...result };
+		const tf = await getTranslations("account.follow");
+		return { success: true, ...result, message: tf(result.message) };
 	} catch (error: unknown) {
 		await TelegramLog.error(
 			`Catch Error file user-actions.ts follow user: ${error instanceof Error ? error.message : error}`,
 		);
-		return { error: publicErrorMessage(error, "Erro ao seguir usuário") };
+		return { error: publicErrorMessage(error, t("followFailed")) };
 	}
 };
 
 export const likeQuestionAction = async (questionId: string) => {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account.errors");
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
-			return { error: "Não autorizado" };
+			return { error: te("unauthorized") };
 		}
 
 		const question = await prisma.question.findUnique({
@@ -382,7 +400,7 @@ export const likeQuestionAction = async (questionId: string) => {
 		});
 
 		if (!question) {
-			return { error: "Pergunta não encontrada" };
+			return { error: t("questionNotFound") };
 		}
 
 		let likedUsers: string[] = [];
@@ -397,7 +415,7 @@ export const likeQuestionAction = async (questionId: string) => {
 		}
 
 		const userNickname = session.user.nickname;
-		if (!userNickname) return { error: "Não autorizado" };
+		if (!userNickname) return { error: te("unauthorized") };
 		const hasLiked = likedUsers.includes(userNickname);
 		const hasDisliked = dislikedUsers.includes(userNickname);
 
@@ -424,15 +442,17 @@ export const likeQuestionAction = async (questionId: string) => {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts like question: ${error?.message}`);
-		return { error: publicErrorMessage(error, "Erro ao curtir pergunta") };
+		return { error: publicErrorMessage(error, t("likeFailed")) };
 	}
 };
 
 export const dislikeQuestionAction = async (questionId: string) => {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account.errors");
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
-			return { error: "Não autorizado" };
+			return { error: te("unauthorized") };
 		}
 
 		const question = await prisma.question.findUnique({
@@ -441,7 +461,7 @@ export const dislikeQuestionAction = async (questionId: string) => {
 		});
 
 		if (!question) {
-			return { error: "Pergunta não encontrada" };
+			return { error: t("questionNotFound") };
 		}
 
 		let likedUsers: string[] = [];
@@ -456,7 +476,7 @@ export const dislikeQuestionAction = async (questionId: string) => {
 		}
 
 		const userNickname = session.user.nickname;
-		if (!userNickname) return { error: "Não autorizado" };
+		if (!userNickname) return { error: te("unauthorized") };
 		const hasLiked = likedUsers.includes(userNickname);
 		const hasDisliked = dislikedUsers.includes(userNickname);
 
@@ -483,15 +503,17 @@ export const dislikeQuestionAction = async (questionId: string) => {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts dislike question: ${error?.message}`);
-		return { error: publicErrorMessage(error, "Erro ao descurtir pergunta") };
+		return { error: publicErrorMessage(error, t("dislikeFailed")) };
 	}
 };
 
 export const blockUserAction = async (blockedUserId: string) => {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account.errors");
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
-			return { error: "Não autorizado" };
+			return { error: te("unauthorized") };
 		}
 
 		const existingBlock = await prisma.userBlock.findUnique({
@@ -504,7 +526,7 @@ export const blockUserAction = async (blockedUserId: string) => {
 		});
 
 		if (existingBlock) {
-			return { error: "Usuário já está bloqueado" };
+			return { error: t("alreadyBlocked") };
 		}
 
 		await prisma.userBlock.create({
@@ -527,15 +549,17 @@ export const blockUserAction = async (blockedUserId: string) => {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts block user: ${error?.message}`);
-		return { error: publicErrorMessage(error, "Erro ao bloquear usuário") };
+		return { error: publicErrorMessage(error, t("blockFailed")) };
 	}
 };
 
 export const unblockUserAction = async (blockedUserId: string) => {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account.errors");
 	try {
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
-			return { error: "Não autorizado" };
+			return { error: te("unauthorized") };
 		}
 
 		await prisma.userBlock.delete({
@@ -551,6 +575,6 @@ export const unblockUserAction = async (blockedUserId: string) => {
 		return { success: true };
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts unblock user: ${error?.message}`);
-		return { error: publicErrorMessage(error, "Erro ao desbloquear usuário") };
+		return { error: publicErrorMessage(error, t("unblockFailed")) };
 	}
 };

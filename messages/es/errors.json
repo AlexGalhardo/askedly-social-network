@@ -4,5 +4,10 @@
 	"notFound": "No encontrado",
 	"invalidData": "Datos inválidos",
 	"internal": "Error interno del servidor",
-	"tryAgainLater": "Algo salió mal. Inténtalo de nuevo más tarde."
+	"tryAgainLater": "Algo salió mal. Inténtalo de nuevo más tarde.",
+	"rateLimited": "Demasiados intentos. Inténtalo de nuevo en {minutes, plural, one {# minuto} other {# minutos}}.",
+	"invalidCaptcha": "Captcha inválido",
+	"captchaRequired": "Por favor, completa el CAPTCHA.",
+	"emailSendFailed": "No se pudo enviar el correo",
+	"sessionCheckFailed": "No se pudo verificar la sesión"
 }

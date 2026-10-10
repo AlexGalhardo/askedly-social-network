@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +12,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { formatCurrency, validatePixKey } from "@/lib/utils/payment-utils";
+import { validatePixKey } from "@/lib/utils/payment-utils";
 
 interface WithdrawModalProps {
 	isOpen: boolean;
@@ -30,6 +31,8 @@ export function PaymentWithdrawModal({
 	onConfirmWithdraw,
 	isProcessing = false,
 }: WithdrawModalProps) {
+	const t = useTranslations("payments");
+	const format = useFormatter();
 	const [confirmationInput, setConfirmationInput] = useState("");
 
 	const hasValidPixKey = validatePixKey(pixKey);
@@ -41,24 +44,28 @@ export function PaymentWithdrawModal({
 				{!hasValidPixKey ? (
 					<>
 						<DialogHeader>
-							<DialogTitle className="text-2xl font-bold">Chave Pix não configurada</DialogTitle>
+							<DialogTitle className="text-2xl font-bold">{t("withdraw.noPixKeyTitle")}</DialogTitle>
 							<DialogDescription className="mt-2 text-base">
-								Você precisa configurar sua chave Pix na sua conta antes de poder sacar.
+								{t("withdraw.noPixKeyDescription")}
 							</DialogDescription>
 						</DialogHeader>
 						<DialogFooter>
-							<Button onClick={() => onOpenChange(false)}>Entendi</Button>
+							<Button onClick={() => onOpenChange(false)}>{t("withdraw.understood")}</Button>
 						</DialogFooter>
 					</>
 				) : (
 					<>
 						<DialogHeader>
 							<DialogTitle>
-								<span className="text-3xl font-bold mb-12">Sacar R$ {formatCurrency(amount)}</span>
+								<span className="text-3xl font-bold mb-12">
+									{t("withdraw.title", {
+										amount: format.number(amount / 100, { style: "currency", currency: "BRL" }),
+									})}
+								</span>
 							</DialogTitle>
 							<DialogDescription>
 								<span className="mt-3 mb-3 text-2xl">
-									Confirme o saque nessa Chave PIX configurada na sua conta:
+									{t("withdraw.confirmKey")}
 									<br />
 									<br />
 									<strong className="text-blue-600 break-all dark:text-white">{pixKey}</strong>
@@ -68,7 +75,7 @@ export function PaymentWithdrawModal({
 
 						<div className="mt-4 space-y-2">
 							<label htmlFor="confirmPixKey" className="text-base font-medium">
-								Digite a chave PIX acima para confirmar o saque:
+								{t("withdraw.typeKey")}
 							</label>
 							<Input
 								id="confirmPixKey"
@@ -87,7 +94,7 @@ export function PaymentWithdrawModal({
 								className="bg-green-500 text-white hover:bg-green-800 font-bold px-6 py-6 text-2xl mt-6 w-full"
 								disabled={isProcessing || !isInputMatching}
 							>
-								{isProcessing ? "Processando Saque..." : "Confirmar Saque Nessa Chave PIX"}
+								{isProcessing ? t("withdraw.processingWithdraw") : t("withdraw.confirm")}
 							</Button>
 						</DialogFooter>
 					</>

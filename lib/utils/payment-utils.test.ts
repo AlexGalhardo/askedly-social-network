@@ -1,21 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-	calculateTotalEarnings,
-	canWithdraw,
-	formatCurrency,
-	getMinimumWithdrawMessage,
-	validatePixKey,
-} from "./payment-utils";
-
-describe("formatCurrency", () => {
-	test("converts cents to a decimal string", () => {
-		expect(formatCurrency(12345)).toBe("123.45");
-	});
-
-	test("handles zero", () => {
-		expect(formatCurrency(0)).toBe("0.00");
-	});
-});
+import { calculateTotalEarnings, canWithdraw, MIN_WITHDRAW_CENTS, validatePixKey } from "./payment-utils";
 
 describe("canWithdraw", () => {
 	test("is false below the R$100 minimum", () => {
@@ -31,9 +15,9 @@ describe("canWithdraw", () => {
 	});
 });
 
-describe("getMinimumWithdrawMessage", () => {
-	test("mentions the R$100 minimum", () => {
-		expect(getMinimumWithdrawMessage()).toContain("R$ 100");
+describe("MIN_WITHDRAW_CENTS", () => {
+	test("is the R$100 minimum shown to the user", () => {
+		expect(MIN_WITHDRAW_CENTS).toBe(10000);
 	});
 });
 

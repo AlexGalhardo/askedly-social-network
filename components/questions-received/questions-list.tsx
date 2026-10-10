@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { QuestionInterface } from "@/types/QuestionInterface";
 import { QuestionCard } from "./question-card";
 
@@ -28,8 +30,10 @@ export function QuestionsList({
 	onExpire, // NOVO
 	loadingStates = {},
 }: QuestionsListProps) {
+	const t = useTranslations("questions");
+
 	if (!Array.isArray(questions) || questions.length === 0) {
-		return <div className="text-center py-12 text-gray-500 dark:text-gray-400">Nenhuma pergunta encontrada.</div>;
+		return <div className="text-center py-12 text-gray-500 dark:text-gray-400">{t("card.empty")}</div>;
 	}
 
 	return (

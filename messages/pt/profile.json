@@ -1,1 +1,75 @@
-{}
+{
+	"meta": {
+		"description": "Veja o perfil público de {nickname} no Askedly Social Network."
+	},
+	"block": {
+		"loginRequired": "Você precisa estar logado para bloquear usuários",
+		"blockFailed": "Erro ao bloquear usuário",
+		"unblockFailed": "Erro ao desbloquear usuário",
+		"blocked": "@{nickname} foi bloqueado com sucesso",
+		"unblocked": "@{nickname} foi desbloqueado com sucesso",
+		"loginTitle": "Faça login para bloquear usuários",
+		"block": "Bloquear",
+		"unblock": "Desbloquear",
+		"checking": "Verificando...",
+		"blockTitle": "Bloquear usuário",
+		"unblockTitle": "Desbloquear usuário",
+		"blockConfirm": "Tem certeza que deseja bloquear <strong>@{nickname}</strong>?",
+		"blockIntro": "Quando você bloqueia alguém:",
+		"blockEffect1": "Essa pessoa não poderá mais ver seu perfil, te enviar perguntas ou seguir você",
+		"blockEffect2": "Você não verá mais o conteúdo dela no seu feed",
+		"unblockConfirm": "Tem certeza que deseja desbloquear <strong>@{nickname}</strong>?",
+		"unblockIntro": "Quando você desbloqueia alguém:",
+		"unblockEffect1": "Essa pessoa poderá ver seu perfil, enviar perguntas e seguir você novamente",
+		"unblockEffect2": "Você verá o conteúdo dela novamente no feed",
+		"cancel": "Cancelar",
+		"blocking": "Bloqueando...",
+		"unblocking": "Desbloqueando..."
+	},
+	"follow": {
+		"loginRequiredTitle": "Login necessário",
+		"loginRequiredDescription": "Você precisa estar logado para seguir usuários",
+		"errorTitle": "Erro",
+		"failed": "Erro ao seguir @{nickname}",
+		"tryAgain": "Tente novamente mais tarde",
+		"loading": "Carregando...",
+		"following": "Seguindo",
+		"requested": "Solicitado",
+		"follow": "Seguir",
+		"loginTitle": "Faça login para seguir usuários"
+	},
+	"stats": {
+		"answered": "respondidas",
+		"received": "recebidas",
+		"sent": "enviadas",
+		"followers": "seguidores",
+		"following": "seguindo",
+		"likes": "Likes"
+	},
+	"form": {
+		"tooShortTitle": "Pergunta muito curta",
+		"tooShortDescription": "A pergunta deve ter pelo menos 32 caracteres.",
+		"tooLongTitle": "Pergunta muito longa",
+		"tooLongDescription": "A pergunta deve ter no máximo 512 caracteres.",
+		"publicRemaining": "{count, plural, one {# pergunta pública restante hoje} other {# perguntas públicas restantes hoje}}",
+		"anonymousNotAccepted": "Esse perfil não aceita perguntas anônimas.",
+		"anonymousRemaining": "{count, plural, one {# pergunta anônima restante hoje} other {# perguntas anônimas restantes hoje}}",
+		"title": "Faça uma pergunta para <highlight>@{nickname}</highlight>",
+		"placeholder": "Digite sua pergunta aqui...",
+		"limits": "Mínimo: 32 | Máximo: 512 caracteres",
+		"submit": "Enviar pergunta"
+	},
+	"list": {
+		"page": "Página {current} de {total}",
+		"noAnswers": "Nenhuma resposta ainda.",
+		"ownProfile": "Esse é seu perfil público",
+		"loginToAsk": "Entre na sua conta para poder fazer perguntas a esse usuário.",
+		"tabs": {
+			"latest": "Últimas",
+			"topLiked": "Top Curtidas",
+			"topPaid": "Top Pagas"
+		},
+		"requestPending": "Solicitação para seguir esse perfil enviada. Aguardando aprovação.",
+		"private": "Esse perfil é privado. Você precisa ser seguidor para ver as respostas desse perfil."
+	}
+}

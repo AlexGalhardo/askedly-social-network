@@ -1,6 +1,8 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+
 import { toast } from "sonner";
 import { getMySentQuestions } from "@/actions/my-account-actions";
 import { reportAnswer } from "@/actions/sent-question-actions";
@@ -21,16 +23,18 @@ export function useSentQuestions() {
 }
 
 export function useReportAnswer() {
+	const t = useTranslations("questions");
+
 	return useMutation({
 		mutationFn: async ({ questionId, reason }: { questionId: string; reason: "offensive" | "inappropriate" }) => {
 			await reportAnswer(questionId, reason);
 			return { questionId, reason };
 		},
 		onError: (error) => {
-			toast.error(error instanceof Error ? error.message : "Erro ao reportar resposta");
+			toast.error(error instanceof Error ? error.message : t("toasts.reportAnswerFailed"));
 		},
 		onSuccess: () => {
-			toast.success("Resposta reportada com sucesso");
+			toast.success(t("toasts.answerReported"));
 		},
 	});
 }

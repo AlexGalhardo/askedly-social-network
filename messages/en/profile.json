@@ -1,1 +1,75 @@
-{}
+{
+	"meta": {
+		"description": "See {nickname}'s public profile on Askedly Social Network."
+	},
+	"block": {
+		"loginRequired": "You need to be logged in to block users",
+		"blockFailed": "Couldn't block this user",
+		"unblockFailed": "Couldn't unblock this user",
+		"blocked": "@{nickname} has been blocked",
+		"unblocked": "@{nickname} has been unblocked",
+		"loginTitle": "Log in to block users",
+		"block": "Block",
+		"unblock": "Unblock",
+		"checking": "Checking...",
+		"blockTitle": "Block user",
+		"unblockTitle": "Unblock user",
+		"blockConfirm": "Are you sure you want to block <strong>@{nickname}</strong>?",
+		"blockIntro": "When you block someone:",
+		"blockEffect1": "They can no longer see your profile, send you questions or follow you",
+		"blockEffect2": "You'll no longer see their content in your feed",
+		"unblockConfirm": "Are you sure you want to unblock <strong>@{nickname}</strong>?",
+		"unblockIntro": "When you unblock someone:",
+		"unblockEffect1": "They'll be able to see your profile, send you questions and follow you again",
+		"unblockEffect2": "You'll see their content in your feed again",
+		"cancel": "Cancel",
+		"blocking": "Blocking...",
+		"unblocking": "Unblocking..."
+	},
+	"follow": {
+		"loginRequiredTitle": "Log in required",
+		"loginRequiredDescription": "You need to be logged in to follow users",
+		"errorTitle": "Error",
+		"failed": "Couldn't follow @{nickname}",
+		"tryAgain": "Please try again later",
+		"loading": "Loading...",
+		"following": "Following",
+		"requested": "Requested",
+		"follow": "Follow",
+		"loginTitle": "Log in to follow users"
+	},
+	"stats": {
+		"answered": "answered",
+		"received": "received",
+		"sent": "sent",
+		"followers": "followers",
+		"following": "following",
+		"likes": "likes"
+	},
+	"form": {
+		"tooShortTitle": "Question too short",
+		"tooShortDescription": "Your question must be at least 32 characters long.",
+		"tooLongTitle": "Question too long",
+		"tooLongDescription": "Your question can be at most 512 characters long.",
+		"publicRemaining": "{count, plural, one {# public question left today} other {# public questions left today}}",
+		"anonymousNotAccepted": "This profile doesn't accept anonymous questions.",
+		"anonymousRemaining": "{count, plural, one {# anonymous question left today} other {# anonymous questions left today}}",
+		"title": "Ask <highlight>@{nickname}</highlight> a question",
+		"placeholder": "Type your question here...",
+		"limits": "Minimum: 32 | Maximum: 512 characters",
+		"submit": "Send question"
+	},
+	"list": {
+		"page": "Page {current} of {total}",
+		"noAnswers": "No answers yet.",
+		"ownProfile": "This is your public profile",
+		"loginToAsk": "Log in to ask this user a question.",
+		"tabs": {
+			"latest": "Latest",
+			"topLiked": "Most liked",
+			"topPaid": "Top paid"
+		},
+		"requestPending": "Your follow request has been sent and is awaiting approval.",
+		"private": "This profile is private. You need to follow it to see its answers."
+	}
+}

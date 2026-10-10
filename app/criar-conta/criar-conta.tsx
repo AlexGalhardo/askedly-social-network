@@ -4,6 +4,7 @@ import { ArrowRight, Check, Eye, EyeOff, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -15,13 +16,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { signupSchema } from "@/lib/schemas/signup";
+import { createSignupSchema } from "@/lib/schemas/signup";
 import TelegramLog from "@/lib/telegram-logger";
 import { getTurnstile, waitForFreshTurnstileToken } from "@/lib/turnstile";
 
 export default function CriarContaClient() {
 	const { data: session } = useSession();
 	const router = useRouter();
+	const t = useTranslations("auth");
 
 	const [name, setName] = useState("");
 	const [nickname, setNickname] = useState("");
@@ -55,7 +57,7 @@ export default function CriarContaClient() {
 		setLoading(true);
 
 		try {
-			signupSchema.parse({
+			createSignupSchema((key) => t(`errors.${key}`)).parse({
 				name: name.trim(),
 				nickname: nickname.trim(),
 				email: email.trim(),
@@ -96,7 +98,7 @@ export default function CriarContaClient() {
 			token = getTurnstile()?.getResponse();
 
 			if (!token) {
-				setError("Por favor, verifique o CAPTCHA.");
+				setError(t("errors.captchaRequired"));
 				setLoading(false);
 				return;
 			}
@@ -143,7 +145,7 @@ export default function CriarContaClient() {
 			});
 
 			if (result?.error) {
-				setError("Ocorreu algum erro ao criar conta. Tente novamente mais tarde.");
+				setError(t("signup.genericError"));
 				setLoading(false);
 				return;
 			}
@@ -152,7 +154,7 @@ export default function CriarContaClient() {
 			router.push("/minha-conta");
 		} catch (err: any) {
 			await TelegramLog.error(`Catch Error file criar-conta.ts handleSignup: ${err?.message}`);
-			setError("Ocorreu algum erro ao criar conta. Tente novamente mais tarde.");
+			setError(t("signup.genericError"));
 		} finally {
 			setLoading(false);
 			getTurnstile()?.reset();
@@ -191,6 +193,8 @@ export default function CriarContaClient() {
 		special: false,
 	});
 
+	const hint = (chunks: React.ReactNode) => <small className="text-gray-400 dark:text-gray-300">{chunks}</small>;
+
 	const CriteriaItem = ({ met, text }: { met: boolean; text: string }) => (
 		<div className="flex items-center space-x-2">
 			{met ? <Check className="h-4 w-4 text-green-500" /> : <X className="h-4 w-4 text-red-500" />}
@@ -202,8 +206,8 @@ export default function CriarContaClient() {
 		<div className="min-h-screen flex items-center justify-center p-4">
 			<Card className="w-full max-w-md border-none">
 				<CardHeader className="text-center">
-					<CardTitle className="text-2xl font-bold dark:text-white">Crie Sua Conta</CardTitle>
-					<CardDescription className="dark:text-white">Preencha as informações abaixo</CardDescription>
+					<CardTitle className="text-2xl font-bold dark:text-white">{t("signup.title")}</CardTitle>
+					<CardDescription className="dark:text-white">{t("signup.description")}</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-6">
 					<Button
@@ -230,7 +234,7 @@ export default function CriarContaClient() {
 								d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
 							/>
 						</svg>
-						Criar Conta Com Google
+						{t("signup.google")}
 					</Button>
 
 					<div className="relative">
@@ -239,7 +243,7 @@ export default function CriarContaClient() {
 						</div>
 						<div className="relative flex justify-center text-xs uppercase">
 							<span className="bg-white px-2 text-gray-500 dark:bg-gray-900 dark:text-white">
-								Ou cadastre-se com email
+								{t("signup.orEmail")}
 							</span>
 						</div>
 					</div>
@@ -247,14 +251,14 @@ export default function CriarContaClient() {
 					<form onSubmit={handleSignup} className="space-y-4">
 						<div className="space-y-2">
 							<Label htmlFor="name" className="dark:text-white">
-								Nome da Conta
+								{t("signup.nameLabel")}
 							</Label>
 							<Input
 								id="name"
 								type="text"
 								maxLength={32}
 								minLength={4}
-								placeholder="Digite o nome da conta"
+								placeholder={t("signup.namePlaceholder")}
 								value={name}
 								onChange={(e) => {
 									const capitalizedName = e.target.value
@@ -271,10 +275,7 @@ export default function CriarContaClient() {
 
 						<div className="space-y-2">
 							<Label htmlFor="nickname" className="dark:text-white">
-								O @ será{" "}
-								<small className="text-gray-400 dark:text-gray-300">
-									(você não poderá mudar depois)
-								</small>
+								{t.rich("signup.nicknameLabel", { hint })}
 							</Label>
 							<div className="">
 								<Input
@@ -298,10 +299,7 @@ export default function CriarContaClient() {
 
 						<div className="space-y-2">
 							<Label htmlFor="email" className="dark:text-white">
-								Email{" "}
-								<small className="text-gray-400 dark:text-gray-300">
-									(você não poderá mudar depois)
-								</small>
+								{t.rich("signup.emailLabel", { hint })}
 							</Label>
 							<Input
 								id="email"
@@ -309,7 +307,7 @@ export default function CriarContaClient() {
 								name="email"
 								minLength={12}
 								maxLength={32}
-								placeholder="seuemail@email.com"
+								placeholder={t("fields.emailPlaceholder")}
 								value={email}
 								onChange={(e) => setEmail(e.target.value.toLowerCase().replace(/\s/g, ""))}
 								className="dark:text-white"
@@ -320,7 +318,7 @@ export default function CriarContaClient() {
 
 						<div className="space-y-2">
 							<Label htmlFor="password" className="dark:text-white">
-								Senha
+								{t("fields.password")}
 							</Label>
 							<div className="relative">
 								<Input
@@ -354,21 +352,29 @@ export default function CriarContaClient() {
 							</div>
 							{showPasswordCriteria && (
 								<div className="mt-2 p-3 rounded-md">
-									<p className="text-sm text-gray-600 mb-2 dark:text-white">Sua senha deve conter:</p>
+									<p className="text-sm text-gray-600 mb-2 dark:text-white">
+										{t("passwordCriteria.title")}
+									</p>
 									<div className="space-y-1">
-										<CriteriaItem met={passwordCriteria.length} text="Pelo menos 8 caracteres" />
+										<CriteriaItem
+											met={passwordCriteria.length}
+											text={t("passwordCriteria.length")}
+										/>
 										<CriteriaItem
 											met={passwordCriteria.uppercase}
-											text="Pelo menos 1 letra maiúscula (A-Z)"
+											text={t("passwordCriteria.uppercase")}
 										/>
 										<CriteriaItem
 											met={passwordCriteria.lowercase}
-											text="Pelo menos 1 letra minúscula (a-z)"
+											text={t("passwordCriteria.lowercase")}
 										/>
-										<CriteriaItem met={passwordCriteria.number} text="Pelo menos 1 número (0-9)" />
+										<CriteriaItem
+											met={passwordCriteria.number}
+											text={t("passwordCriteria.number")}
+										/>
 										<CriteriaItem
 											met={passwordCriteria.special}
-											text="Pelo menos 1 caractere especial (!@#$...)"
+											text={t("passwordCriteria.special")}
 										/>
 									</div>
 								</div>
@@ -379,22 +385,26 @@ export default function CriarContaClient() {
 							<div className="flex items-center space-x-2">
 								<Checkbox id="terms" onCheckedChange={(checked) => setAcceptTerms(!!checked)} />
 								<Label htmlFor="terms" className="text-sm text-gray-600 dark:text-white">
-									Aceito os{" "}
-									<Link
-										href="/termos-de-uso"
-										target="_blank"
-										className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
-									>
-										Termos de Uso
-									</Link>{" "}
-									e{" "}
-									<Link
-										href="/politica-de-privacidade"
-										target="_blank"
-										className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
-									>
-										Política de Privacidade
-									</Link>
+									{t.rich("signup.terms", {
+										terms: (chunks) => (
+											<Link
+												href="/termos-de-uso"
+												target="_blank"
+												className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+											>
+												{chunks}
+											</Link>
+										),
+										privacy: (chunks) => (
+											<Link
+												href="/politica-de-privacidade"
+												target="_blank"
+												className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+											>
+												{chunks}
+											</Link>
+										),
+									})}
 								</Label>
 							</div>
 							{errorTerms && <p className="font-bold text-red-600">{errorTerms}</p>}
@@ -412,29 +422,32 @@ export default function CriarContaClient() {
 							{loading ? (
 								<>
 									<span className="ml-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin dark:border-black dark:border-t-transparent"></span>
-									Processando...
+									{t("fields.processing")}
 								</>
 							) : (
 								<>
-									Criar Conta Gratuitamente
+									{t("signup.submit")}
 									<ArrowRight className="ml-2 h-5 w-5" />
 								</>
 							)}
 						</Button>
 
 						{accountCreated && (
-							<p className="font-bold text-center text-green-600">Conta criada! Redirecionando...</p>
+							<p className="font-bold text-center text-green-600">{t("signup.created")}</p>
 						)}
 					</form>
 
 					<div className="text-center text-sm text-gray-600 dark:text-white">
-						Já tem uma conta?{" "}
-						<Link
-							href="/entrar"
-							className="text-blue-600 hover:text-blue-500 font-medium dark:text-blue-400 dark:hover:text-blue-300"
-						>
-							Entrar
-						</Link>
+						{t.rich("signup.haveAccount", {
+							link: (chunks) => (
+								<Link
+									href="/entrar"
+									className="text-blue-600 hover:text-blue-500 font-medium dark:text-blue-400 dark:hover:text-blue-300"
+								>
+									{chunks}
+								</Link>
+							),
+						})}
 					</div>
 				</CardContent>
 			</Card>

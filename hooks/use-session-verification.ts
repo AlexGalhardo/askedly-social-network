@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { toast } from "./use-toast";
 
 interface SessionUserInterface {
@@ -16,6 +17,7 @@ interface VerifiedSession {
 }
 
 export function useSessionVerification() {
+	const t = useTranslations("errors");
 	const { data: nextAuthSession, status: nextAuthStatus } = useSession();
 
 	const {
@@ -36,7 +38,7 @@ export function useSessionVerification() {
 			if (!response.ok) {
 				if (response.status === 401) return null;
 				toast({
-					title: "Erro ao verificar sessão",
+					title: t("sessionCheckFailed"),
 					variant: "error",
 				});
 			}

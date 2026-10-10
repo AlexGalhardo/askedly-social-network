@@ -1,1 +1,114 @@
-{}
+{
+	"meta": {
+		"title": "Payments - Askedly Social Network",
+		"description": "See your payments on Askedly Social Network"
+	},
+	"loading": "Loading payment data...",
+	"loadError": "We couldn't load your payment data",
+	"loadErrorRetry": "We couldn't load your payment data. Please try again.",
+	"tabs": {
+		"answered": "Answered questions",
+		"sent": "Sent questions"
+	},
+	"answered": {
+		"withdrawTitle": "Ready to withdraw",
+		"withdrawDescription": "Earnings from questions you answered that were approved",
+		"pendingTitle": "Pending your answer",
+		"pendingDescription": "Value of the questions waiting for your answer"
+	},
+	"sent": {
+		"withdrawTitle": "Available to withdraw",
+		"withdrawDescription": "Paid questions you sent that expired or were declined",
+		"pendingTitle": "Awaiting an answer",
+		"pendingDescription": "Total you paid for questions that are still waiting for an answer.",
+		"paidTitle": "Total paid for answered questions",
+		"paidDescription": "Total you paid for questions that were properly answered."
+	},
+	"minimumWithdraw": "You need at least {amount} in earnings before you can withdraw",
+	"withdraw": {
+		"button": "Withdraw money",
+		"processing": "Processing...",
+		"noPixKeyTitle": "No PIX key set up",
+		"noPixKeyDescription": "You need to add a PIX key to your account before you can withdraw.",
+		"understood": "Got it",
+		"title": "Withdraw {amount}",
+		"confirmKey": "Confirm the withdrawal to the PIX key set up in your account:",
+		"typeKey": "Type the PIX key above to confirm the withdrawal:",
+		"processingWithdraw": "Processing withdrawal...",
+		"confirm": "Confirm withdrawal to this PIX key",
+		"successTitle": "Withdrawal requested",
+		"successDescription": "{amount} will be sent to the account linked to this PIX key shortly.",
+		"errorTitle": "Withdrawal failed",
+		"errorFallback": "Please try again later."
+	},
+	"history": {
+		"title": "Transaction history",
+		"empty": "No transactions found",
+		"withdrawal": "Withdrawal completed",
+		"pixKey": "PIX: {key}"
+	},
+	"withdrawErrors": {
+		"noQuestions": "No questions selected for withdrawal.",
+		"userNotFound": "User not found.",
+		"noPixKey": "Add a PIX key before withdrawing.",
+		"invalidQuestions": "Some questions are invalid or have already been withdrawn.",
+		"failed": "We couldn't process your withdrawal. Please try again."
+	},
+	"api": {
+		"missingPaymentId": "Payment ID is missing.",
+		"missingPixId": "PIX ID is missing",
+		"paymentNotFound": "Payment not found",
+		"minimumAmount": "The minimum amount is {amount}",
+		"pixCreateFailed": "We couldn't generate the PIX charge",
+		"invalidAmount": "Invalid amount",
+		"checkoutFailed": "We couldn't start the credits purchase",
+		"stripeStatusFailed": "We couldn't reach Stripe",
+		"invalidCountry": "Invalid country",
+		"onboardingFailed": "We couldn't open Stripe onboarding"
+	},
+	"modal": {
+		"title": "How much do you want to pay to ask this question?",
+		"anonymousNotAccepted": "This profile doesn't accept anonymous questions",
+		"anonymousRemaining": "{count, plural, =0 {No anonymous questions left today} one {# anonymous question left today} other {# anonymous questions left today}}",
+		"anonymousLabel": "Send this question anonymously?",
+		"anonymousHint": "Your identity won't be revealed",
+		"privateAnswerLabel": "I want the answer to be private",
+		"privateAnswerHint": "The answer won't be shown publicly",
+		"privateAmountLabel": "Keep the amount I paid for this question private",
+		"privateAmountHint": "The amount you paid to ask this question won't be shown publicly",
+		"pix": "PIX",
+		"credits": "Credits",
+		"balance": "Balance: {amount}. <link>Buy credits</link>",
+		"other": "Other",
+		"customAmountLabel": "Enter an amount",
+		"sending": "Sending...",
+		"generatingPix": "Generating PIX...",
+		"payWithCredits": "Pay with credits",
+		"generatePix": "Generate PIX to pay",
+		"pixTitle": "Pay with PIX",
+		"paidTitle": "Payment confirmed!",
+		"questionSent": "Your question was sent successfully!",
+		"autoClose": "This window will close automatically in {seconds, plural, one {# second} other {# seconds}}.",
+		"qrCodeAlt": "PIX QR code",
+		"status": {
+			"paid": "Payment confirmed!",
+			"expired": "PIX expired",
+			"cancelled": "PIX cancelled",
+			"refunded": "PIX refunded",
+			"pending": "Waiting for payment..."
+		},
+		"amountDue": "Amount due: {amount}",
+		"timeRemaining": "Time remaining: <b>{time}</b>",
+		"copied": "Copied!",
+		"copyCode": "Copy PIX code",
+		"scanHint": "Scan the QR code or copy the PIX code to pay.",
+		"testMode": "You are in test mode. This PIX will be paid automatically in a few seconds.",
+		"closeAndRetry": "Close and try again",
+		"pixErrorTitle": "Couldn't generate PIX",
+		"pixErrorDescription": "Try again later",
+		"pixErrorFallback": "We couldn't generate the PIX code. Please try again.",
+		"questionErrorTitle": "Couldn't send your question",
+		"questionErrorDescription": "Something went wrong while sending your question.",
+		"questionSentDescription": "Your question was sent successfully."
+	}
+}

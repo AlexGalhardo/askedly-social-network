@@ -1,6 +1,7 @@
 "use server";
 
 import { getServerSession } from "next-auth";
+import { getTranslations } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import {
 	getUserQuestionsAnsweredPaymentDetails,
@@ -12,7 +13,8 @@ import TelegramLog from "@/lib/telegram-logger";
 // Server Actions são endpoints públicos: a identidade vem sempre da sessão, nunca dos argumentos.
 async function requireSessionUser(): Promise<{ id: string; nickname: string }> {
 	const session = await getServerSession(authOptions);
-	if (!session?.user?.id || !session.user.nickname) throw new Error("Usuário não autenticado");
+	if (!session?.user?.id || !session.user.nickname)
+		throw new Error((await getTranslations("errors"))("unauthorized"));
 	return { id: session.user.id, nickname: session.user.nickname };
 }
 
@@ -32,8 +34,9 @@ export async function processWithdraw({ questionIds }: { questionIds: string[] }
 	try {
 		return await withdrawBalance(id, questionIds);
 	} catch (error: unknown) {
-		if (error instanceof WithdrawError) throw error;
+		const t = await getTranslations("payments");
+		if (error instanceof WithdrawError) throw new Error(t(`withdrawErrors.${error.message}`));
 		await TelegramLog.error(`Catch Error payment-actions.ts processWithdraw: ${(error as Error)?.message}`);
-		throw new Error("Erro ao processar saque. Tente novamente.");
+		throw new Error(t("withdrawErrors.failed"));
 	}
 }

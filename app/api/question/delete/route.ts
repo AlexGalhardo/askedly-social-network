@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
+
 import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(request: NextRequest) {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("questions.api");
+
 	try {
 		const user = await getSessionUser();
-		if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+		if (!user) return NextResponse.json({ error: te("unauthorized") }, { status: 401 });
 
 		const body = await request.json();
 		const { nickname } = user;
@@ -14,7 +19,7 @@ export async function POST(request: NextRequest) {
 
 		if (!questionId) {
 			await TelegramLog.error("Question Delete: ❌ ID da pergunta é obrigatório");
-			return NextResponse.json({ error: "ID da pergunta é obrigatório" }, { status: 400 });
+			return NextResponse.json({ error: t("questionIdRequired") }, { status: 400 });
 		}
 
 		const questionToDelete = await prisma.question.findUnique({
@@ -31,24 +36,21 @@ export async function POST(request: NextRequest) {
 
 		if (!questionToDelete) {
 			await TelegramLog.error(`Question Delete: ❌ Pergunta com ID ${questionId} não encontrada.`);
-			return NextResponse.json({ error: "Pergunta não encontrada" }, { status: 404 });
+			return NextResponse.json({ error: t("questionNotFound") }, { status: 404 });
 		}
 
 		if (questionToDelete.owner.nickname !== nickname) {
 			await TelegramLog.warning(
 				`Question Delete: ❌ Usuário @${nickname} não autorizado a deletar a pergunta ${questionId}.`,
 			);
-			return NextResponse.json({ error: "Você não tem permissão para deletar esta pergunta" }, { status: 403 });
+			return NextResponse.json({ error: t("deleteForbidden") }, { status: 403 });
 		}
 
 		if (!questionToDelete.question_answer_was_recused && !questionToDelete.question_answer_was_expired) {
 			await TelegramLog.warning(
 				`Question Delete: ❌ Pergunta ${questionId} não pode ser deletada. Status atual: aguardando ou respondida.`,
 			);
-			return NextResponse.json(
-				{ error: "Apenas perguntas recusadas ou expiradas podem ser deletadas" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: t("onlyDeclinedOrExpired") }, { status: 400 });
 		}
 
 		const deletedQuestion = await prisma.question.update({
@@ -70,13 +72,13 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json(
 			{
-				message: "Pergunta deletada com sucesso",
+				message: t("deleted"),
 				question: deletedQuestion,
 			},
 			{ status: 200 },
 		);
 	} catch (error: any) {
 		await TelegramLog.error(`Question Delete catch error: ${error?.message}`);
-		return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+		return NextResponse.json({ error: te("internal") }, { status: 500 });
 	}
 }

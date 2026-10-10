@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
-import { signupSchema } from "@/lib/schemas/signup";
+import { type AuthErrorKey, signupSchema } from "@/lib/schemas/signup";
 import { prisma } from "@/prisma/prisma-client";
 
 const TOKEN_TTL_MS = 60 * 60 * 1000;
@@ -33,12 +33,14 @@ export async function isResetTokenValid(token: string): Promise<boolean> {
 	return !!user;
 }
 
-export type ResetResult = { ok: true } | { ok: false; error: string };
+export type ResetResult = { ok: true } | { ok: false; error: AuthErrorKey };
 
 /** Troca a senha e invalida o token na mesma instrução: dois envios simultâneos não usam o token duas vezes. */
 export async function resetPasswordWithToken(token: string, newPassword: string): Promise<ResetResult> {
 	const parsed = signupSchema.shape.password.safeParse(newPassword);
-	if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Senha inválida" };
+	if (!parsed.success) {
+		return { ok: false, error: (parsed.error.issues[0]?.message as AuthErrorKey | undefined) ?? "passwordInvalid" };
+	}
 
 	const { count } = await prisma.user.updateMany({
 		where: { reset_password_token: hashToken(token), reset_password_token_expires_at: { gt: new Date() } },
@@ -50,5 +52,5 @@ export async function resetPasswordWithToken(token: string, newPassword: string)
 			updated_at: new Date(),
 		},
 	});
-	return count === 1 ? { ok: true } : { ok: false, error: "Token inválido ou expirado" };
+	return count === 1 ? { ok: true } : { ok: false, error: "invalidOrExpiredToken" };
 }

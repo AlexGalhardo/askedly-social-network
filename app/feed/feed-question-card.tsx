@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import type { PublicQuestion } from "@/lib/repositories/questions.repository";
@@ -35,6 +36,8 @@ export const FeedQuestionCard = memo(
 		optimisticHasUserLiked,
 		optimisticHasUserDisliked,
 	}: QuestionCardProps) => {
+		const t = useTranslations("questions");
+
 		return (
 			<Card className="border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800">
 				<CardContent className="p-4 sm:p-6">
@@ -42,8 +45,10 @@ export const FeedQuestionCard = memo(
 
 					<div className="mb-4">
 						<h3 className="font-semibold text-base sm:text-lg text-gray-800 dark:text-gray-200 mb-2 leading-relaxed">
-							<span className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Perguntou</span>:{" "}
-							{question.question_text}
+							<span className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+								{t("card.asked")}
+							</span>
+							: {question.question_text}
 						</h3>
 					</div>
 

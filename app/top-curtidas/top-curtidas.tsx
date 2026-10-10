@@ -3,6 +3,8 @@
 import { Loader2, ThumbsDown, ThumbsUp, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { useFormatter, useNow, useTranslations } from "next-intl";
+
 import { useCallback, useEffect, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
 import { AskerAvatar, AskerName } from "@/components/question-asker";
@@ -16,7 +18,6 @@ import { useToast } from "@/hooks/use-toast";
 import { getInitials } from "@/lib/functions";
 import type { PublicQuestion } from "@/lib/repositories/questions.repository";
 import TelegramLog from "@/lib/telegram-logger";
-import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface TopCurtidasProps {
 	today: PublicQuestion[];
@@ -37,6 +38,10 @@ function sortQuestionsByLikes(questions: PublicQuestion[]): PublicQuestion[] {
 export default function TopCurtidasClient({ today, week, month, year, allTime }: TopCurtidasProps) {
 	const { data: session } = useSession();
 	const { toast } = useToast();
+	const t = useTranslations("feed");
+	const tq = useTranslations("questions");
+	const format = useFormatter();
+	const now = useNow();
 	const likeMutation = useLikeQuestion();
 	const dislikeMutation = useDislikeQuestion();
 	const { status } = useSession();
@@ -171,8 +176,8 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 			updateQuestionInAllStates(updatedQuestion);
 		} catch {
 			toast({
-				title: "Erro ao curtir pergunta!",
-				description: "Tente novamente mais tarde",
+				title: tq("card.likeError"),
+				description: tq("card.tryAgain"),
 				variant: "error",
 			});
 		}
@@ -211,8 +216,8 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 		} catch (error: any) {
 			await TelegramLog.error(`Erro ao descurtir pergunta ${error?.message}`);
 			toast({
-				title: "Erro ao descurtir pergunta!",
-				description: "Tente novamente mais tarde",
+				title: tq("card.dislikeError"),
+				description: tq("card.tryAgain"),
 				variant: "error",
 			});
 		}
@@ -235,26 +240,27 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 										variant="secondary"
 										className="text-xs w-fit bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
 									>
-										Pagou {formatCurrency(question.amount_paid, question.currency)}
+										{tq("card.paid", {
+											amount: format.number(question.amount_paid / 100, {
+												style: "currency",
+												currency: question.currency || "BRL",
+											}),
+										})}
 									</Badge>
 									<span className="hidden sm:inline">•</span>
 								</>
 							)}
-							<span className="text-xs">
-								{formatDate(
-									typeof question.created_at === "string"
-										? question.created_at
-										: question.created_at.toISOString(),
-								)}
-							</span>
+							<span className="text-xs">{format.relativeTime(new Date(question.created_at), now)}</span>
 						</div>
 					</div>
 				</div>
 
 				<div className="mb-4">
 					<h3 className="font-semibold text-base sm:text-lg text-gray-800 dark:text-gray-200 mb-2 leading-relaxed">
-						<span className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Perguntou</span>:{" "}
-						{question.question_text}
+						<span className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+							{tq("card.asked")}
+						</span>
+						: {question.question_text}
 					</h3>
 				</div>
 
@@ -280,15 +286,11 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 									</Link>
 								</div>
 								<div className="flex flex-col sm:flex-row sm:items-center gap-1 text-xs text-green-600 dark:text-green-400">
-									<span>respondeu</span>
+									<span>{tq("card.answered")}</span>
 									<span className="text-gray-500 dark:text-gray-400">
-										{formatDate(
-											typeof question?.answered_at === "string"
-												? question?.answered_at
-												: question?.answered_at
-													? question.answered_at.toISOString()
-													: "",
-										)}
+										{question.answered_at
+											? format.relativeTime(new Date(question.answered_at), now)
+											: ""}
 									</span>
 								</div>
 							</div>
@@ -348,32 +350,32 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 		</Card>
 	);
 
-	const renderEmptyState = (period: string) => (
+	const renderEmptyState = (emptyMessage: string) => (
 		<div className="text-center py-12">
 			<Trophy className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-			<p className="text-gray-500 text-lg">Nenhuma pergunta curtida {period} ainda.</p>
-			<p className="text-gray-400 text-sm mt-2">Seja o primeiro a curtir uma resposta!</p>
+			<p className="text-gray-500 text-lg">{emptyMessage}</p>
+			<p className="text-gray-400 text-sm mt-2">{t("top.emptyHint")}</p>
 		</div>
 	);
 
-	const renderTabContent = (period: string) => (
+	const renderTabContent = (emptyMessage: string) => (
 		<div className="space-y-4 sm:space-y-6">
 			{displayedQuestions.map((question, index) => renderQuestionCard(question, index))}
 
 			{isLoadingMore && (
 				<div className="flex justify-center items-center py-8">
 					<Loader2 className="h-8 w-8 animate-spin text-gray-500" />
-					<span className="ml-2 text-gray-500">Carregando mais respostas...</span>
+					<span className="ml-2 text-gray-500">{t("loadingMore")}</span>
 				</div>
 			)}
 
 			{!hasMoreQuestions && displayedQuestions.length > 0 && (
 				<div className="text-center py-8">
-					<p className="text-gray-500 text-sm">Você chegou ao final da lista! 🎉</p>
+					<p className="text-gray-500 text-sm">{t("top.end")}</p>
 				</div>
 			)}
 
-			{displayedQuestions.length === 0 && !isLoadingMore && renderEmptyState(period)}
+			{displayedQuestions.length === 0 && !isLoadingMore && renderEmptyState(emptyMessage)}
 		</div>
 	);
 
@@ -382,41 +384,39 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 			<div className="mb-6 text-center mt-12">
 				<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2 dark:text-white">
 					<Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500 dark:text-yellow-400" />
-					TOP 10 Respostas Mais Curtidas
+					{t("top.title")}
 				</h1>
-				<p className="text-gray-600 mt-8 mb-12 dark:text-white">
-					Veja as 10 perguntas e respostas mais curtidas da comunidade
-				</p>
+				<p className="text-gray-600 mt-8 mb-12 dark:text-white">{t("top.subtitle")}</p>
 			</div>
 
 			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 				<TabsList className="grid w-full grid-cols-5 mb-6">
 					<TabsTrigger value="today" className="text-xs sm:text-sm">
-						Hoje
+						{t("top.tabs.today")}
 					</TabsTrigger>
 					<TabsTrigger value="week" className="text-xs sm:text-sm">
-						Semana
+						{t("top.tabs.week")}
 					</TabsTrigger>
 					<TabsTrigger value="month" className="text-xs sm:text-sm">
-						Mês
+						{t("top.tabs.month")}
 					</TabsTrigger>
 					<TabsTrigger value="year" className="text-xs sm:text-sm">
-						Ano {new Date().getFullYear()}
+						{t("top.tabs.year", { year: String(new Date().getFullYear()) })}
 					</TabsTrigger>
 					<TabsTrigger value="allTime" className="text-xs sm:text-sm">
-						Geral
+						{t("top.tabs.allTime")}
 					</TabsTrigger>
 				</TabsList>
 
-				<TabsContent value="today">{renderTabContent("hoje")}</TabsContent>
+				<TabsContent value="today">{renderTabContent(t("top.empty.today"))}</TabsContent>
 
-				<TabsContent value="week">{renderTabContent("esta semana")}</TabsContent>
+				<TabsContent value="week">{renderTabContent(t("top.empty.week"))}</TabsContent>
 
-				<TabsContent value="month">{renderTabContent("este mês")}</TabsContent>
+				<TabsContent value="month">{renderTabContent(t("top.empty.month"))}</TabsContent>
 
-				<TabsContent value="year">{renderTabContent("este ano")}</TabsContent>
+				<TabsContent value="year">{renderTabContent(t("top.empty.year"))}</TabsContent>
 
-				<TabsContent value="allTime">{renderTabContent("de todos os tempos")}</TabsContent>
+				<TabsContent value="allTime">{renderTabContent(t("top.empty.allTime"))}</TabsContent>
 			</Tabs>
 		</div>
 	);

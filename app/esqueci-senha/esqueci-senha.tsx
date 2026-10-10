@@ -3,6 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -14,6 +15,7 @@ import TelegramLog from "@/lib/telegram-logger";
 
 export default function EsqueciSenhaClient() {
 	const router = useRouter();
+	const t = useTranslations("auth");
 	const { data: session } = useSession();
 
 	useEffect(() => {
@@ -32,7 +34,7 @@ export default function EsqueciSenhaClient() {
 		setError("");
 
 		if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-			setError("Por favor, insira um email válido");
+			setError(t("forgotPassword.invalidEmail"));
 			return;
 		}
 
@@ -49,14 +51,14 @@ export default function EsqueciSenhaClient() {
 
 			if (!response.ok) {
 				const data = await response.json();
-				throw new Error(data.error ?? "Erro ao enviar email de recuperação de senha");
+				throw new Error(data.error ?? t("forgotPassword.sendError"));
 			}
 
 			setSuccessAlert(true);
 			setEmail("");
 		} catch (error: any) {
 			await TelegramLog.error(`Error esqueci-senha.ts handleSubmitForgetPassword: ${error.message}`);
-			setError("Erro ao enviar email de recuperação de senha");
+			setError(t("forgotPassword.sendError"));
 		} finally {
 			setLoading(false);
 		}
@@ -67,17 +69,17 @@ export default function EsqueciSenhaClient() {
 			<Card className="w-full max-w-md border-none">
 				<CardHeader className="text-center">
 					<CardDescription className="text-2xl text-black dark:text-white">
-						Digite o email que receberá o link para criar nova senha
+						{t("forgotPassword.heading")}
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-6">
 					<form onSubmit={handleSubmitForgetPassword} className="space-y-4">
 						<div className="space-y-2">
-							<Label htmlFor="email">Email</Label>
+							<Label htmlFor="email">{t("fields.email")}</Label>
 							<Input
 								id="email"
 								type="email"
-								placeholder="seu@email.com"
+								placeholder={t("fields.emailPlaceholder")}
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 								required
@@ -92,9 +94,7 @@ export default function EsqueciSenhaClient() {
 
 						{successAlert && (
 							<Alert variant="default" className="font-bold text-center bg-green-300 text-green-900">
-								<AlertDescription>
-									{"Se esse email estiver registrado, um link será enviado para resetar a senha"}
-								</AlertDescription>
+								<AlertDescription>{t("forgotPassword.success")}</AlertDescription>
 							</Alert>
 						)}
 
@@ -106,11 +106,11 @@ export default function EsqueciSenhaClient() {
 							{loading ? (
 								<>
 									<span className="ml-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-									Processando...
+									{t("fields.processing")}
 								</>
 							) : (
 								<>
-									Enviar Link Nesse Email
+									{t("forgotPassword.submit")}
 									<ArrowRight className="ml-2 h-5 w-5" />
 								</>
 							)}

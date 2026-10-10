@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
+
 import { useCallback, useEffect, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
 import { ConfirmationModals } from "@/components/questions-received/question-confirmation-modals";
@@ -28,6 +30,7 @@ export default function PerguntasRecebidasPage() {
 	const declineMutation = useDeclineQuestion();
 	const deleteMutation = useDeleteQuestion();
 	const reportMutation = useReportQuestion();
+	const t = useTranslations("questions");
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const questionsPerPage = 10;
@@ -81,7 +84,7 @@ export default function PerguntasRecebidasPage() {
 		} catch (error: any) {
 			await TelegramLog.error(`Error perguntas-recebidas.ts handleConfirmAnswer: ${error?.message}`);
 			toast({
-				title: "Ocorreu um erro ao responder a pergunta. Por favor, tente novamente.",
+				title: t("received.errors.answer"),
 				variant: "error",
 			});
 		} finally {
@@ -123,7 +126,7 @@ export default function PerguntasRecebidasPage() {
 		} catch (error: any) {
 			await TelegramLog.error(`Error perguntas-recebidas.ts handleConfirmDecline: ${error?.message}`);
 			toast({
-				title: "Ocorreu um erro ao recusar a pergunta. Por favor, tente novamente.",
+				title: t("received.errors.decline"),
 				variant: "error",
 			});
 		} finally {
@@ -153,7 +156,7 @@ export default function PerguntasRecebidasPage() {
 		} catch (error: any) {
 			await TelegramLog.error(`Error perguntas-recebidas.ts handleConfirmDelete: ${error?.message}`);
 			toast({
-				title: "Ocorreu um erro ao deletar a pergunta. Por favor, tente novamente.",
+				title: t("received.errors.delete"),
 				variant: "error",
 			});
 		} finally {
@@ -203,7 +206,7 @@ export default function PerguntasRecebidasPage() {
 		} catch (error: any) {
 			await TelegramLog.error(`Error perguntas-recebidas.ts handleConfirmReport: ${error?.message}`);
 			toast({
-				title: "Ocorreu um erro ao reportar a pergunta. Por favor, tente novamente.",
+				title: t("received.errors.report"),
 				variant: "error",
 			});
 		} finally {

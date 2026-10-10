@@ -1,1 +1,35 @@
-{}
+{
+	"tabs": {
+		"community": "Community",
+		"following": "Following"
+	},
+	"loading": "Loading...",
+	"loadingMore": "Loading more answers...",
+	"loadError": "Couldn't load questions: {message}",
+	"unknownError": "Unknown error",
+	"emptyFollowing": "You're not following anyone yet, or the people you follow haven't answered any questions.",
+	"empty": "No questions to show right now.",
+	"end": "You've reached the end of the feed! 🎉",
+	"top": {
+		"metaTitle": "Top 10 Most Liked Questions & Answers - Askedly Social Network",
+		"metaDescription": "See the top 10 most liked questions and answers on Askedly Social Network by day, week, month, year and all time.",
+		"title": "Top 10 Most Liked Answers",
+		"subtitle": "See the 10 most liked questions and answers from the community",
+		"tabs": {
+			"today": "Today",
+			"week": "Week",
+			"month": "Month",
+			"year": "{year}",
+			"allTime": "All time"
+		},
+		"empty": {
+			"today": "No liked questions today yet.",
+			"week": "No liked questions this week yet.",
+			"month": "No liked questions this month yet.",
+			"year": "No liked questions this year yet.",
+			"allTime": "No liked questions yet."
+		},
+		"emptyHint": "Be the first to like an answer!",
+		"end": "You've reached the end of the list! 🎉"
+	}
+}

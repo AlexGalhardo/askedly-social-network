@@ -1,7 +1,8 @@
 "use client";
 
 import { Clock, DollarSign } from "lucide-react";
-import { canWithdraw, getMinimumWithdrawMessage } from "@/lib/utils/payment-utils";
+import { useFormatter, useTranslations } from "next-intl";
+import { canWithdraw, MIN_WITHDRAW_CENTS } from "@/lib/utils/payment-utils";
 import { PaymentData } from "@/types/PaymentInterface";
 import { PaymentCard } from "./payment-card";
 import { TransactionHistory } from "./payment-transaction-history";
@@ -15,24 +16,32 @@ interface PaymentTabContentProps {
 }
 
 export function PaymentTabContent({ data, type, onWithdraw, isProcessingWithdraw = false }: PaymentTabContentProps) {
+	const t = useTranslations("payments");
+	const format = useFormatter();
 	const isAnswered = type === "answered";
 
 	return (
 		<div className="space-y-6 mt-4">
 			<PaymentCard
-				title={isAnswered ? "Pronto Para Sacar" : "Disponível Para Saque"}
+				title={t(`${type}.withdrawTitle`)}
 				amount={data.paymentToWithdraw}
-				description={
-					isAnswered
-						? "Valor das perguntas que você respondeu e foram aprovadas"
-						: "Perguntas pagas que você enviou e foram expiradas ou recusadas a responder"
-				}
+				description={t(`${type}.withdrawDescription`)}
 				icon={DollarSign}
 				iconBgColor="bg-green-600 dark:bg-foreground"
 				cardBgColor="bg-green-50 dark:bg-muted"
 				borderColor="border-green-200 dark:border-border"
 				titleColor="text-green-600 dark:text-foreground"
-				warning={!canWithdraw(data.paymentToWithdraw) ? getMinimumWithdrawMessage() : undefined}
+				warning={
+					!canWithdraw(data.paymentToWithdraw)
+						? t("minimumWithdraw", {
+								amount: format.number(MIN_WITHDRAW_CENTS / 100, {
+									style: "currency",
+									currency: "BRL",
+									maximumFractionDigits: 0,
+								}),
+							})
+						: undefined
+				}
 			>
 				<WithdrawButton
 					amount={data.paymentToWithdraw}
@@ -42,13 +51,9 @@ export function PaymentTabContent({ data, type, onWithdraw, isProcessingWithdraw
 			</PaymentCard>
 
 			<PaymentCard
-				title={isAnswered ? "Valor Pendente Para Responder" : "Valor Aguardando Resposta"}
+				title={t(`${type}.pendingTitle`)}
 				amount={data.paymentAwaitingAnswer}
-				description={
-					isAnswered
-						? "Valor das perguntas aguardando sua resposta"
-						: "Valor total que você pagou fazendo perguntas que ainda estão esperando resposta."
-				}
+				description={t(`${type}.pendingDescription`)}
 				icon={Clock}
 				iconBgColor="bg-orange-600 dark:bg-muted-foreground"
 				cardBgColor="bg-orange-50 dark:bg-muted"
@@ -58,9 +63,9 @@ export function PaymentTabContent({ data, type, onWithdraw, isProcessingWithdraw
 
 			{!isAnswered && data.paymentSentAnsweredQuestions !== undefined && (
 				<PaymentCard
-					title="Total Pago em Perguntas Respondidas"
+					title={t("sent.paidTitle")}
 					amount={data.paymentSentAnsweredQuestions}
-					description="Valor total que você pagou para fazer perguntas e foram respondidas adequadamente."
+					description={t("sent.paidDescription")}
 					icon={DollarSign}
 					iconBgColor="bg-blue-600 dark:bg-foreground"
 					cardBgColor="bg-blue-50 dark:bg-muted"

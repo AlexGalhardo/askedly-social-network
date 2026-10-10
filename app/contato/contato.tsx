@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -10,11 +11,15 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { contactSchema } from "@/lib/schemas/contact";
+import { createContactSchema } from "@/lib/schemas/contact";
 import TelegramLog from "@/lib/telegram-logger";
 import { getTurnstile } from "@/lib/turnstile";
 
 export default function ContatoClient() {
+	const t = useTranslations("legal.contact");
+	const tValidation = useTranslations("legal.contact.validation");
+	const tCommon = useTranslations("common");
+	const tErrors = useTranslations("errors");
 	const [error, setError] = useState("");
 
 	const [formData, setFormData] = useState({
@@ -32,7 +37,7 @@ export default function ContatoClient() {
 	const [loading, setLoading] = useState(false);
 
 	const validateForm = () => {
-		const validationResult = contactSchema.safeParse(formData);
+		const validationResult = createContactSchema(tValidation).safeParse(formData);
 
 		if (validationResult.success) {
 			setErrors({
@@ -75,7 +80,7 @@ export default function ContatoClient() {
 			token = getTurnstile()?.getResponse();
 
 			if (!token) {
-				setError("Por favor, verifique o CAPTCHA.");
+				setError(tErrors("captchaRequired"));
 				setLoading(false);
 				return;
 			}
@@ -92,8 +97,8 @@ export default function ContatoClient() {
 
 			if (response.ok) {
 				toast({
-					title: "Mensagem enviada com sucesso",
-					description: "Vamos responder em breve.",
+					title: t("successTitle"),
+					description: t("successDescription"),
 					variant: "success",
 				});
 				setFormData({
@@ -107,15 +112,15 @@ export default function ContatoClient() {
 
 			const errorData = await response.json();
 			toast({
-				title: "Erro ao enviar mensagem",
-				description: errorData.error || "Por favor, tente novamente mais tarde.",
+				title: t("errorTitle"),
+				description: errorData.error || tCommon("tryAgainLater"),
 				variant: "error",
 			});
 		} catch (error: any) {
 			await TelegramLog.error(`Error contato.tsx handleSubmit: ${error?.message}`);
 			toast({
-				title: "Erro ao enviar mensagem",
-				description: "Por favor, tente novamente mais tarde.",
+				title: t("errorTitle"),
+				description: tCommon("tryAgainLater"),
 				variant: "error",
 			});
 		} finally {
@@ -149,11 +154,8 @@ export default function ContatoClient() {
 		<div className="p-4 lg:p-6">
 			<div className="max-w-6xl mx-auto">
 				<div className="text-center mb-8 dark:text-white p-8 rounded-lg">
-					<h2 className="text-3xl font-bold text-foreground mb-4">Contato</h2>
-					<p className="text-lg text-muted-foreground">
-						Tem alguma dúvida? Encontrou algum problema? Envie nos uma mensagem e retornaremos o mais breve
-						possível.
-					</p>
+					<h2 className="text-3xl font-bold text-foreground mb-4">{t("title")}</h2>
+					<p className="text-lg text-muted-foreground">{t("intro")}</p>
 				</div>
 
 				<Card>
@@ -161,73 +163,71 @@ export default function ContatoClient() {
 						<form onSubmit={handleSubmit} className="space-y-6">
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div className="space-y-2">
-									<Label htmlFor="name">Seu Nome</Label>
+									<Label htmlFor="name">{t("nameLabel")}</Label>
 									<Input
 										id="name"
 										name="name"
 										minLength={4}
 										maxLength={24}
-										placeholder="Digite seu nome"
+										placeholder={t("namePlaceholder")}
 										value={formData.name}
 										onChange={handleChange}
 										className={`${errors.name ? "border-red-500" : ""}`}
 									/>
-									{errors.name && (
-										<p className="text-red-500 text-sm">Nome deve ter entre 4 e 24 caracteres</p>
-									)}
+									{errors.name && <p className="text-red-500 text-sm">{tValidation("nameLength")}</p>}
 								</div>
 
 								<div className="space-y-2">
-									<Label htmlFor="email">Seu Email</Label>
+									<Label htmlFor="email">{t("emailLabel")}</Label>
 									<Input
 										id="email"
 										name="email"
 										type="email"
 										minLength={12}
 										maxLength={48}
-										placeholder="seuemail@email.com"
+										placeholder={t("emailPlaceholder")}
 										value={formData.email}
 										onChange={handleChange}
 										className={`${errors.email ? "border-red-500" : ""}`}
 									/>
-									{errors.email && <p className="text-red-500 text-sm">Email inválido</p>}
+									{errors.email && (
+										<p className="text-red-500 text-sm">{tValidation("emailInvalid")}</p>
+									)}
 								</div>
 							</div>
 
 							<div className="space-y-2">
-								<Label htmlFor="subject">Assunto</Label>
+								<Label htmlFor="subject">{t("subjectLabel")}</Label>
 								<Select value={formData.subject} onValueChange={handleSelectChange}>
 									<SelectTrigger className={`${errors.subject ? "border-red-500" : ""}`}>
-										<SelectValue placeholder="Selecione um tópico" />
+										<SelectValue placeholder={t("subjectPlaceholder")} />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="Problemas Técnicos">Problemas Técnicos</SelectItem>
-										<SelectItem value="Problemas Com Pagamentos">
-											Problemas com Pagamentos
-										</SelectItem>
-										<SelectItem value="Problemas com Conta">Problemas com Conta</SelectItem>
-										<SelectItem value="Sugestões e Feedbacks">Sugestões & Feedbacks</SelectItem>
-										<SelectItem value="Outros">Outros</SelectItem>
+										<SelectItem value="Problemas Técnicos">{t("subjectTechnical")}</SelectItem>
+										<SelectItem value="Problemas Com Pagamentos">{t("subjectPayments")}</SelectItem>
+										<SelectItem value="Problemas com Conta">{t("subjectAccount")}</SelectItem>
+										<SelectItem value="Sugestões e Feedbacks">{t("subjectFeedback")}</SelectItem>
+										<SelectItem value="Outros">{t("subjectOther")}</SelectItem>
 									</SelectContent>
 								</Select>
-								{errors.subject && <p className="text-red-500 text-sm">Selecione um assunto válido</p>}
+								{errors.subject && (
+									<p className="text-red-500 text-sm">{tValidation("subjectSelect")}</p>
+								)}
 							</div>
 
 							<div className="space-y-2">
-								<Label htmlFor="message">Mensagem</Label>
+								<Label htmlFor="message">{t("messageLabel")}</Label>
 								<Textarea
 									id="message"
 									name="message"
-									placeholder="Digite sua mensagem"
+									placeholder={t("messagePlaceholder")}
 									rows={6}
 									maxLength={1024}
 									value={formData.message}
 									onChange={handleChange}
 									className={`${errors.message ? "border-red-500" : ""}`}
 								/>
-								{errors.message && (
-									<p className="text-red-500 text-sm">A mensagem deve ter pelo menos 32 caracteres</p>
-								)}
+								{errors.message && <p className="text-red-500 text-sm">{tValidation("messageMin")}</p>}
 							</div>
 
 							<TurnstileWidget />
@@ -246,7 +246,7 @@ export default function ContatoClient() {
 								className="w-full bg-green-600 hover:bg-green-700 text-white"
 								disabled={loading}
 							>
-								{loading ? "Enviando Mensagem..." : "Enviar Mensagem"}
+								{loading ? t("submitting") : t("submit")}
 							</Button>
 						</form>
 					</CardContent>

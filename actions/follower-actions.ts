@@ -2,6 +2,7 @@
 
 import { updateTag } from "next/cache";
 import { getServerSession } from "next-auth";
+import { getTranslations } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
@@ -11,7 +12,7 @@ export async function removeFollower(followerId: string) {
 		const session = await getServerSession(authOptions);
 
 		if (!session?.user?.id) {
-			throw new Error("Usuário não autenticado");
+			throw new Error((await getTranslations("errors"))("unauthorized"));
 		}
 
 		await prisma.follower.deleteMany({
@@ -36,7 +37,7 @@ export async function acceptFollowRequest(requestId: string) {
 
 		if (!session?.user?.id) {
 			await TelegramLog.error(`Error follower-actions.ts usuário não autenticado`);
-			throw new Error("Usuário não autenticado");
+			throw new Error((await getTranslations("errors"))("unauthorized"));
 		}
 
 		const request = await prisma.followRequest.findFirst({
@@ -45,7 +46,7 @@ export async function acceptFollowRequest(requestId: string) {
 
 		if (!request) {
 			await TelegramLog.error(`Error follower-actions.ts solicitação não encontrada`);
-			throw new Error("Solicitação não encontrada");
+			throw new Error((await getTranslations("account.errors"))("followRequestNotFound"));
 		}
 
 		await prisma.follower.create({
@@ -80,7 +81,7 @@ export async function rejectFollowRequest(requestId: string) {
 
 		if (!session?.user?.id) {
 			await TelegramLog.error(`Error follower-actions.ts usuário não autenticado`);
-			throw new Error("Usuário não autenticado");
+			throw new Error((await getTranslations("errors"))("unauthorized"));
 		}
 
 		const request = await prisma.followRequest.findFirst({
@@ -89,7 +90,7 @@ export async function rejectFollowRequest(requestId: string) {
 
 		if (!request) {
 			await TelegramLog.error(`Error follower-actions.ts solicitação não encontrada`);
-			throw new Error("Solicitação não encontrada");
+			throw new Error((await getTranslations("account.errors"))("followRequestNotFound"));
 		}
 
 		await prisma.followRequest.delete({

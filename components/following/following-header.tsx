@@ -1,7 +1,11 @@
+import { useTranslations } from "next-intl";
+
 interface FollowingHeaderProps {
 	count: number;
 }
 
 export function FollowingHeader({ count }: FollowingHeaderProps) {
-	return <h2 className="text-xl font-bold text-foreground mb-4">Você está seguindo {count} pessoas</h2>;
+	const t = useTranslations("common.following");
+
+	return <h2 className="text-xl font-bold text-foreground mb-4">{t("header", { count })}</h2>;
 }

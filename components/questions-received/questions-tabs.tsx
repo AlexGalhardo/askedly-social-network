@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { filterQuestionsByStatus, paginateQuestions } from "@/lib/utils/question-utils";
 import { QuestionInterface } from "@/types/QuestionInterface";
@@ -35,6 +37,7 @@ export function QuestionsTabs({
 	onExpire,
 	loadingStates = {},
 }: QuestionsTabsProps) {
+	const t = useTranslations("questions");
 	const validQuestions = Array.isArray(questions) ? questions : [];
 
 	const pendingQuestions = filterQuestionsByStatus(validQuestions, "pending");
@@ -46,7 +49,7 @@ export function QuestionsTabs({
 	const renderTabContent = (
 		questionsList: QuestionInterface[],
 		showAnswerForm: boolean = false,
-		emptyMessage: string = "Nenhuma pergunta encontrada.",
+		emptyMessage: string = t("card.empty"),
 	) => {
 		if (questionsList.length === 0) {
 			return <div className="text-center py-12 text-gray-500">{emptyMessage}</div>;
@@ -84,53 +87,63 @@ export function QuestionsTabs({
 						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
 						value="pending"
 					>
-						<span className="truncate">Aguardando ({pendingQuestions.length})</span>
+						<span className="truncate">
+							{t("received.tabs.pending", { count: pendingQuestions.length })}
+						</span>
 					</TabsTrigger>
 					<TabsTrigger
 						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
 						value="answered"
 					>
-						<span className="truncate">Respondidas ({answeredQuestions.length})</span>
+						<span className="truncate">
+							{t("received.tabs.answered", { count: answeredQuestions.length })}
+						</span>
 					</TabsTrigger>
 					<TabsTrigger
 						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
 						value="declined"
 					>
-						<span className="truncate">Recusadas ({declinedQuestions.length})</span>
+						<span className="truncate">
+							{t("received.tabs.declined", { count: declinedQuestions.length })}
+						</span>
 					</TabsTrigger>
 					<TabsTrigger
 						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
 						value="expired"
 					>
-						<span className="truncate">Expiradas ({expiredQuestions.length})</span>
+						<span className="truncate">
+							{t("received.tabs.expired", { count: expiredQuestions.length })}
+						</span>
 					</TabsTrigger>
 					<TabsTrigger
 						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
 						value="reported"
 					>
-						<span className="truncate">Reportadas ({reportedQuestions.length})</span>
+						<span className="truncate">
+							{t("received.tabs.reported", { count: reportedQuestions.length })}
+						</span>
 					</TabsTrigger>
 				</TabsList>
 			</div>
 
 			<TabsContent value="pending" className="space-y-6">
-				{renderTabContent(pendingQuestions, true, "Nenhuma pergunta pendente no momento.")}
+				{renderTabContent(pendingQuestions, true, t("received.empty.pending"))}
 			</TabsContent>
 
 			<TabsContent value="answered" className="space-y-6">
-				{renderTabContent(answeredQuestions, false, "Nenhuma pergunta respondida ainda.")}
+				{renderTabContent(answeredQuestions, false, t("received.empty.answered"))}
 			</TabsContent>
 
 			<TabsContent value="declined" className="space-y-6">
-				{renderTabContent(declinedQuestions, false, "Nenhuma pergunta recusada.")}
+				{renderTabContent(declinedQuestions, false, t("received.empty.declined"))}
 			</TabsContent>
 
 			<TabsContent value="expired" className="space-y-6">
-				{renderTabContent(expiredQuestions, false, "Nenhuma pergunta expirada.")}
+				{renderTabContent(expiredQuestions, false, t("received.empty.expired"))}
 			</TabsContent>
 
 			<TabsContent value="reported" className="space-y-6">
-				{renderTabContent(reportedQuestions, false, "Nenhuma pergunta reportada.")}
+				{renderTabContent(reportedQuestions, false, t("received.empty.reported"))}
 			</TabsContent>
 		</Tabs>
 	);

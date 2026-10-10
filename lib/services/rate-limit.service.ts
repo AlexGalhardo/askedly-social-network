@@ -74,7 +74,12 @@ export async function deleteExpiredRateLimits(): Promise<number> {
 	return count;
 }
 
+/** Minutos até poder tentar de novo, para a mensagem traduzida `errors.rateLimited`. */
+export function rateLimitMinutes(retryAfterSeconds: number): number {
+	return Math.max(1, Math.ceil(retryAfterSeconds / 60));
+}
+
 export function rateLimitMessage(retryAfterSeconds: number): string {
-	const minutes = Math.max(1, Math.ceil(retryAfterSeconds / 60));
-	return `Muitas tentativas. Tente de novo em ${minutes} minuto${minutes > 1 ? "s" : ""}.`;
+	const minutes = rateLimitMinutes(retryAfterSeconds);
+	return `Too many attempts. Try again in ${minutes} minute${minutes > 1 ? "s" : ""}.`;
 }

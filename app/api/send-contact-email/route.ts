@@ -1,21 +1,28 @@
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { ContactEmail } from "@/emails/contact-email";
 import { isCaptchaValid } from "@/lib/captcha";
 import { EMAIL_FROM, resendClient } from "@/lib/email";
 import { clientIp } from "@/lib/request-ip";
-import { contactSchema } from "@/lib/schemas/contact";
-import { consumeRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/services/rate-limit.service";
+import { createContactSchema } from "@/lib/schemas/contact";
+import { consumeRateLimit, RATE_LIMITS, rateLimitMinutes } from "@/lib/services/rate-limit.service";
 import TelegramLog from "@/lib/telegram-logger";
 
 export async function POST(request: Request) {
+	const t = await getTranslations("errors");
+
 	try {
 		const limit = await consumeRateLimit(`contact:ip:${clientIp(request.headers)}`, RATE_LIMITS.contact);
 		if (!limit.allowed) {
-			return NextResponse.json({ error: rateLimitMessage(limit.retryAfterSeconds) }, { status: 429 });
+			return NextResponse.json(
+				{ error: t("rateLimited", { minutes: rateLimitMinutes(limit.retryAfterSeconds) }) },
+				{ status: 429 },
+			);
 		}
 
 		const body = await request.json();
 
+		const contactSchema = createContactSchema(await getTranslations("legal.contact.validation"));
 		const validationResult = contactSchema.safeParse({
 			name: body.name,
 			email: body.email,
@@ -31,7 +38,7 @@ export async function POST(request: Request) {
 
 			return NextResponse.json(
 				{
-					error: "Dados inválidos",
+					error: t("invalidData"),
 					details: errors,
 				},
 				{ status: 400 },
@@ -39,7 +46,7 @@ export async function POST(request: Request) {
 		}
 
 		if (process.env.NODE_ENV === "production" && !(await isCaptchaValid(body?.captchaToken))) {
-			return NextResponse.json({ error: "Captcha inválido" }, { status: 400 });
+			return NextResponse.json({ error: t("invalidCaptcha") }, { status: 400 });
 		}
 
 		const { name, email, subject, message } = validationResult.data;
@@ -48,12 +55,12 @@ export async function POST(request: Request) {
 			from: EMAIL_FROM,
 			to: ["aleexgvieira@gmail.com"],
 			subject: `Askedly Social Network - ${email} - ${subject}`,
-			react: ContactEmail({ name, email, subject, message }),
+			react: ContactEmail({ name, email, subject, message, t: await getTranslations("emails") }),
 		});
 
 		if (error) {
 			await TelegramLog.error(`Error sending email via Resend: ${JSON.stringify(error)}`);
-			return NextResponse.json({ error: "Erro ao enviar email" }, { status: 500 });
+			return NextResponse.json({ error: t("emailSendFailed") }, { status: 500 });
 		}
 
 		await TelegramLog.info(
@@ -63,6 +70,6 @@ export async function POST(request: Request) {
 		return NextResponse.json({ success: true, data });
 	} catch (error: any) {
 		await TelegramLog.error(`Error in contact API: ${error?.message}`);
-		return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+		return NextResponse.json({ error: t("internal") }, { status: 500 });
 	}
 }

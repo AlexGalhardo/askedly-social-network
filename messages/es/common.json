@@ -1,4 +1,60 @@
 {
 	"language": "Idioma",
-	"locales": { "en": "English", "pt": "Português", "es": "Español" }
+	"locales": { "en": "English", "pt": "Português", "es": "Español" },
+	"meta": {
+		"title": "Askedly Social Network - Recibe Preguntas, Monetiza Tus Respuestas.",
+		"description": "Comparte tu conocimiento y tus experiencias con personas interesadas en saber lo que tienes para decir.",
+		"twitterDescription": "Askedly Social Network es una plataforma donde puedes recibir y enviar preguntas a otros perfiles y monetizar tus respuestas.",
+		"keywords": "respondeae.com.br, preguntas, monetización, respuestas, plataforma social, ganar dinero"
+	},
+	"loading": "Cargando...",
+	"loadingProgress": "{progress}% Cargando...",
+	"close": "Cerrar",
+	"tryAgainLater": "Inténtalo de nuevo más tarde.",
+	"anonymousQuestion": "Pregunta Anónima",
+	"notFound": {
+		"metaTitle": "Página No Encontrada - Askedly Social Network",
+		"metaDescription": "Esta página no existe en la plataforma Askedly Social Network",
+		"title": "Página no encontrada",
+		"description": "La página que buscas no existe o fue eliminada.",
+		"redirecting": "Redirigiendo en <count>{seconds}</count> {seconds, plural, one {segundo} other {segundos}}..."
+	},
+	"offline": {
+		"title": "Sistema en Mantenimiento",
+		"metaDescription": "El sistema no está disponible temporalmente por mantenimiento.",
+		"description": "Estamos realizando un mantenimiento en la plataforma. ¡Volveremos pronto!",
+		"status": "Estado: Fuera de línea",
+		"lastUpdate": "Última actualización: {date}"
+	},
+	"footer": {
+		"rights": "© 2024 Askedly Social Network. Todos los derechos reservados."
+	},
+	"questionList": {
+		"empty": "Todavía no hay preguntas. ¡Sé el primero en preguntar!",
+		"title": "Preguntas recientes",
+		"amountPaid": "Monto pagado: {amount}"
+	},
+	"followers": {
+		"tabFollowers": "Tus Seguidores ({count})",
+		"tabRequests": "Solicitudes Para Seguirte ({count})",
+		"empty": "Todavía no tienes seguidores.",
+		"noRequests": "No hay solicitudes de seguimiento.",
+		"remove": "Eliminar Seguidor",
+		"removing": "Eliminando...",
+		"removeError": "No se pudo eliminar al seguidor",
+		"accept": "Aceptar",
+		"accepting": "Aceptando...",
+		"acceptError": "No se pudo aceptar la solicitud",
+		"reject": "Rechazar",
+		"rejecting": "Rechazando...",
+		"rejectError": "No se pudo rechazar la solicitud"
+	},
+	"following": {
+		"header": "Sigues a {count, plural, one {# persona} other {# personas}}",
+		"empty": "Todavía no sigues a nadie.",
+		"emptyHint": "¡Empieza a seguir personas para ver su actividad en tu feed!",
+		"unfollow": "Dejar de Seguir",
+		"unfollowing": "Dejando...",
+		"unfollowError": "No se pudo dejar de seguir"
+	}
 }

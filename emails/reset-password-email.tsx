@@ -1,31 +1,42 @@
 import { Body, Button, Container, Head, Heading, Html, Link, Section, Text } from "@react-email/components";
+import { createTranslator } from "next-intl";
+import type { EmailTranslator } from "@/lib/email";
+import en from "@/messages/en";
 
 interface ResetPasswordEmailProps {
 	name: string;
 	resetLink: string;
+	/** Sem tradutor o email sai no idioma padrão (inglês). */
+	t?: EmailTranslator;
 }
 
-export function ResetPasswordEmail({ name, resetLink }: ResetPasswordEmailProps) {
+export function ResetPasswordEmail({
+	name,
+	resetLink,
+	t = createTranslator({ locale: "en", messages: en, namespace: "emails" }),
+}: ResetPasswordEmailProps) {
 	return (
 		<Html>
 			<Head />
 			<Body style={{ fontFamily: "Arial, sans-serif", margin: 0, padding: 0, backgroundColor: "#f4f4f4" }}>
 				<Container style={{ padding: "20px", maxWidth: "600px" }}>
 					<Section style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "5px" }}>
-						<Heading className="text-[24px] font-bold text-center">Recuperação de Senha</Heading>
-
-						<Text style={{ fontSize: "16px", lineHeight: "1.5", color: "#333333" }}>Olá {name},</Text>
+						<Heading className="text-[24px] font-bold text-center">{t("resetPassword.heading")}</Heading>
 
 						<Text style={{ fontSize: "16px", lineHeight: "1.5", color: "#333333" }}>
-							Recebemos uma solicitação para redefinir a senha da sua conta no Askedly Social Network
+							{t("resetPassword.greeting", { name })}
 						</Text>
 
 						<Text style={{ fontSize: "16px", lineHeight: "1.5", color: "#333333" }}>
-							Se você não solicitou uma redefinição de senha, por favor ignore este email.
+							{t("resetPassword.intro")}
 						</Text>
 
 						<Text style={{ fontSize: "16px", lineHeight: "1.5", color: "#333333" }}>
-							Para redefinir sua senha, clique no botão abaixo:
+							{t("resetPassword.ignore")}
+						</Text>
+
+						<Text style={{ fontSize: "16px", lineHeight: "1.5", color: "#333333" }}>
+							{t("resetPassword.instruction")}
 						</Text>
 
 						<Section style={{ textAlign: "center", margin: "30px 0" }}>
@@ -41,12 +52,12 @@ export function ResetPasswordEmail({ name, resetLink }: ResetPasswordEmailProps)
 									fontSize: "16px",
 								}}
 							>
-								Redefinir Senha
+								{t("resetPassword.button")}
 							</Button>
 						</Section>
 
 						<Text style={{ fontSize: "16px", lineHeight: "1.5", color: "#333333" }}>
-							Ou copie e cole o link abaixo no seu navegador:
+							{t("resetPassword.copyLink")}
 						</Text>
 
 						<Text style={{ fontSize: "14px", lineHeight: "1.5", color: "#4F46E5" }}>
@@ -56,8 +67,7 @@ export function ResetPasswordEmail({ name, resetLink }: ResetPasswordEmailProps)
 						</Text>
 
 						<Text style={{ fontSize: "16px", lineHeight: "1.5", color: "#333333" }}>
-							Este link é válido por 1 hora. Após esse período, você precisará solicitar uma nova
-							redefinição de senha.
+							{t("resetPassword.expiry")}
 						</Text>
 					</Section>
 

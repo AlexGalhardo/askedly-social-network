@@ -1,6 +1,6 @@
 {
   "name": "askedly-social-network",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "private": true,
   "license": "MIT",
   "packageManager": "bun@1.4.2",
@@ -108,6 +108,7 @@
     "typescript": "7.0.2"
   },
   "overrides": {
+    "seroval": "1.6.9",
     "effect": "3.22.2",
     "baseline-browser-mapping": "2.11.26",
     "mysql2": "3.24.4"

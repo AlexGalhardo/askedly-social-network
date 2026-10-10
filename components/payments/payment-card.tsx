@@ -1,9 +1,9 @@
 "use client";
 
 import { LucideIcon } from "lucide-react";
+import { useFormatter } from "next-intl";
 import { ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/utils/payment-utils";
 
 interface PaymentCardProps {
 	title: string;
@@ -32,6 +32,8 @@ export function PaymentCard({
 	warning,
 	warningColor = "text-red-600 dark:text-red-400",
 }: PaymentCardProps) {
+	const format = useFormatter();
+
 	return (
 		<Card className={`${cardBgColor} ${borderColor}`}>
 			<CardContent className="p-6">
@@ -41,7 +43,9 @@ export function PaymentCard({
 							<Icon className="h-6 w-6 text-white dark:text-background" />
 						</div>
 						<div>
-							<p className={`text-3xl font-bold ${titleColor}`}>R$ {formatCurrency(amount)}</p>
+							<p className={`text-3xl font-bold ${titleColor}`}>
+								{format.number(amount / 100, { style: "currency", currency: "BRL" })}
+							</p>
 							<p className="text-sm font-bold text-muted-foreground">{title}</p>
 							<p className="text-sm text-muted-foreground mt-1">{description}</p>
 							{warning && <p className={`text-sm font-bold mt-2 ${warningColor}`}>{warning}</p>}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { acceptFollowRequest, rejectFollowRequest, removeFollower } from "@/actions/follower-actions";
 import { getMyFollowers } from "@/actions/my-account-actions";
@@ -27,22 +28,25 @@ export function useFollowRequests() {
 }
 
 export function useRemoveFollower() {
+	const t = useTranslations("account.follow");
+
 	return useMutation({
 		mutationFn: async ({ followerId, followerName }: { followerId: string; followerName: string }) => {
 			await removeFollower(followerId);
 			return { followerId, followerName };
 		},
 		onError: (error) => {
-			toast.error(error instanceof Error ? error.message : "Erro ao remover seguidor");
+			toast.error(error instanceof Error ? error.message : t("removeError"));
 		},
 		onSuccess: (data) => {
-			toast.success(`${data.followerName} foi removido dos seus seguidores`);
+			toast.success(t("removed", { name: data.followerName }));
 		},
 	});
 }
 
 export function useAcceptFollowRequest() {
 	const queryClient = useQueryClient();
+	const t = useTranslations("account.follow");
 
 	return useMutation({
 		mutationFn: acceptFollowRequest,
@@ -62,10 +66,10 @@ export function useAcceptFollowRequest() {
 			if (context?.previousRequests) {
 				queryClient.setQueryData(["follow-requests"], context.previousRequests);
 			}
-			toast.error(error instanceof Error ? error.message : "Erro ao aceitar seguidor");
+			toast.error(error instanceof Error ? error.message : t("acceptError"));
 		},
 		onSuccess: (data) => {
-			toast.success("Seguidor aceito");
+			toast.success(t("accepted"));
 
 			if (data.senderId && data.receiverId) {
 				queryClient.invalidateQueries({ queryKey: ["profile", data.senderId] });
@@ -82,6 +86,7 @@ export function useAcceptFollowRequest() {
 
 export function useRejectFollowRequest() {
 	const queryClient = useQueryClient();
+	const t = useTranslations("account.follow");
 
 	return useMutation({
 		mutationFn: rejectFollowRequest,
@@ -101,10 +106,10 @@ export function useRejectFollowRequest() {
 			if (context?.previousRequests) {
 				queryClient.setQueryData(["follow-requests"], context.previousRequests);
 			}
-			toast.error(error instanceof Error ? error.message : "Erro ao rejeitar seguidor");
+			toast.error(error instanceof Error ? error.message : t("rejectError"));
 		},
 		onSuccess: (data) => {
-			toast.success("Seguidor rejeitado");
+			toast.success(t("rejected"));
 
 			if (data.senderId && data.receiverId) {
 				queryClient.invalidateQueries({ queryKey: ["profile", data.senderId] });

@@ -8,6 +8,8 @@ docker compose -f infra/docker-compose.demo.yaml up --build
 
 Abra <http://localhost:3000>. Para zerar tudo: `docker compose -f infra/docker-compose.demo.yaml down -v`.
 
+Porta 3000 ocupada? `APP_PORT=3300 docker compose -f infra/docker-compose.demo.yaml up --build` (a porta entra no build, por isso o `--build`).
+
 ## Contas do seed
 
 | Conta | Email | Senha |
@@ -47,6 +49,15 @@ O resto do código é o mesmo de produção: débito de créditos, liquidação,
 3. Abra o perfil de outro usuário e envie uma pergunta, uma vez por PIX (confirma sozinho) e outra com créditos.
 4. Em Pagamentos, saque o saldo PIX do admin (mínimo de R$ 100).
 5. Troque o idioma no seletor da barra lateral.
+
+## Checagem automática
+
+`tests/e2e/demo-check.mjs` percorre a stack no ar com o Chromium do Playwright: idioma por `Accept-Language`, login do admin com captcha, painel, compra simulada de créditos, pergunta paga com créditos (débito conferido), recusas (dono inexistente, saldo insuficiente), PIX simulado e ausência de violação de CSP.
+
+```bash
+docker compose -f infra/docker-compose.demo.yaml exec db   psql -U postgres -d askedly_demo -Atc "select id, nickname from users where not is_admin limit 1"
+node tests/e2e/demo-check.mjs http://localhost:3000 <id> <nickname>
+```
 
 ## Detalhes
 

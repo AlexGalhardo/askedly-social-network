@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
+
 import { useEffect, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
 import { ReportModal } from "@/components/sent-questions/report-modal";
@@ -16,6 +18,7 @@ export default function PerguntasEnviadasPage() {
 	const { data: questions, setData: setQuestions } = useSentQuestions();
 
 	const reportMutation = useReportAnswer();
+	const t = useTranslations("questions");
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const questionsPerPage = 10;
@@ -86,7 +89,7 @@ export default function PerguntasEnviadasPage() {
 	if (questions.length === 0) {
 		return (
 			<div className="p-4 lg:p-6">
-				<div className="text-center py-12 text-gray-500">Você ainda não enviou nenhuma pergunta.</div>
+				<div className="text-center py-12 text-gray-500">{t("sent.none")}</div>
 			</div>
 		);
 	}

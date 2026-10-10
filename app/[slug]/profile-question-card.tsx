@@ -3,6 +3,8 @@
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { useFormatter, useNow, useTranslations } from "next-intl";
+
 import { AskerAvatar, AskerName } from "@/components/question-asker";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +15,6 @@ import { useToast } from "@/hooks/use-toast";
 import { getInitials } from "@/lib/functions";
 import { QuestionInterface } from "@/lib/interfaces";
 import TelegramLog from "@/lib/telegram-logger";
-import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface QuestionCardProps {
 	question: QuestionInterface;
@@ -22,6 +23,10 @@ interface QuestionCardProps {
 export function ProfileQuestionCard({ question }: QuestionCardProps) {
 	const { data: session } = useSession();
 	const { toast } = useToast();
+	const t = useTranslations("questions");
+	const format = useFormatter();
+	const now = useNow();
+
 	const likeMutation = useLikeQuestion();
 	const dislikeMutation = useDislikeQuestion();
 
@@ -48,8 +53,8 @@ export function ProfileQuestionCard({ question }: QuestionCardProps) {
 		} catch (error: any) {
 			TelegramLog.error(`Error profile-question-card.ts handleLike: ${error?.message}`);
 			toast({
-				title: "Erro ao curtir pergunta!",
-				description: "Tente novamente mais tarde",
+				title: t("card.likeError"),
+				description: t("card.tryAgain"),
 				variant: "error",
 			});
 		}
@@ -66,8 +71,8 @@ export function ProfileQuestionCard({ question }: QuestionCardProps) {
 		} catch (error: any) {
 			TelegramLog.error(`Error profile-question-card.ts handleDislike: ${error?.message}`);
 			toast({
-				title: "Erro ao descurtir pergunta!",
-				description: "Tente novamente mais tarde",
+				title: t("card.dislikeError"),
+				description: t("card.tryAgain"),
 				variant: "error",
 			});
 		}
@@ -88,26 +93,25 @@ export function ProfileQuestionCard({ question }: QuestionCardProps) {
 											variant="secondary"
 											className="text-xs w-fit bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
 										>
-											Pagou {formatCurrency(question.amount_paid, question.currency)}
+											{t("card.paid", {
+												amount: format.number(question.amount_paid / 100, {
+													style: "currency",
+													currency: question.currency || "BRL",
+												}),
+											})}
 										</Badge>
 										<span className="hidden sm:inline">•</span>
 									</>
 								)}
-							<span className="text-xs">
-								{formatDate(
-									typeof question.created_at === "string"
-										? question.created_at
-										: question.created_at.toISOString(),
-								)}
-							</span>
+							<span className="text-xs">{format.relativeTime(new Date(question.created_at), now)}</span>
 						</div>
 					</div>
 				</div>
 
 				<div className="mb-4">
 					<h3 className="font-semibold text-base sm:text-lg text-gray-800 dark:text-gray-200 mb-2 leading-relaxed">
-						<span className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Perguntou</span>:{" "}
-						{question.question_text}
+						<span className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">{t("card.asked")}</span>
+						: {question.question_text}
 					</h3>
 				</div>
 
@@ -133,13 +137,9 @@ export function ProfileQuestionCard({ question }: QuestionCardProps) {
 									</Link>
 								</div>
 								<div className="flex flex-col sm:flex-row sm:items-center gap-1 text-xs text-green-600 dark:text-green-400">
-									<span>respondeu</span>
+									<span>{t("card.answered")}</span>
 									<span className="text-gray-500 dark:text-gray-400">
-										{formatDate(
-											typeof question.answered_at === "string"
-												? question.answered_at
-												: question.answered_at.toISOString(),
-										)}
+										{format.relativeTime(new Date(question.answered_at), now)}
 									</span>
 								</div>
 							</div>
