@@ -65,6 +65,13 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Added
 
+- **Internacionalização** com next-intl: inglês (padrão), português e espanhol. O idioma vem do cookie `NEXT_LOCALE` (seletor na barra lateral) ou do navegador; não há idioma na URL. Só a interface é traduzida, não o conteúdo dos usuários. As chaves são checadas pelo `tsc` nos três idiomas.
+- **Painel do admin** em `/admin` (404 para quem não é admin): totais por moeda, receita da plataforma, compras de créditos e saques.
+- **Modo demonstração em Docker** (`infra/docker-compose.demo.yaml`): Postgres, migrations, seed e app, com pagamentos simulados por `PAYMENTS_SIMULATED` (ignorado em produção na Vercel). O seed ganhou dados de pagamento para o admin (`admin@gmail.com`).
+- `infra/stripe-setup.ts`: cria ou atualiza o webhook da Stripe de forma idempotente.
+- Arquivos open source: `LICENSE.md`, `SECURITY.md`, `CONTRIBUTING.md`.
+- markdownlint (`bun run lint:md`), no CI e no lint-staged.
+- Documentação: `docs/payments-stripe.md`, `stripe-setup.md`, `vercel-deploy.md`, `docker.md`, `i18n.md`, `tooling.md`.
 - **Pagamento com créditos via Stripe**, ao lado do PIX. O usuário compra créditos em dólar (Stripe Checkout, `POST /api/stripe/checkout`) e paga perguntas com eles (`POST /api/question/create-with-credits`). O webhook `/api/webhook/stripe` credita a compra de forma idempotente.
 - **Stripe Connect (Accounts v2, conta de recebimento)**: quem recebe perguntas se cadastra pela Stripe em Minha Conta. Ao responder uma pergunta paga com créditos, o valor sem a taxa da plataforma é transferido para a conta conectada; pergunta recusada, expirada ou denunciada devolve os créditos inteiros a quem perguntou. O cron diário refaz liquidações pendentes.
 - `questions.currency` (`BRL` para PIX, `USD` para créditos), `questions.stripe_transfer_id`, `users.credits_cents`, `users.stripe_account_id` e a tabela `stripe_purchases`. `questions.webhook_id` virou opcional.
@@ -83,6 +90,9 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Changed
 
+- **O projeto passou a se chamar Askedly Social Network** (repositório `askedly-social-network`). Domínios, o projeto na Vercel e a conta oficial do seed mantêm os nomes antigos.
+- `PLAN.md` reescrito em quatro fases: ESTRUTURA, ALPHA, BETA e 1.0.0 STABLE.
+- `LICENSE` virou `LICENSE.md`.
 - Dependências atualizadas para as últimas versões estáveis, com versão fixa: Next 16.4.0, TypeScript 7.0.2, Radix UI, React Query 5.104.1, Resend 6.32.1, lucide-react 1.55.0, Biome 2.5.15, Playwright 1.64.0, entre outras. Prisma fica em 7.10.0 (a 8 ainda é release candidate).
 - A sessão do NextAuth carrega só a própria conta. Perguntas, seguidores e bloqueios são buscados por tela (`actions/my-account-actions.ts`); o contador da sidebar virou um `COUNT` no banco.
 - **Prisma 6 → 7.10.0** com driver adapters (`@prisma/adapter-pg`; `@prisma/adapter-libsql` para SQLite local), `prisma.config.ts`, client gerado em `prisma/generated/` e uma única instância compartilhada. Rode `bun run prisma:generate` após instalar. `SQLITE_DATABASE_URL` deixou de existir: use `DATABASE_URL="file:./dev.db"`.

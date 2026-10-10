@@ -7,7 +7,7 @@
 ## Tipos
 
 | Tipo | O que cobre | Onde |
-|---|---|---|
+| --- | --- | --- |
 | Unitário/funcional | funções puras (`lib/utils/*`, `lib/date-time.ts`, `lib/utils.ts`, cálculo de repasse, sanitização de perfil) e o teste de guarda que proíbe `"use server"` em `lib/` | `*.test.ts` ao lado do arquivo testado |
 | Integração | repositórios e services contra um Postgres de teste real (não mockado): usuários, saque (incluindo saque concorrente), criação de pergunta (valor do webhook, limite diário), expiração, autorização do cron, troca de senha (senha atual obrigatória, conta Google definindo a primeira), cadastro validado no servidor, feed sem dado privado nem autor de pergunta anônima | `tests/integration/*.test.ts` |
 | Smoke | a aplicação sobe com `node .../next start` e responde (`/api/health` e `/`) | `tests/smoke/*.test.ts` |
@@ -28,5 +28,7 @@ Localmente, rode o e2e com `NEXTAUTH_URL=http://localhost:3200` (a porta do Play
 No modo `CI=true` o captcha é obrigatório (produção). Rode o build com as chaves de teste da Cloudflare em `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY`/`CLOUDFLARE_TURNSTILE_SECRET` (ver `deployment.md`); `tests/e2e/helpers.ts` espera o token antes de enviar formulários.
 
 **Regra:** nunca rodar `test:integration`/`test:smoke` contra o banco de desenvolvimento com dados reais/seed — sempre um Postgres descartável (`infra/docker-compose.yaml` ou um container efêmero) com migration aplicada do zero.
+
+Os créditos da Stripe são testados em `tests/integration/stripe-credits.test.ts` sem chamar a Stripe: a transferência entra por parâmetro (`SendTransfer`). `i18n/config.test.ts` cobre a escolha de idioma, e o Playwright roda com `locale: "pt-BR"` porque os specs conferem textos em português.
 
 No CI (`.github/workflows/ci.yml` e `e2e.yml`) cada tipo roda num job separado com Postgres em service container — ver [`deployment.md`](deployment.md).

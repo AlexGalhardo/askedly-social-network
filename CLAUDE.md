@@ -1,7 +1,7 @@
 # Askedly Social Network — Guia para Agentes de IA
 
-Rede social de perguntas e respostas (estilo Retrospectiva/NGL) com perguntas pagas via PIX.
-Next.js 16 (App Router) + React 19 + Prisma 7/PostgreSQL + NextAuth + AbacatePay + Resend + UploadThing.
+Rede social global de perguntas e respostas (estilo Retrospectiva/NGL) com perguntas pagas via PIX (BRL) ou com créditos comprados na Stripe (USD), com repasse por Stripe Connect.
+Next.js 16 (App Router) + React 19 + Prisma 7/PostgreSQL + NextAuth + next-intl (en, pt, es) + AbacatePay + Stripe + Resend + UploadThing.
 
 ## Comandos essenciais
 
@@ -9,19 +9,20 @@ Next.js 16 (App Router) + React 19 + Prisma 7/PostgreSQL + NextAuth + AbacatePay
 - `bun install` — instalar dependências
 - `bun run dev` — servidor de desenvolvimento (Turbopack)
 - `bun run build` / `bun run start` — build e servidor de produção
-- `bun run lint` / `bun run format` — Biome (lint e format)
+- `bun run lint` / `bun run format` — Biome (lint e format); `bun run lint:md` — markdownlint
 - `bun run prisma:migrate` / `bun run prisma:studio` / `bun run prisma:db:seed` — banco de dados
 
 ## Setup local
 
 Veja `setups/` para os 6 scripts prontos (Windows/Unix × SQLite/Postgres/Postgres+Docker).
-Infra (Docker/docker-compose) fica em `infra/`.
+Infra (Docker/docker-compose) fica em `infra/`. Aplicação completa com pagamentos simulados e seed: `docker compose -f infra/docker-compose.demo.yaml up --build` (admin: `admin@gmail.com` / `adminBR@123`, painel em `/admin`).
 
 ## Estrutura
 
 - `app/` — rotas App Router (páginas em português: `entrar`, `criar-conta`, `feed`, `minha-conta`, `[slug]` = perfil público) e `app/api/*/route.ts` (API routes)
 - `actions/` — Server Actions
-- `lib/` — auth, integração PIX, repositórios, serviços, utils
+- `lib/` — auth, integrações PIX e Stripe, repositórios, serviços, utils
+- `i18n/` e `messages/` — configuração do next-intl e textos por idioma (`en` é a fonte da verdade)
 - `hooks/` — hooks React Query por domínio
 - `prisma/` — schema, migrations, seed
 - `emails/` — templates React Email
@@ -32,11 +33,17 @@ Infra (Docker/docker-compose) fica em `infra/`.
 - [`docs/database.md`](docs/database.md) — schema Prisma e estratégia SQLite/dev
 - [`docs/auth.md`](docs/auth.md) — NextAuth e sessões
 - [`docs/payments-pix.md`](docs/payments-pix.md) — AbacatePay e webhook PIX
+- [`docs/payments-stripe.md`](docs/payments-stripe.md) — créditos, webhook Stripe e repasse por Connect
+- [`docs/stripe-setup.md`](docs/stripe-setup.md) — configurar a Stripe (manual e com agentes de IA)
+- [`docs/i18n.md`](docs/i18n.md) — idiomas, onde ficam os textos, como traduzir
 - [`docs/email.md`](docs/email.md) — Resend e templates
 - [`docs/uploads.md`](docs/uploads.md) — UploadThing
 - [`docs/telegram-bot.md`](docs/telegram-bot.md) — logger/bot Telegram
 - [`docs/testing.md`](docs/testing.md) — como rodar cada tipo de teste
 - [`docs/deployment.md`](docs/deployment.md) — CI/CD e deploy
+- [`docs/vercel-deploy.md`](docs/vercel-deploy.md) — roteiro de deploy na Vercel (manual e com agentes de IA)
+- [`docs/docker.md`](docs/docker.md) — aplicação completa em Docker com pagamentos simulados e seed
+- [`docs/tooling.md`](docs/tooling.md) — ferramentas, hooks do git e como validar como o CI
 - [`docs/security.md`](docs/security.md) — auditoria OWASP Top 10:2025, riscos aceitos
 
 ## Skills (uso obrigatório)
@@ -56,9 +63,10 @@ Skills de terceiros vendorizadas em `.claude/skills/` (origem/commit em `.claude
 - Conventional Commits obrigatório (validado por commitlint no `commit-msg`)
 - Comentários só para edge cases/decisões não óbvias — nunca comentário redundante
 - TypeScript com tipagem forte; evite `any` não justificado
+- Texto de interface nunca é hardcoded: chave em `messages/en`, `pt` e `es` (o `tsc` falha se faltar em algum). Conteúdo de usuário não é traduzido. Detalhes em [`docs/i18n.md`](docs/i18n.md)
 - Segurança: quem age vem de `getSessionUser()` (`lib/session.ts`), nunca do body; `"use server"` só em `actions/` (em `lib/` vira endpoint público); nenhuma linha inteira de `User` vai para o browser; valores de dinheiro são calculados no servidor; segredo nunca é `NEXT_PUBLIC_*`. Detalhes em [`docs/architecture.md`](docs/architecture.md)
 - Prisma 7: rode `bun run prisma:generate` após `bun install`; use só a instância de `@/prisma/prisma-client`
-- Antes de considerar algo pronto: `bun run lint:ci`, `bunx tsc --noEmit`, `bun run build` e os testes relevantes devem passar (o CI bloqueia em todos)
+- Antes de considerar algo pronto: `bun run lint:ci`, `bun run lint:md`, `bunx tsc --noEmit`, `bun run build` e os testes relevantes devem passar (o CI bloqueia em todos)
 
 <!-- BEGIN:nextjs-agent-rules -->
 
