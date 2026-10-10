@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.15.0] - 2026-10-10
+
+### Added
+
+- English routes, askedly brand and icon, env validation, optional captcha and error pages
+
+### Changed
+
+- Document english routes, env validation and optional captcha
+
 ## [0.14.0] - 2026-10-10
 
 ### Added

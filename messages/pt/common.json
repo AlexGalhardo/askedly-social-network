@@ -1,10 +1,14 @@
 {
 	"language": "Idioma",
-	"locales": { "en": "English", "pt": "Português", "es": "Español" },
+	"locales": {
+		"en": "English",
+		"pt": "Português",
+		"es": "Español"
+	},
 	"meta": {
-		"title": "Askedly Social Network - Receba Perguntas, Monetize Suas Respostas.",
+		"title": "Askedly - Receba Perguntas, Monetize Suas Respostas.",
 		"description": "Compartilhe conhecimento e suas experiências com pessoas interessadas em saber o que você tem a dizer.",
-		"twitterDescription": "Askedly Social Network é uma plataforma onde você pode receber e enviar perguntas para outros perfis, e monetizar suas respostas.",
+		"twitterDescription": "Askedly é uma plataforma onde você pode receber e enviar perguntas para outros perfis, e monetizar suas respostas.",
 		"keywords": "respondeae.com.br, perguntas, monetização, respostas, plataforma social, ganhar dinheiro"
 	},
 	"loading": "Carregando...",
@@ -13,8 +17,8 @@
 	"tryAgainLater": "Tente novamente mais tarde",
 	"anonymousQuestion": "Pergunta Anônima",
 	"notFound": {
-		"metaTitle": "Página Não Encontrada - Askedly Social Network",
-		"metaDescription": "Essa página não existe na plataforma Askedly Social Network",
+		"metaTitle": "Página Não Encontrada - Askedly",
+		"metaDescription": "Essa página não existe na plataforma Askedly",
 		"title": "Página não encontrada",
 		"description": "A página que você está procurando não existe ou foi removida.",
 		"redirecting": "Redirecionando em <count>{seconds}</count> {seconds, plural, one {segundo} other {segundos}}..."
@@ -27,7 +31,7 @@
 		"lastUpdate": "Última atualização: {date}"
 	},
 	"footer": {
-		"rights": "© 2024 Askedly Social Network. Todos os direitos reservados."
+		"rights": "© 2024 Askedly. Todos os direitos reservados."
 	},
 	"questionList": {
 		"empty": "Nenhuma pergunta feita ainda. Seja o primeiro a perguntar!",
@@ -56,5 +60,11 @@
 		"unfollow": "Deixar de Seguir",
 		"unfollowing": "Deixando...",
 		"unfollowError": "Erro ao deixar de seguir"
+	},
+	"errorPage": {
+		"title": "Algo deu errado",
+		"description": "Não foi possível carregar esta página. Seus dados estão seguros. Tente novamente.",
+		"retry": "Tentar novamente",
+		"home": "Voltar ao início"
 	}
 }

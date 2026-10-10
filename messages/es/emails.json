@@ -1,6 +1,6 @@
 {
 	"contact": {
-		"heading": "Formulario de Contacto de Askedly Social Network",
+		"heading": "Formulario de Contacto de Askedly",
 		"name": "Nombre:",
 		"email": "Correo:",
 		"subject": "Asunto:",
@@ -9,7 +9,7 @@
 	"resetPassword": {
 		"heading": "Recuperación de Contraseña",
 		"greeting": "Hola {name},",
-		"intro": "Recibimos una solicitud para restablecer la contraseña de tu cuenta en Askedly Social Network.",
+		"intro": "Recibimos una solicitud para restablecer la contraseña de tu cuenta en Askedly.",
 		"ignore": "Si no solicitaste restablecer tu contraseña, ignora este correo.",
 		"instruction": "Para restablecer tu contraseña, haz clic en el botón de abajo:",
 		"button": "Restablecer Contraseña",

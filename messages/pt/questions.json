@@ -13,7 +13,7 @@
 		"empty": "Nenhuma pergunta encontrada."
 	},
 	"received": {
-		"metaTitle": "Perguntas Recebidas - Askedly Social Network",
+		"metaTitle": "Perguntas Recebidas - Askedly",
 		"metaDescription": "Veja as Perguntas Recebidas que você recebeu e os status delas.",
 		"expired": "Expirado",
 		"timeRemaining": "{hours}h {minutes}m {seconds}s restantes",
@@ -70,7 +70,7 @@
 		}
 	},
 	"sent": {
-		"metaTitle": "Perguntas Enviadas - Askedly Social Network",
+		"metaTitle": "Perguntas Enviadas - Askedly",
 		"metaDescription": "Veja as perguntas que você enviou e os status delas.",
 		"none": "Você ainda não enviou nenhuma pergunta.",
 		"status": {

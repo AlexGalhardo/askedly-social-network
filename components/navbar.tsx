@@ -12,7 +12,7 @@ export function Navbar() {
 					href="/feed"
 					className="text-2xl font-bold bg-gradient-to-r from-green-700 to-green-600 bg-clip-text text-transparent"
 				>
-					Askedly Social Network
+					Askedly
 				</Link>
 
 				<div className="flex items-center gap-4">
@@ -20,7 +20,7 @@ export function Navbar() {
 						className="bg-gradient-to-r from-green-700 to-green-600 hover:from-green-800 hover:to-green-700"
 						asChild
 					>
-						<Link href="/entrar">{t("signInShort")}</Link>
+						<Link href="/login">{t("signInShort")}</Link>
 					</Button>
 				</div>
 			</div>

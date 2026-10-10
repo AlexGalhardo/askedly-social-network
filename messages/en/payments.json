@@ -1,7 +1,7 @@
 {
 	"meta": {
-		"title": "Payments - Askedly Social Network",
-		"description": "See your payments on Askedly Social Network"
+		"title": "Payments - Askedly",
+		"description": "See your payments on Askedly"
 	},
 	"loading": "Loading payment data...",
 	"loadError": "We couldn't load your payment data",

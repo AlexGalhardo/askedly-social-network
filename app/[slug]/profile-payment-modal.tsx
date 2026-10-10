@@ -488,7 +488,7 @@ export function ProfilePaymentModal({
 								t.rich("balance", {
 									amount: format.number((credits ?? 0) / 100, { style: "currency", currency: "USD" }),
 									link: (chunks) => (
-										<Link href="/minha-conta" className="underline">
+										<Link href="/my-account" className="underline">
 											{chunks}
 										</Link>
 									),

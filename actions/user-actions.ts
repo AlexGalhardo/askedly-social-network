@@ -97,7 +97,7 @@ export async function updatePersonalInfo(data: FormData) {
 		});
 
 		updateTag(`user-${session.user.id}`);
-		revalidatePath("/minha-conta");
+		revalidatePath("/my-account");
 
 		return {
 			success: true,
@@ -153,7 +153,7 @@ export async function updateSocialMedia(data: FormData) {
 		});
 
 		updateTag(`user-${session.user.id}`);
-		revalidatePath("/minha-conta");
+		revalidatePath("/my-account");
 
 		return { success: true };
 	} catch (error: any) {
@@ -185,7 +185,7 @@ export async function updatePixKey(data: FormData) {
 		});
 
 		updateTag(`user-${session.user.id}`);
-		revalidatePath("/minha-conta");
+		revalidatePath("/my-account");
 
 		return { success: true };
 	} catch (error: any) {
@@ -273,7 +273,7 @@ export async function updatePrivacySettings(data: FormData) {
 		});
 
 		updateTag(`user-${session.user.id}`);
-		revalidatePath("/minha-conta");
+		revalidatePath("/my-account");
 
 		return { success: true };
 	} catch (error: any) {

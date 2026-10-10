@@ -1,6 +1,6 @@
 {
 	"contact": {
-		"heading": "Formulário de Contato do Askedly Social Network",
+		"heading": "Formulário de Contato do Askedly",
 		"name": "Nome:",
 		"email": "Email:",
 		"subject": "Assunto:",
@@ -9,7 +9,7 @@
 	"resetPassword": {
 		"heading": "Recuperação de Senha",
 		"greeting": "Olá {name},",
-		"intro": "Recebemos uma solicitação para redefinir a senha da sua conta no Askedly Social Network",
+		"intro": "Recebemos uma solicitação para redefinir a senha da sua conta no Askedly",
 		"ignore": "Se você não solicitou uma redefinição de senha, por favor ignore este email.",
 		"instruction": "Para redefinir sua senha, clique no botão abaixo:",
 		"button": "Redefinir Senha",

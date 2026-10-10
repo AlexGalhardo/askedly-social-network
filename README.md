@@ -6,7 +6,7 @@
  <a href="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/ci.yml/badge.svg?branch=main"></a>
  <a href="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/e2e.yml"><img alt="E2E" src="https://github.com/AlexGalhardo/askedly-social-network/actions/workflows/e2e.yml/badge.svg?branch=main"></a>
  <a href="LICENSE.md"><img alt="Licença MIT" src="https://img.shields.io/badge/licen%C3%A7a-MIT-blue.svg"></a>
- <a href="CHANGELOG.md"><img alt="Versão" src="https://img.shields.io/badge/vers%C3%A3o-0.14.0-green.svg"></a>
+ <a href="CHANGELOG.md"><img alt="Versão" src="https://img.shields.io/badge/vers%C3%A3o-0.15.0-green.svg"></a>
 </p>
 
 ## Sobre
@@ -95,7 +95,7 @@ A pasta [`docs/`](docs) explica o projeto por área (também é o contexto que o
 
 ## Contribuindo
 
-Leia [`CONTRIBUTING.md`](CONTRIBUTING.md). Falhas de segurança: [`SECURITY.md`](SECURITY.md), nunca em issue pública.
+Leia [`CONTRIBUTE.md`](CONTRIBUTE.md). Falhas de segurança: [`SECURITY.md`](SECURITY.md), nunca em issue pública.
 
 Commits seguem [Conventional Commits](https://www.conventionalcommits.org/pt-br) (validado pelo commitlint) e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/). Antes de abrir um PR, `bun run lint:ci`, `bunx tsc --noEmit`, `bun run build` e os testes precisam passar: o CI bloqueia em todos. Mudanças relevantes entram no [`CHANGELOG.md`](CHANGELOG.md).
 

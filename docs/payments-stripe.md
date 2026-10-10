@@ -6,7 +6,7 @@ Segundo meio de pagamento, ao lado do PIX ([`payments-pix.md`](payments-pix.md))
 | --- | --- | --- |
 | Moeda (`questions.currency`) | `BRL` | `USD` |
 | Quem pergunta paga | um PIX por pergunta | com créditos comprados antes por cartão |
-| Quem responde recebe | saldo sacado para a chave PIX, em `/pagamentos` | transferência Stripe para a conta conectada, ao responder |
+| Quem responde recebe | saldo sacado para a chave PIX, em `/payments` | transferência Stripe para a conta conectada, ao responder |
 | Recusada, expirada ou denunciada | reembolso sacável por quem perguntou | créditos inteiros de volta a quem perguntou |
 | Taxa da plataforma | `calculatePayout` (`lib/services/withdraw.service.ts`) | a mesma função |
 

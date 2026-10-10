@@ -72,7 +72,7 @@ export function ResetPasswordEmail({
 					</Section>
 
 					<Text style={{ fontSize: "12px", color: "#666666", textAlign: "center", marginTop: "20px" }}>
-						© 2025 Askedly Social Network
+						© 2025 Askedly
 					</Text>
 				</Container>
 			</Body>

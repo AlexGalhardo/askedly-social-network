@@ -1,15 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildContentSecurityPolicy } from "@/lib/csp";
 
-const redirectMap: Record<string, string> = {
-	"/teste": "/",
+// Rotas antigas em português: links e buscadores antigos continuam funcionando.
+const legacyRoutes: Record<string, string> = {
+	entrar: "login",
+	"criar-conta": "signup",
+	"esqueci-senha": "forgot-password",
+	"alterar-senha": "change-password",
+	"minha-conta": "my-account",
+	pagamentos: "payments",
+	"perguntas-enviadas": "sent-questions",
+	"perguntas-recebidas": "received-questions",
+	"politica-de-privacidade": "privacy-policy",
+	"termos-de-uso": "terms-of-use",
+	seguidores: "followers",
+	seguindo: "following",
+	sobre: "about",
+	contato: "contact",
+	"top-curtidas": "top-liked",
+	teste: "",
 };
 
 export default function proxy(request: NextRequest) {
-	const { pathname } = request.nextUrl;
+	const [, first, ...rest] = request.nextUrl.pathname.split("/");
 
-	const redirectTo = redirectMap[pathname.replace(/^\/+/, "")];
-	if (redirectTo) return NextResponse.redirect(new URL(`/${redirectTo}`, request.url), 301);
+	if (Object.hasOwn(legacyRoutes, first)) {
+		const url = request.nextUrl.clone();
+		url.pathname = `/${[legacyRoutes[first], ...rest].filter(Boolean).join("/")}`;
+		return NextResponse.redirect(url, 301);
+	}
 
 	// Nonce novo a cada requisição. O Next lê o CSP do header da requisição e aplica o nonce nos próprios scripts;
 	// o layout repassa `x-nonce` para os scripts inline (tema, analytics).

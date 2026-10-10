@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 	const t = await getTranslations("profile");
 	const locale = await getLocale();
 
-	const title = `@${nickname} - Askedly Social Network`;
+	const title = `@${nickname} - Askedly`;
 	const description = t("meta.description", { nickname });
 
 	return {
@@ -18,13 +18,13 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 			title,
 			description,
 			url: `https://respondeae.com.br/${nickname}`,
-			siteName: "Askedly Social Network",
+			siteName: "Askedly",
 			images: [
 				{
 					url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
 					width: 1200,
 					height: 630,
-					alt: "Askedly Social Network",
+					alt: "Askedly",
 				},
 			],
 			locale: { en: "en_US", pt: "pt_BR", es: "es_ES" }[locale],

@@ -1,7 +1,7 @@
 {
 	"meta": {
-		"title": "Pagamentos - Askedly Social Network",
-		"description": "Veja os seus pagamentos da plataforma Askedly Social Network"
+		"title": "Pagamentos - Askedly",
+		"description": "Veja os seus pagamentos da plataforma Askedly"
 	},
 	"loading": "Carregando dados de pagamento...",
 	"loadError": "Erro ao carregar dados de pagamento",

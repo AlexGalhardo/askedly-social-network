@@ -20,7 +20,7 @@ ENV NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_
 ENV NEXT_PUBLIC_TEST_MODE=$NEXT_PUBLIC_TEST_MODE
 RUN bun run prisma:generate
 # O build só exige que a variável exista (nenhuma página consulta o banco no build); o valor real vem em runtime.
-RUN DATABASE_URL=postgresql://build:build@localhost:5432/build bun run build
+RUN DATABASE_URL=postgresql://build:build@localhost:5432/build SKIP_ENV_VALIDATION=true bun run build
 
 FROM base AS runner
 ENV NODE_ENV=production

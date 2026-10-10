@@ -13,7 +13,7 @@
 		"empty": "No questions found."
 	},
 	"received": {
-		"metaTitle": "Questions Received - Askedly Social Network",
+		"metaTitle": "Questions Received - Askedly",
 		"metaDescription": "See the questions you've received and the status of each one.",
 		"expired": "Expired",
 		"timeRemaining": "{hours}h {minutes}m {seconds}s left",
@@ -70,7 +70,7 @@
 		}
 	},
 	"sent": {
-		"metaTitle": "Questions Sent - Askedly Social Network",
+		"metaTitle": "Questions Sent - Askedly",
 		"metaDescription": "See the questions you've sent and the status of each one.",
 		"none": "You haven't sent any questions yet.",
 		"status": {

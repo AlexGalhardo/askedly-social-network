@@ -20,7 +20,7 @@ for (const [locale, lang] of [
 	["pt-BR", "pt"],
 	["es-MX", "es"],
 ]) {
-	const html = await (await fetch(`${base}/entrar`, { headers: { "accept-language": locale } })).text();
+	const html = await (await fetch(`${base}/login`, { headers: { "accept-language": locale } })).text();
 	check(`html lang for ${locale}`, html.includes(`<html lang="${lang}"`), html.match(/<title>([^<]*)/)?.[1]);
 }
 check("health", (await fetch(`${base}/api/health`)).status === 200);
@@ -50,12 +50,12 @@ const api = async (path, body) =>
 	);
 
 try {
-	await page.goto(`${base}/entrar`);
+	await page.goto(`${base}/login`);
 	await page.fill("#email", "admin@gmail.com");
 	await page.fill("#password", "adminBR@123");
 	await page.waitForFunction(() => Boolean(window.turnstile?.getResponse()), null, { timeout: 20_000 });
 	await page.click('button[type="submit"]');
-	await page.waitForURL((url) => !url.pathname.startsWith("/entrar"), { timeout: 20_000 });
+	await page.waitForURL((url) => !url.pathname.startsWith("/login"), { timeout: 20_000 });
 	check("admin login", true);
 
 	await page.goto(`${base}/admin`);

@@ -6,7 +6,7 @@ test("changing the password requires the current password and ends every session
 	const nickname = `p_${unique}`;
 
 	await useUniqueClientIp(page);
-	await page.goto("/criar-conta");
+	await page.goto("/signup");
 	await page.locator("#name").fill("E2E Password User");
 	await page.locator("#nickname").fill(nickname);
 	await page.locator("#email").fill(`pw-${unique}@example.com`);
@@ -14,7 +14,7 @@ test("changing the password requires the current password and ends every session
 	await page.locator("#terms").click();
 	await waitForCaptcha(page);
 	await page.getByRole("button", { name: /criar conta gratuitamente/i }).click();
-	await page.waitForURL(/\/minha-conta/, { timeout: 15_000 });
+	await page.waitForURL(/\/my-account/, { timeout: 15_000 });
 
 	const submit = page.getByRole("button", { name: /atualizar senha/i });
 
@@ -32,12 +32,12 @@ test("changing the password requires the current password and ends every session
 
 	await page.locator("#current-password").fill("Old!Pass123");
 	await submit.click();
-	await page.waitForURL(/\/entrar\?senha-alterada=1/, { timeout: 15_000 });
+	await page.waitForURL(/\/login\?senha-alterada=1/, { timeout: 15_000 });
 	await expect(page.getByText(/todas as sessões foram encerradas/)).toBeVisible();
 
 	// O token do outro aparelho foi emitido antes da troca: deixou de valer.
-	await otherDevice.goto("/minha-conta");
-	await otherDevice.waitForURL(/\/entrar/, { timeout: 15_000 });
+	await otherDevice.goto("/my-account");
+	await otherDevice.waitForURL(/\/login/, { timeout: 15_000 });
 	await otherDevice.close();
 
 	await logIn(page, `pw-${unique}@example.com`, "New!Pass456");
@@ -45,7 +45,7 @@ test("changing the password requires the current password and ends every session
 });
 
 async function logIn(target: Page, email: string, password: string): Promise<void> {
-	await target.goto("/entrar");
+	await target.goto("/login");
 	await target.locator("#email").fill(email);
 	await target.locator("#password").fill(password);
 	await waitForCaptcha(target);

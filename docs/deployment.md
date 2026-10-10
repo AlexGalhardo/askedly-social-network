@@ -14,6 +14,8 @@ Projeto `respondeae` no time "Fitness Projects", ligado ao repositório pela **i
 
 ### Variáveis de ambiente (dashboard da Vercel)
 
+`lib/env.ts` valida as variáveis com Zod toda vez que o `next.config.ts` carrega (build e start). **Essenciais** (`DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `NEXT_PUBLIC_APP_URL`): faltando ou inválidas, o build falha e o deploy não sai. **Opcionais** (PIX, Stripe, captcha, Google, emails, upload, Telegram, cron): faltando, o recurso fica desligado e o build só avisa com `[env] ...`; um recurso com metade das variáveis também é avisado. `SKIP_ENV_VALIDATION=true` pula a checagem e existe só para o build da imagem Docker.
+
 `.env.example` é a referência. Além das que o projeto já tem, produção precisa de:
 
 - `CRON_SECRET` — sem ela o cron diário recebe 401 e nada é limpo;
@@ -58,4 +60,4 @@ bun run build
 bun run start   # valida o build de produção localmente
 ```
 
-O build faz queries reais ao Prisma em páginas estáticas (ex: `/top-curtidas`) — `DATABASE_URL` precisa apontar para um Postgres acessível mesmo em build time, não só em runtime.
+O build faz queries reais ao Prisma em páginas estáticas (ex: `/top-liked`) — `DATABASE_URL` precisa apontar para um Postgres acessível mesmo em build time, não só em runtime.
