@@ -45,6 +45,7 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- **Tokens de cor do tema não geravam CSS**: o Tailwind 4 ignorava `tailwind.config.ts`, então `bg-background`, `bg-primary`, `border-input`, `prose` etc. não existiam (botões e diálogos sem fundo, bordas na cor do texto). Os tokens foram para um bloco `@theme` em `app/globals.css`, o plugin de tipografia entrou por `@plugin`, e o `tailwind.config.ts` foi removido.
 - Seletor de idioma ilegível no tema escuro (fundo branco com letra branca).
 - Borda e sombra dos cartões em `/login`, `/signup`, `/privacy-policy` e `/terms-of-use`.
 - Os redirecionamentos de `proxy.ts` nunca casavam (a chave tinha barra, a busca não).
@@ -95,6 +96,7 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Changed
 
+- **Base UI no lugar de shadcn/ui + Radix**: `components/ui/*` agora usa `@base-ui/react` 1.9.0. `asChild` virou `render` (`<Button render={<Link href="/" />}>`), os seletores `data-[state=...]` viraram `data-[checked]`/`data-[active]`, e `@radix-ui/*`, `tailwindcss-animate` e `components.json` saíram.
 - **Rotas em inglês** (`/login`, `/signup`, `/my-account`, `/payments`, `/terms-of-use` etc.). As antigas em português redirecionam com 301. Nicknames iguais a uma rota passam a ser recusados no cadastro.
 - O título do site é só **Askedly**, com ícone próprio (balão de pergunta) na barra lateral e como favicon.
 - **Captcha opcional**: o Turnstile só liga com a site key e o secret configurados; sem eles o widget some e o servidor não exige token.

@@ -30,7 +30,7 @@ No Askedly Social Network cada pessoa tem um perfil público onde recebe pergunt
 | Auth | [NextAuth](https://next-auth.js.org) 4 (credenciais + Google) e [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) |
 | Pagamentos | [AbacatePay](https://abacatepay.com) (PIX) e [Stripe](https://stripe.com) (créditos + Connect) |
 | Email e uploads | [Resend](https://resend.com) + React Email, [UploadThing](https://uploadthing.com) |
-| UI | Tailwind CSS 4, shadcn/ui, TanStack Query 5 |
+| UI | Tailwind CSS 4, Base UI, TanStack Query 5 |
 | Qualidade | Bun 1.4 (package manager e test runner), Biome, markdownlint, Playwright, Husky + commitlint |
 | Deploy | [Vercel](https://vercel.com) via GitHub Actions |
 

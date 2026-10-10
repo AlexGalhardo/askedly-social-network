@@ -197,19 +197,19 @@ export default function ProfileClient() {
 							<TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-neutral-800 rounded-lg p-1 h-auto">
 								<TabsTrigger
 									value="answered"
-									className="text-xs sm:text-sm py-2.5 px-1 rounded-md text-center font-medium whitespace-nowrap data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-700 transition-all"
+									className="text-xs sm:text-sm py-2.5 px-1 rounded-md text-center font-medium whitespace-nowrap data-[active]:bg-white dark:data-[active]:bg-neutral-700 transition-all"
 								>
 									{t("list.tabs.latest")}
 								</TabsTrigger>
 								<TabsTrigger
 									value="liked"
-									className="text-xs sm:text-sm py-2.5 px-1 rounded-md text-center font-medium whitespace-nowrap data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-700 transition-all"
+									className="text-xs sm:text-sm py-2.5 px-1 rounded-md text-center font-medium whitespace-nowrap data-[active]:bg-white dark:data-[active]:bg-neutral-700 transition-all"
 								>
 									{t("list.tabs.topLiked")}
 								</TabsTrigger>
 								<TabsTrigger
 									value="top"
-									className="text-xs sm:text-sm py-2.5 px-1 rounded-md text-center font-medium whitespace-nowrap data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-700 transition-all"
+									className="text-xs sm:text-sm py-2.5 px-1 rounded-md text-center font-medium whitespace-nowrap data-[active]:bg-white dark:data-[active]:bg-neutral-700 transition-all"
 								>
 									{t("list.tabs.topPaid")}
 								</TabsTrigger>

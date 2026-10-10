@@ -20,8 +20,8 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
 			<p className="max-w-md text-muted-foreground">{t("description")}</p>
 			<div className="flex gap-2">
 				<Button onClick={reset}>{t("retry")}</Button>
-				<Button variant="outline" asChild>
-					<Link href="/">{t("home")}</Link>
+				<Button variant="outline" render={<Link href="/" />}>
+					{t("home")}
 				</Button>
 			</div>
 		</div>

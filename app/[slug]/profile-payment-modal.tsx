@@ -439,7 +439,7 @@ export function ProfilePaymentModal({
 									<Switch
 										checked={isAnonymousNewQuestion}
 										onCheckedChange={setIsAnonymousNewQuestion}
-										className="data-[state=checked]:bg-green-500 dark:data-[state=checked]:bg-green-400"
+										className="data-[checked]:bg-green-500 dark:data-[checked]:bg-green-400"
 									/>
 								</>
 							)}
@@ -453,7 +453,7 @@ export function ProfilePaymentModal({
 							<Switch
 								checked={isPrivateAnswer}
 								onCheckedChange={setIsPrivateAnswer}
-								className="data-[state=checked]:bg-blue-500 dark:data-[state=checked]:bg-blue-400"
+								className="data-[checked]:bg-blue-500 dark:data-[checked]:bg-blue-400"
 							/>
 						</div>
 
@@ -465,7 +465,7 @@ export function ProfilePaymentModal({
 							<Switch
 								checked={questionAmountPaidIsPrivate}
 								onCheckedChange={setQuestionAmountPaidIsPrivate}
-								className="data-[state=checked]:bg-purple-500 dark:data-[state=checked]:bg-purple-400"
+								className="data-[checked]:bg-purple-500 dark:data-[checked]:bg-purple-400"
 							/>
 						</div>
 

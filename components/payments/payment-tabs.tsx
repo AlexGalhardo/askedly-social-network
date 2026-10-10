@@ -48,13 +48,13 @@ export function PaymentTabs({
 			<TabsList className="flex flex-wrap justify-between gap-2 w-full bg-gray-100 dark:bg-neutral-800 rounded-lg p-1">
 				<TabsTrigger
 					value="respondidas"
-					className="flex-1 text-xs sm:text-sm py-2 px-2 rounded-md text-center font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=inactive]:opacity-70 dark:data-[state=active]:bg-white dark:data-[state=active]:text-black dark:data-[state=inactive]:bg-neutral-700 dark:data-[state=inactive]:text-neutral-300"
+					className="flex-1 text-xs sm:text-sm py-2 px-2 rounded-md text-center font-medium transition-all duration-200 data-[active]:bg-white data-[active]:shadow-sm not-data-[active]:opacity-70 dark:data-[active]:bg-white dark:data-[active]:text-black dark:not-data-[active]:bg-neutral-700 dark:not-data-[active]:text-neutral-300"
 				>
 					{t("tabs.answered")}
 				</TabsTrigger>
 				<TabsTrigger
 					value="enviadas"
-					className="flex-1 text-xs sm:text-sm py-2 px-2 rounded-md text-center font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=inactive]:opacity-70 dark:data-[state=active]:bg-white dark:data-[state=active]:text-black dark:data-[state=inactive]:bg-neutral-700 dark:data-[state=inactive]:text-neutral-300"
+					className="flex-1 text-xs sm:text-sm py-2 px-2 rounded-md text-center font-medium transition-all duration-200 data-[active]:bg-white data-[active]:shadow-sm not-data-[active]:opacity-70 dark:data-[active]:bg-white dark:data-[active]:text-black dark:not-data-[active]:bg-neutral-700 dark:not-data-[active]:text-neutral-300"
 				>
 					{t("tabs.sent")}
 				</TabsTrigger>

@@ -84,7 +84,7 @@ export function QuestionsTabs({
 			<div className="w-full overflow-x-auto">
 				<TabsList className="w-full min-w-max flex h-auto p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
 					<TabsTrigger
-						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
+						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[active]:bg-white dark:data-[active]:bg-gray-700"
 						value="pending"
 					>
 						<span className="truncate">
@@ -92,7 +92,7 @@ export function QuestionsTabs({
 						</span>
 					</TabsTrigger>
 					<TabsTrigger
-						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
+						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[active]:bg-white dark:data-[active]:bg-gray-700"
 						value="answered"
 					>
 						<span className="truncate">
@@ -100,7 +100,7 @@ export function QuestionsTabs({
 						</span>
 					</TabsTrigger>
 					<TabsTrigger
-						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
+						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[active]:bg-white dark:data-[active]:bg-gray-700"
 						value="declined"
 					>
 						<span className="truncate">
@@ -108,7 +108,7 @@ export function QuestionsTabs({
 						</span>
 					</TabsTrigger>
 					<TabsTrigger
-						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
+						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[active]:bg-white dark:data-[active]:bg-gray-700"
 						value="expired"
 					>
 						<span className="truncate">
@@ -116,7 +116,7 @@ export function QuestionsTabs({
 						</span>
 					</TabsTrigger>
 					<TabsTrigger
-						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
+						className="flex-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 min-w-0 data-[active]:bg-white dark:data-[active]:bg-gray-700"
 						value="reported"
 					>
 						<span className="truncate">

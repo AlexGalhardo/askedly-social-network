@@ -31,20 +31,20 @@ export function FollowersTabs({
 				<TabsTrigger
 					value="followers"
 					className="flex-1 text-[0.7rem] sm:text-xs py-2 px-2 rounded-md text-center font-medium transition-all duration-200
-          data-[state=active]:bg-white data-[state=active]:shadow-sm
-          data-[state=inactive]:opacity-70
-          dark:data-[state=active]:bg-white dark:data-[state=active]:text-black
-          dark:data-[state=inactive]:bg-neutral-700 dark:data-[state=inactive]:text-neutral-300"
+          data-[active]:bg-white data-[active]:shadow-sm
+          not-data-[active]:opacity-70
+          dark:data-[active]:bg-white dark:data-[active]:text-black
+          dark:not-data-[active]:bg-neutral-700 dark:not-data-[active]:text-neutral-300"
 				>
 					{t("tabFollowers", { count: followers.length })}
 				</TabsTrigger>
 				<TabsTrigger
 					value="requests"
 					className="flex-1 text-[0.7rem] sm:text-xs py-2 px-2 rounded-md text-center font-medium transition-all duration-200
-          data-[state=active]:bg-white data-[state=active]:shadow-sm
-          data-[state=inactive]:opacity-70
-          dark:data-[state=active]:bg-white dark:data-[state=active]:text-black
-          dark:data-[state=inactive]:bg-neutral-700 dark:data-[state=inactive]:text-neutral-300"
+          data-[active]:bg-white data-[active]:shadow-sm
+          not-data-[active]:opacity-70
+          dark:data-[active]:bg-white dark:data-[active]:text-black
+          dark:not-data-[active]:bg-neutral-700 dark:not-data-[active]:text-neutral-300"
 				>
 					{t("tabRequests", { count: followRequests.length })}
 				</TabsTrigger>

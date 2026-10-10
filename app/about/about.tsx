@@ -114,8 +114,11 @@ export default function SobreClient() {
 							<h3 className="text-2xl font-bold text-foreground mb-4">{t("ctaTitle")}</h3>
 							<p className="text-muted-foreground mb-6">{t("ctaBody")}</p>
 							<div className="flex flex-col sm:flex-row gap-4 justify-center">
-								<Button asChild className="bg-green-600 hover:bg-green-700 text-white">
-									<Link href="/signup">{t("ctaButton")}</Link>
+								<Button
+									render={<Link href="/signup" />}
+									className="bg-green-600 hover:bg-green-700 text-white"
+								>
+									{t("ctaButton")}
 								</Button>
 							</div>
 						</CardContent>

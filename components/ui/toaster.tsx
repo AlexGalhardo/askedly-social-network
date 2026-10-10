@@ -1,24 +1,39 @@
 "use client";
 
-import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from "@/components/ui/toast";
-import { useToast } from "@/hooks/use-toast";
+import { Toast as ToastPrimitive } from "@base-ui/react/toast";
+import type * as React from "react";
+import {
+	Toast,
+	ToastClose,
+	type ToastData,
+	ToastDescription,
+	ToastProvider,
+	ToastTitle,
+	ToastViewport,
+} from "@/components/ui/toast";
+import { toastManager } from "@/hooks/use-toast";
 
-export function Toaster() {
-	const { toasts } = useToast();
+function ToastList(): React.ReactNode {
+	const { toasts } = ToastPrimitive.useToastManager<ToastData>();
 
+	return toasts.map((toast) => (
+		<Toast key={toast.id} toast={toast} variant={toast.data?.variant} className={toast.data?.className}>
+			<div className="grid gap-1">
+				<ToastTitle />
+				<ToastDescription />
+			</div>
+			{toast.data?.action}
+			<ToastClose />
+		</Toast>
+	));
+}
+
+export function Toaster(): React.ReactElement {
 	return (
-		<ToastProvider>
-			{toasts.map(({ id, title, description, action, ...props }) => (
-				<Toast key={id} {...props}>
-					<div className="grid gap-1">
-						{title && <ToastTitle>{title}</ToastTitle>}
-						{description && <ToastDescription>{description}</ToastDescription>}
-					</div>
-					{action}
-					<ToastClose />
-				</Toast>
-			))}
-			<ToastViewport />
+		<ToastProvider toastManager={toastManager}>
+			<ToastViewport>
+				<ToastList />
+			</ToastViewport>
 		</ToastProvider>
 	);
 }
