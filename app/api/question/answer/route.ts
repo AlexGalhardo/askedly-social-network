@@ -19,12 +19,12 @@ export async function POST(request: NextRequest) {
 		const { questionId, answerText } = body;
 
 		if (!questionId) {
-			await TelegramLog.error("Question Answer: ❌ ID da pergunta é obrigatório.");
+			await TelegramLog.error("Question Answer: ❌ Question ID is required.");
 			return NextResponse.json({ error: t("questionIdRequired") }, { status: 400 });
 		}
 
 		if (!answerText || answerText.trim().length < 32 || answerText.trim().length > 512) {
-			await TelegramLog.error("Question Answer: ❌ Texto da resposta inválido.");
+			await TelegramLog.error("Question Answer: ❌ Invalid answer text.");
 			return NextResponse.json({ error: t("answerLength") }, { status: 400 });
 		}
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 		});
 
 		if (!answeringUser) {
-			await TelegramLog.error(`Question Answer: ❌ Usuário com nickname '${nickname}' não encontrado.`);
+			await TelegramLog.error(`Question Answer: ❌ User with nickname '${nickname}' not found.`);
 			return NextResponse.json({ error: t("answererNotFound") }, { status: 404 });
 		}
 
@@ -51,31 +51,31 @@ export async function POST(request: NextRequest) {
 		});
 
 		if (!questionToAnswer) {
-			await TelegramLog.error(`Question Answer: ❌ Pergunta com ID ${questionId} não encontrada.`);
+			await TelegramLog.error(`Question Answer: ❌ Question with ID ${questionId} not found.`);
 			return NextResponse.json({ error: t("questionNotFound") }, { status: 404 });
 		}
 
 		if (questionToAnswer.owner.nickname !== nickname) {
 			await TelegramLog.warning(
-				`Question Answer: ❌ Usuário @${nickname} não autorizado a responder a pergunta ${questionId}.`,
+				`Question Answer: ❌ User @${nickname} is not authorized to answer question ${questionId}.`,
 			);
 			return NextResponse.json({ error: t("answerForbidden") }, { status: 403 });
 		}
 
 		if (questionToAnswer.question_answered) {
-			await TelegramLog.warning(`Question Answer: ❌ Pergunta ${questionId} já foi respondida.`);
+			await TelegramLog.warning(`Question Answer: ❌ Question ${questionId} has already been answered.`);
 			return NextResponse.json({ error: t("alreadyAnswered") }, { status: 400 });
 		}
 
 		if (questionToAnswer.question_answer_was_recused) {
 			await TelegramLog.warning(
-				`Question Answer: ❌ Pergunta ${questionId} foi recusada e não pode ser respondida.`,
+				`Question Answer: ❌ Question ${questionId} was declined and cannot be answered.`,
 			);
 			return NextResponse.json({ error: t("declinedCannotAnswer") }, { status: 400 });
 		}
 
 		if (questionToAnswer.question_answer_was_expired) {
-			await TelegramLog.warning(`Question Answer: ❌ Pergunta ${questionId} expirou e não pode ser respondida.`);
+			await TelegramLog.warning(`Question Answer: ❌ Question ${questionId} expired and cannot be answered.`);
 			return NextResponse.json({ error: t("expiredCannotAnswer") }, { status: 400 });
 		}
 
@@ -92,12 +92,12 @@ export async function POST(request: NextRequest) {
 
 		await settleCreditQuestion(questionId);
 
-		TelegramLog.info(`PERGUNTA RESPONDIDA:
-        ID da Pergunta: ${updatedQuestion.id}
-        Dono da Pergunta: @${questionToAnswer.owner.nickname}
-        Respondida por (Nickname do Usuário): @${nickname}
-        Texto da Pergunta: ${updatedQuestion.question_text}
-        Texto da Resposta: ${updatedQuestion.answer_text}
+		TelegramLog.info(`QUESTION ANSWERED:
+        Question ID: ${updatedQuestion.id}
+        Question Owner: @${questionToAnswer.owner.nickname}
+        Answered by (User Nickname): @${nickname}
+        Question Text: ${updatedQuestion.question_text}
+        Answer Text: ${updatedQuestion.answer_text}
         `);
 
 		return NextResponse.json(

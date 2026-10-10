@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FollowerUserInterface } from "@/types/FollowerUserInterface";
+import { FollowerUserInterface } from "@/lib/interfaces";
 import { FollowerCard } from "./follower-card";
 
 interface FollowersListProps {

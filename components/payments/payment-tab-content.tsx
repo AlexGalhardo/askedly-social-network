@@ -2,8 +2,8 @@
 
 import { Clock, DollarSign } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
+import { PaymentData } from "@/lib/interfaces";
 import { canWithdraw, MIN_WITHDRAW_CENTS } from "@/lib/utils/payment-utils";
-import { PaymentData } from "@/types/PaymentInterface";
 import { PaymentCard } from "./payment-card";
 import { TransactionHistory } from "./payment-transaction-history";
 import { WithdrawButton } from "./payment-withdraw-button";

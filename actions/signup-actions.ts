@@ -17,12 +17,12 @@ export async function signUp(input: unknown, captchaToken?: string): Promise<Sig
 		return { ok: false, fieldErrors: {}, error: te("rateLimited", { minutes }) };
 	}
 
-	// Captcha só é exigido em produção, como no login (app/login).
+	// Captcha is only required in production, as in login (app/login).
 	const captcha = process.env.NODE_ENV === "production" ? { captchaToken, verifyCaptcha: isCaptchaValid } : undefined;
 	const result = await signUpUser(input, captcha);
 	if (result.ok) return result;
 
-	// Só `nicknameTaken` interpola, e ele só existe depois de o schema validar o nickname como string.
+	// Only `nicknameTaken` interpolates, and it only exists after the schema has validated the nickname as a string.
 	const nickname = String((input as { nickname?: unknown } | null)?.nickname ?? "");
 	return {
 		ok: false,

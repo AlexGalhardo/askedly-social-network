@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
-import { FollowingUserInterface } from "@/types/FollowingUserInterface";
+import { FollowingUserInterface } from "@/lib/interfaces";
 import { FollowingUserCard } from "./following-user-card";
 
 interface FollowingListProps {

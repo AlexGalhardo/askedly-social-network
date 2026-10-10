@@ -26,7 +26,7 @@ describe("smoke: production server boots and responds", () => {
 		// Spawn the `next` binary directly (not `bun run start`) so kill() below
 		// terminates the actual server process instead of leaking it past a
 		// wrapper script that doesn't forward signals to its child.
-		// Node, como na Vercel: sob o runtime do Bun os módulos externalizados pelo Next (Prisma, pg) não resolvem.
+		// Node, as on Vercel: under the Bun runtime the modules externalized by Next (Prisma, pg) do not resolve.
 		server = Bun.spawn(["node", "node_modules/next/dist/bin/next", "start", "-p", PORT], {
 			stdout: "pipe",
 			stderr: "pipe",

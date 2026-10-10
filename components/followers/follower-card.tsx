@@ -10,8 +10,8 @@ import { useRemoveFollower } from "@/hooks/use-follower";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "@/hooks/use-toast";
 import { getInitials } from "@/lib/functions";
+import { FollowerUserInterface } from "@/lib/interfaces";
 import TelegramLog from "@/lib/telegram-logger";
-import { FollowerUserInterface } from "@/types/FollowerUserInterface";
 
 interface FollowerCardProps {
 	follower: FollowerUserInterface;

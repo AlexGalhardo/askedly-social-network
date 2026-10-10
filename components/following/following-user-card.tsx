@@ -9,8 +9,8 @@ import { useUnfollowUser } from "@/hooks/use-following";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "@/hooks/use-toast";
 import { getInitials } from "@/lib/functions";
+import { FollowingUserInterface } from "@/lib/interfaces";
 import TelegramLog from "@/lib/telegram-logger";
-import { FollowingUserInterface } from "@/types/FollowingUserInterface";
 
 interface UserCardProps {
 	user: FollowingUserInterface;

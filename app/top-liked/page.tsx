@@ -7,7 +7,7 @@ import {
 	getTopLikedAnswersThisYear,
 	getTopLikedAnswersToday,
 } from "@/lib/repositories/questions.repository";
-import TopCurtidasClient from "./top-liked";
+import TopLikedClient from "./top-liked";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const t = await getTranslations("feed");
@@ -47,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function TopCurtidasPage() {
+export default async function TopLikedPage() {
 	const topLikedAnswersToday = await getTopLikedAnswersToday();
 	const topLikedAnswersThisWeek = await getTopLikedAnswersThisWeek();
 	const topLikedAnswersThisMonth = await getTopLikedAnswersThisMonth();
@@ -55,7 +55,7 @@ export default async function TopCurtidasPage() {
 	const topLikedAnswersAllTime = await getTopLikedAnswersAllTime();
 
 	return (
-		<TopCurtidasClient
+		<TopLikedClient
 			today={topLikedAnswersToday}
 			week={topLikedAnswersThisWeek}
 			month={topLikedAnswersThisMonth}

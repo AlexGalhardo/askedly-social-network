@@ -1,13 +1,13 @@
-# Aplicação completa em modo demonstração: Postgres + migrations + seed + app, com pagamentos simulados
-# (PAYMENTS_SIMULATED=true: PIX confirmado sozinho, créditos e repasses Stripe fictícios). Ver docs/docker.md.
-# Uso, a partir da raiz: docker compose -f infra/docker-compose.demo.yaml up --build
-# Login: admin@gmail.com / adminBR@123 (painel em /admin)
+# Full application in demo mode: Postgres + migrations + seed + app, with simulated payments
+# (PAYMENTS_SIMULATED=true: PIX confirmed on its own, fictitious Stripe credits and payouts). See docs/docker.md.
+# Usage, from the root: docker compose -f infra/docker-compose.demo.yaml up --build
+# Login: admin@gmail.com / adminBR@123 (dashboard at /admin)
 x-app-build: &app-build
   context: ..
   dockerfile: infra/Dockerfile
   args:
     NEXT_PUBLIC_APP_URL: http://localhost:${APP_PORT:-3000}
-    # Chave de teste oficial da Cloudflare Turnstile: sempre passa.
+    # Official Cloudflare Turnstile test key: always passes.
     NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
 
 x-app-env: &app-env
@@ -34,7 +34,7 @@ services:
       timeout: 3s
       retries: 20
 
-  # Roda uma vez: aplica as migrations e, se o banco estiver vazio, popula com o seed.
+  # Runs once: applies the migrations and, if the database is empty, populates it with the seed.
   setup:
     build:
       <<: *app-build

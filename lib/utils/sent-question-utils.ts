@@ -1,10 +1,10 @@
-import { SentQuestionInterface, SentQuestionStatus } from "@/types/SentQuestion";
+import { SentQuestionInterface, SentQuestionStatus } from "@/lib/interfaces";
 
 export function isSentQuestionExpired(createdAt: string | Date): boolean {
 	const created = new Date(createdAt);
 	const now = new Date();
 	const diffInHours = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
-	return diffInHours >= 168; // 7 dias em horas
+	return diffInHours >= 168; // 7 days in hours
 }
 
 export function getSentQuestionStatus(question: SentQuestionInterface): SentQuestionStatus {

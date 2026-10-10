@@ -20,8 +20,8 @@ export async function getPayoutStatus(userId: string): Promise<PayoutStatus> {
 }
 
 /**
- * Cria (uma vez) a conta conectada do usuário e devolve o link de onboarding hospedado pela Stripe.
- * Conta de marketplace: só recebe transferências, a plataforma cobra as taxas e responde por saldo negativo.
+ * Creates (once) the user's connected account and returns the Stripe-hosted onboarding link.
+ * Marketplace account: it only receives transfers, the platform charges the fees and is liable for negative balances.
  */
 export async function startPayoutOnboarding(userId: string, country: string): Promise<string> {
 	const user = await prisma.user.findUnique({
@@ -53,7 +53,7 @@ export async function startPayoutOnboarding(userId: string, country: string): Pr
 			metadata: { user_id: userId },
 		});
 		accountId = account.id;
-		// O filtro em null evita que dois cliques simultâneos gravem contas diferentes.
+		// The null filter prevents two simultaneous clicks from storing different accounts.
 		const { count } = await prisma.user.updateMany({
 			where: { id: userId, stripe_account_id: null },
 			data: { stripe_account_id: accountId },
@@ -81,7 +81,7 @@ export interface TransferInput {
 	questionId: string;
 }
 
-/** Devolve o id da transferência, ou null se a conta ainda não pode receber. */
+/** Returns the transfer id, or null if the account cannot receive yet. */
 export type SendTransfer = (input: TransferInput) => Promise<string | null>;
 
 const sendStripeTransfer: SendTransfer = async ({ accountId, amountCents, questionId }) => {
@@ -90,7 +90,7 @@ const sendStripeTransfer: SendTransfer = async ({ accountId, amountCents, questi
 
 	const stripe = getStripe();
 	const transferGroup = `question_${questionId}`;
-	// Uma tentativa anterior pode ter transferido e caído antes de gravar no banco: nunca transferir duas vezes.
+	// A previous attempt may have transferred and crashed before writing to the database: never transfer twice.
 	const existing = await stripe.transfers.list({ transfer_group: transferGroup, limit: 1 });
 	if (existing.data[0]) return existing.data[0].id;
 
@@ -102,10 +102,10 @@ const sendStripeTransfer: SendTransfer = async ({ accountId, amountCents, questi
 };
 
 /**
- * Liquida uma pergunta paga com créditos que já saiu da fila de resposta:
- * respondida = transfere ao dono o valor já sem a taxa da plataforma; recusada, expirada ou denunciada = devolve
- * os créditos a quem perguntou. Pode ser chamada várias vezes: `amount_already_withdraw` marca a liquidação.
- * Sem conta Stripe apta (ou sem saldo disponível na plataforma) nada muda, e o cron tenta de novo.
+ * Settles a question paid with credits that has already left the answer queue:
+ * answered = transfers to the owner the amount already net of the platform fee; declined, expired or reported = refunds
+ * the credits to the asker. It can be called several times: `amount_already_withdraw` marks the settlement.
+ * Without an eligible Stripe account (or without available balance on the platform) nothing changes, and the cron tries again.
  */
 export async function settleCreditQuestion(
 	questionId: string,
@@ -156,7 +156,7 @@ export async function settleCreditQuestion(
 	}
 }
 
-/** Cron: expira perguntas em créditos vencidas e tenta de novo toda liquidação pendente. */
+/** Cron: expires overdue credit questions and retries every pending settlement. */
 export async function settlePendingCreditQuestions(sendTransfer?: SendTransfer): Promise<number> {
 	await prisma.question.updateMany({
 		where: {

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
-import PerguntasEnviadasClient from "./sent-questions";
+import SentQuestionsClient from "./sent-questions";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const t = await getTranslations("questions");
@@ -40,6 +40,6 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function PerguntasEnviadasPage() {
-	return <PerguntasEnviadasClient />;
+export default async function SentQuestionsPage() {
+	return <SentQuestionsClient />;
 }

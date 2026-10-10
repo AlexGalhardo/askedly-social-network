@@ -1,7 +1,7 @@
-// Origens externas que o site usa de fato. Ao integrar um serviço novo, adicione aqui e rode o e2e
-// tests/e2e/csp.spec.ts, que falha em qualquer violação de CSP.
+// External origins the site actually uses. When integrating a new service, add it here and run the e2e
+// tests/e2e/csp.spec.ts, which fails on any CSP violation.
 const CONNECT_SOURCES = [
-	"https://*.uploadthing.com", // UploadThing: upload do avatar
+	"https://*.uploadthing.com", // UploadThing: avatar upload
 	"https://*.ufs.sh",
 	"https://utfs.io",
 	"https://challenges.cloudflare.com", // Turnstile
@@ -12,9 +12,9 @@ const CONNECT_SOURCES = [
 ];
 
 /**
- * CSP estrito por nonce (gerado a cada requisição em proxy.ts). `'strict-dynamic'` libera os scripts que um script
- * com nonce carrega (next/script, Speed Insights, Turnstile), sem lista de hosts para script.
- * `style-src` precisa de `'unsafe-inline'`: bibliotecas de UI usam o atributo `style`, que nonce não cobre.
+ * Strict nonce-based CSP (generated on every request in proxy.ts). `'strict-dynamic'` allows the scripts that a script
+ * with a nonce loads (next/script, Speed Insights, Turnstile), with no host list for scripts.
+ * `style-src` needs `'unsafe-inline'`: UI libraries use the `style` attribute, which a nonce does not cover.
  */
 export function buildContentSecurityPolicy(nonce: string, isDev: boolean): string {
 	const directives = [

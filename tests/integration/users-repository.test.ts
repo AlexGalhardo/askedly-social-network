@@ -51,7 +51,7 @@ describe("users.repository (integration)", () => {
 		};
 		const known = await time(testEmail);
 		const unknown = await time(`nobody-${Date.now()}@example.com`);
-		// Sem o bcrypt de fachada o email inexistente responde em ~1ms contra centenas de ms: dá para listar contas.
+		// Without the decoy bcrypt a nonexistent email answers in ~1ms versus hundreds of ms: enough to enumerate accounts.
 		expect(unknown).toBeGreaterThan(known * 0.5);
 	});
 

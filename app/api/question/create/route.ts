@@ -44,15 +44,15 @@ export async function POST(request: NextRequest) {
 			amountIsPrivate: Boolean(amount_paid_is_private),
 		});
 
-		await TelegramLog.info(`NOVA PERGUNTA CRIADA COM SUCESSO!
+		await TelegramLog.info(`NEW QUESTION CREATED SUCCESSFULLY!
 
-		NICKNAME DE QUEM RECEBEU A PERGUNTA: @${question.owner.nickname}
+		NICKNAME OF WHO RECEIVED THE QUESTION: @${question.owner.nickname}
 		PIX_ID: ${pix_id}
-		PAGOU: ${formatCurrency(question.amount_paid)}
-		PERGUNTA: ${question.question_text}
-		QUEM MANDOU A PERGUNTA: @${question.asked_by.nickname}
-		MANDOU PERGUNTA PRIVADA: ${question.asker_want_answer_to_be_private}
-		MANDOU PERGUNTA ANONIMA: ${question.asker_sent_anonymous_question}
+		PAID: ${formatCurrency(question.amount_paid)}
+		QUESTION: ${question.question_text}
+		WHO SENT THE QUESTION: @${question.asked_by.nickname}
+		SENT PRIVATE QUESTION: ${question.asker_want_answer_to_be_private}
+		SENT ANONYMOUS QUESTION: ${question.asker_sent_anonymous_question}
 		`);
 
 		return NextResponse.json({ message: t("created"), question }, { status: 201 });

@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 			return NextResponse.json({ error: t("errors.invalidEmail") }, { status: 400 });
 		}
 
-		// Mesma resposta com ou sem conta: a rota não pode servir para descobrir quais emails estão cadastrados.
+		// Same response with or without an account: the route must not be usable to discover which emails are registered.
 		const reset = await createPasswordResetToken(email);
 		if (!reset) return NextResponse.json({ success: true });
 
@@ -36,11 +36,11 @@ export async function POST(request: Request) {
 			subject: t("resetPassword.emailSubject"),
 			react: ResetPasswordEmail({ name: reset.name, resetLink, t: await getTranslations("emails") }),
 		});
-		if (error) await TelegramLog.error(`Reset de senha: falha ao enviar email: ${error.message}`);
+		if (error) await TelegramLog.error(`Password reset: failed to send email: ${error.message}`);
 
 		return NextResponse.json({ success: true });
 	} catch (error: unknown) {
-		await TelegramLog.error(`Reset de senha (request): ${error instanceof Error ? error.message : error}`);
+		await TelegramLog.error(`Password reset (request): ${error instanceof Error ? error.message : error}`);
 		return NextResponse.json({ error: t("errors.resetRequestFailed") }, { status: 500 });
 	}
 }

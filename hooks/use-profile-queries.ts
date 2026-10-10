@@ -62,7 +62,7 @@ export const useFollowUser = () => {
 			});
 		},
 		onError: (error) => {
-			console.error("Erro na mutação de follow:", error);
+			console.error("Follow mutation error:", error);
 		},
 	});
 };

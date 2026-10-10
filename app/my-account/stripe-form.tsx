@@ -31,7 +31,7 @@ export function StripeForm() {
 			.catch(() => setAccount(null));
 	}, []);
 
-	// As duas ações devolvem uma URL hospedada pela Stripe (Checkout ou cadastro da conta de recebimento).
+	// Both actions return a Stripe-hosted URL (Checkout or payout account onboarding).
 	const redirectToStripe = async (endpoint: string, body: object) => {
 		setIsRedirecting(true);
 		try {

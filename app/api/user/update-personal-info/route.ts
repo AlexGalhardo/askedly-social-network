@@ -23,7 +23,7 @@ const createPersonalInfoSchema = (t: (key: keyof Messages["account"]["errors"]) 
 			.refine((val) => !val || (val.length >= 32 && val.length <= 256), {
 				message: t("descriptionLength"),
 			}),
-		userId: z.string().optional(), // Adicionar userId como opcional
+		userId: z.string().optional(),
 	});
 
 export async function POST(req: NextRequest) {

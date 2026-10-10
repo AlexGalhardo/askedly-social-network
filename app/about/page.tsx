@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { openGraphLocale } from "@/lib/utils";
-import SobreClient from "./about";
+import AboutClient from "./about";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const t = await getTranslations("legal.about");
@@ -40,6 +40,6 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function SobrePage() {
-	return <SobreClient />;
+export default async function AboutPage() {
+	return <AboutClient />;
 }

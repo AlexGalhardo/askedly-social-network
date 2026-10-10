@@ -5,7 +5,7 @@ import type * as React from "react";
 
 import type { ToastData } from "@/components/ui/toast";
 
-// Gerenciador global: permite chamar `toast()` fora da árvore React. O `Toaster` o entrega ao provider.
+// Global manager: lets `toast()` be called outside the React tree. The `Toaster` hands it to the provider.
 const toastManager = ToastPrimitive.createToastManager<ToastData>();
 
 interface ToastOptions extends ToastData {
@@ -15,7 +15,7 @@ interface ToastOptions extends ToastData {
 }
 
 function toast({ title, description, duration, ...data }: ToastOptions): { id: string; dismiss: () => void } {
-	// Um toast por vez, como antes: o novo substitui o que estiver na tela.
+	// One toast at a time, as before: the new one replaces whatever is on screen.
 	toastManager.close();
 
 	const id = toastManager.add({

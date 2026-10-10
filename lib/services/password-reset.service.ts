@@ -5,12 +5,12 @@ import { prisma } from "@/prisma/prisma-client";
 
 const TOKEN_TTL_MS = 60 * 60 * 1000;
 
-// Só o hash vai para o banco: quem ler o banco não consegue usar um token ainda válido.
+// Only the hash goes to the database: whoever reads the database cannot use a still-valid token.
 function hashToken(token: string): string {
 	return createHash("sha256").update(token).digest("hex");
 }
 
-/** Gera o token (32 hex, 128 bits) para o link do email. Null se o email não tem conta. */
+/** Generates the token (32 hex, 128 bits) for the email link. Null if the email has no account. */
 export async function createPasswordResetToken(email: string): Promise<{ token: string; name: string } | null> {
 	const token = randomBytes(16).toString("hex");
 	const { count } = await prisma.user.updateMany({
@@ -35,7 +35,7 @@ export async function isResetTokenValid(token: string): Promise<boolean> {
 
 export type ResetResult = { ok: true } | { ok: false; error: AuthErrorKey };
 
-/** Troca a senha e invalida o token na mesma instrução: dois envios simultâneos não usam o token duas vezes. */
+/** Changes the password and invalidates the token in the same statement: two simultaneous submissions do not use the token twice. */
 export async function resetPasswordWithToken(token: string, newPassword: string): Promise<ResetResult> {
 	const parsed = signupSchema.shape.password.safeParse(newPassword);
 	if (!parsed.success) {

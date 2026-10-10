@@ -1,6 +1,6 @@
 /**
- * Modo demonstração (Docker/local): nenhum gateway é chamado. O PIX nasce e é confirmado na primeira consulta,
- * a compra de créditos é creditada na hora e a conta de recebimento e as transferências Stripe são fictícias.
- * Dá dinheiro de graça, então nunca liga em produção na Vercel, mesmo com a variável definida por engano.
+ * Demo mode (Docker/local): no gateway is called. The PIX is created and confirmed on the first check,
+ * the credit purchase is credited immediately and the payout account and Stripe transfers are fictitious.
+ * It gives away free money, so it never turns on in production on Vercel, even with the variable set by mistake.
  */
 export const PAYMENTS_SIMULATED = process.env.PAYMENTS_SIMULATED === "true" && process.env.VERCEL_ENV !== "production";

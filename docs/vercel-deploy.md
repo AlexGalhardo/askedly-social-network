@@ -1,78 +1,102 @@
-# Deploy na Vercel
+# Deploying to Vercel
 
-Como o deploy funciona (build, cron, CI) está em [`deployment.md`](deployment.md). Este arquivo é o roteiro para colocar no ar, à mão ou por um agente de IA.
+How deployment works (build, cron, CI) is in [`deployment.md`](deployment.md). This file is the walkthrough for getting it live, by hand or through an AI agent.
 
-Projeto atual: `respondeae`, time `galhardos-projects`, produção em `https://respondeae.vercel.app`. O nome do projeto na Vercel não foi trocado junto com o do repositório: trocar muda o domínio `*.vercel.app`, e com ele `NEXTAUTH_URL`, `NEXT_PUBLIC_APP_URL` e as URLs dos webhooks.
+Current project: `respondeae`, team `galhardos-projects`, production at `https://askedly-social-network.vercel.app` (the old `respondeae.vercel.app` is still attached). The Vercel project was not renamed along with the repository.
 
-## Versão manual, passo a passo
+> **Git integration is disconnected for now.** After the GitHub repository was renamed, pushes to `main` stopped triggering deployments. Until the integration is reconnected (project Settings > Git), production is deployed with `vercel deploy --prod`.
 
-1. **CLI.** `bun add --global vercel` e `vercel login`.
-2. **Vincular** a pasta ao projeto (cria `.vercel/`, que fica fora do git):
+## Manual version, step by step
+
+1. **CLI.** `bun add --global vercel` and `vercel login`.
+2. **Link** the folder to the project (creates `.vercel/`, which stays out of git):
 
    ```bash
    vercel link --project respondeae --scope galhardos-projects
    ```
 
-   Projeto novo: `vercel link` sem `--project` cria um, e a integração Git é ligada em Settings > Git.
-3. **Banco.** Um Postgres acessível pela internet em `DATABASE_URL` (o do Marketplace da Vercel serve: Storage > Create Database).
-4. **Variáveis de ambiente.** `.env.example` é a lista. Para cada uma:
+   New project: `vercel link` without `--project` creates one, and the Git integration is connected in Settings > Git.
+3. **Database.** A Postgres reachable from the internet in `DATABASE_URL`. Through the Vercel Marketplace, Neon:
 
    ```bash
-   vercel env add NOME production   # pede o valor sem mostrá-lo; repita com `preview` quando fizer sentido
+   vercel integration add neon --name askedly-db --prefix NEON_
+   ```
+
+   This injects `NEON_*` variables into the project (e.g. `NEON_DATABASE_URL`, pooled, and `NEON_DATABASE_URL_UNPOOLED`, direct). The app reads `DATABASE_URL`, so point it at the database you want: the pooled URL for runtime. The project also has the earlier Marketplace Prisma Postgres resource `respondeae-db`; `DATABASE_URL` selects which database a deployment uses.
+
+   To apply migrations and seed a fresh database, use the unpooled URL (the seed wipes every table first; see [`database.md`](database.md#seed)):
+
+   ```bash
+   DATABASE_URL="<NEON_DATABASE_URL_UNPOOLED>" bunx prisma migrate deploy
+   DATABASE_URL="<NEON_DATABASE_URL_UNPOOLED>" SEED_TOTAL_RANDOM_USERS_TO_CREATED=1000 \
+     SEED_TOTAL_FOLLOWERS_RELATIONS=5000 SEED_RANDOM_QUESTIONS_TO_CREATE=2000 bun prisma/seed.ts
+   ```
+
+   The seed fetches random profiles from an external API, so 1000 users take several minutes.
+4. **Environment variables.** `.env.example` is the list. For each one:
+
+   ```bash
+   vercel env add NAME production   # asks for the value without showing it; repeat with `preview` when it makes sense
    vercel env ls
    ```
 
-   Obrigatórias em produção: `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET`, `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY`, `CLOUDFLARE_TURNSTILE_SECRET`. Por recurso: `ABACATEPAY_*` (PIX), `STRIPE_*` (créditos, ver [`stripe-setup.md`](stripe-setup.md)), `RESEND_*` (emails), `UPLOADTHING_TOKEN` (avatar), `GOOGLE_*` (login Google), `TELEGRAM_*` (logs). Nunca defina `PAYMENTS_SIMULATED`, `NEXT_PUBLIC_TEST_MODE=true` nem `NODE_ENV`.
-5. **Deploy.** O caminho normal é `git push origin main`: a integração Git faz o deploy de produção, e cada PR ganha um preview. Pela CLI, sem passar pelo git:
+   Essential (the build fails without them, see `lib/env.ts`): `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `NEXT_PUBLIC_APP_URL`. Needed in production although the build only warns: `CRON_SECRET`, and `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY` + `CLOUDFLARE_TURNSTILE_SECRET` (the captcha is on only with both). Per feature: `ABACATEPAY_*` (PIX), `STRIPE_*` (credits, see [`stripe-setup.md`](stripe-setup.md)), `RESEND_*` (emails), `UPLOADTHING_TOKEN` (avatar), `GOOGLE_*` (Google login), `TELEGRAM_*` (logs). Never set `PAYMENTS_SIMULATED`, `NEXT_PUBLIC_TEST_MODE=true` or `NODE_ENV`.
+5. **Deploy.** While the Git integration is disconnected, deploy from the CLI:
 
    ```bash
    vercel deploy           # preview
-   vercel deploy --prod    # produção
+   vercel deploy --prod    # production
    ```
 
-   O build roda `infra/vercel-build.sh`: `prisma generate`, `prisma migrate deploy` (só em produção) e `next build`.
-6. **Conferir.**
+   Once the integration is reconnected, the normal path is `git push origin main`: the Git integration does the production deployment, and each PR gets a preview.
+
+   The build runs `infra/vercel-build.sh`: `prisma generate`, `prisma migrate deploy` (production only) and `next build`.
+6. **Check.**
 
    ```bash
-   curl -s https://respondeae.vercel.app/api/health                                   # 200
-   curl -s -o /dev/null -w "%{http_code}\n" https://respondeae.vercel.app/api/cronjob # 401 sem o segredo
-   curl -s -o /dev/null -w "%{http_code}\n" -X POST https://respondeae.vercel.app/api/webhook/stripe   # 400 sem assinatura
-   vercel logs https://respondeae.vercel.app
+   curl -s https://askedly-social-network.vercel.app/api/health                                   # 200
+   curl -s -o /dev/null -w "%{http_code}\n" https://askedly-social-network.vercel.app/api/cronjob # 401 without the secret
+   curl -s -o /dev/null -w "%{http_code}\n" -X POST https://askedly-social-network.vercel.app/api/webhook/stripe   # 400 without a signature
+   vercel logs https://askedly-social-network.vercel.app
    ```
 
-7. **Voltar atrás.** `vercel rollback` devolve a produção ao deploy anterior. Migration já aplicada não é desfeita: migrations devem ser aditivas.
+7. **Roll back.** `vercel rollback` returns production to the previous deployment. A migration that was already applied is not undone: migrations must be additive.
 
-## Versão com agentes de IA (CLI e MCP)
+## Version with AI agents (CLI and MCP)
 
-**Pré-requisitos que só você pode dar:** `vercel login` feito (o agente confere com `vercel whoami`), ou o MCP da Vercel conectado; e os valores dos segredos, digitados por você ou já gravados no projeto. O agente não deve ler `.env` nem pedir segredo no chat.
+**Prerequisites only you can provide:** `vercel login` done (the agent checks with `vercel whoami`), or the Vercel MCP connected; and the secret values, typed by you or already stored in the project. The agent must not read `.env` or ask for a secret in the chat.
 
-**Pedido para o agente:**
+**Request for the agent:**
 
 ```text
-Faça o deploy de produção deste projeto na Vercel seguindo docs/vercel-deploy.md:
-1. `vercel whoami` e `vercel link --project respondeae --scope galhardos-projects --yes`.
-2. Compare `vercel env ls production` com .env.example e liste o que falta. Não imprima valores.
-3. Valide como o CI antes: `bun run lint:ci`, `bun run lint:md`, `bunx tsc --noEmit`, `bun run test`, `bun run build`.
-4. `git push origin main` e acompanhe o deploy até READY (`vercel ls`, `vercel inspect <url>`).
-5. Rode as checagens do passo 6 do roteiro manual e mostre os códigos HTTP.
-6. Se o deploy falhar, leia o log de build (`vercel inspect <url> --logs`), corrija a causa e repita.
-   Não use `vercel rollback` sem me perguntar.
+Do the production deployment of this project on Vercel following docs/vercel-deploy.md:
+1. `vercel whoami` and `vercel link --project respondeae --scope galhardos-projects --yes`.
+2. Compare `vercel env ls production` with .env.example and list what is missing. Do not print values.
+3. Validate like CI first: `bun run lint:ci`, `bun run lint:md`, `bunx tsc --noEmit`, `bun run test`, `bun run build`.
+4. Deploy with `vercel deploy --prod` (pushes to main do not deploy until the Git integration is reconnected)
+   and follow the deployment until READY (`vercel ls`, `vercel inspect <url>`).
+5. Run the checks from step 6 of the manual walkthrough against https://askedly-social-network.vercel.app
+   and show the HTTP codes.
+6. If the deployment fails, read the build log (`vercel inspect <url> --logs`), fix the cause and repeat.
+   Do not use `vercel rollback` without asking me.
 ```
 
-**O que cada ferramenta cobre:**
+**What each tool covers:**
 
-| Tarefa | CLI | MCP (servidor `vercel`) |
+| Task | CLI | MCP (`vercel` server) |
 | --- | --- | --- |
-| Vincular e fazer deploy | `vercel link`, `vercel deploy --prod` | `create_deployment` |
-| Estado e logs | `vercel ls`, `vercel inspect --logs`, `vercel logs` | `list_deployments`, `get_deployment`, `get_runtime_logs`, `get_runtime_errors` |
-| Variáveis de ambiente | `vercel env add`, `vercel env ls`, `vercel env rm` | `create_project_env`, `filter_project_envs`, `edit_project_env` |
-| Promover e reverter | `vercel promote`, `vercel rollback` | `request_promote`, `request_rollback` |
-| Domínios | `vercel domains`, `vercel alias` | `add_project_domain`, `verify_project_domain` |
+| Link and deploy | `vercel link`, `vercel deploy --prod` | `create_deployment` |
+| State and logs | `vercel ls`, `vercel inspect --logs`, `vercel logs` | `list_deployments`, `get_deployment`, `get_runtime_logs`, `get_runtime_errors` |
+| Environment variables | `vercel env add`, `vercel env ls`, `vercel env rm` | `create_project_env`, `filter_project_envs`, `edit_project_env` |
+| Marketplace resources (Neon, Stripe) | `vercel integration add`, `vercel integration resource claim` | `list_integration_configurations` (read only) |
+| Promote and revert | `vercel promote`, `vercel rollback` | `request_promote`, `request_rollback` |
+| Domains | `vercel domains`, `vercel alias` | `add_project_domain`, `verify_project_domain` |
 
-**Regras para o agente:** deploy de produção, troca de variável de produção, rollback e compra de domínio pedem sua confirmação; segredo nunca aparece em log, commit ou resposta; se o CI estiver vermelho, o agente corrige a causa em vez de pular hook ou teste.
+**Rules for the agent:** a production deployment, changing a production variable, a rollback and buying a domain need your confirmation; a secret never shows up in a log, commit or reply; if CI is red, the agent fixes the cause instead of skipping a hook or a test.
 
-## Depois do primeiro deploy
+## After the first deployment
 
-- Cadastre os webhooks com a URL de produção: AbacatePay (`/api/webhook/abacatepay?webhookSecret=...`) e Stripe (`bun infra/stripe-setup.ts`).
-- Ative Deployment Checks (Settings > Deployment Checks) exigindo os checks `CI` e `E2E`, para a produção só subir com o CI verde.
-- Domínio próprio: Settings > Domains, e então atualize `NEXTAUTH_URL`, `NEXT_PUBLIC_APP_URL` e as URLs dos webhooks.
+- Register the webhooks with the production URL: AbacatePay (`/api/webhook/abacatepay?webhookSecret=...`) and Stripe (`APP_URL=https://askedly-social-network.vercel.app bun infra/stripe-setup.ts`).
+- Reconnect the Git integration (Settings > Git) to the renamed repository, so pushes to `main` deploy again.
+- Enable Deployment Checks (Settings > Deployment Checks) requiring the `CI` and `E2E` checks, so that production only goes out with green CI.
+- Own domain: Settings > Domains, then update `NEXTAUTH_URL`, `NEXT_PUBLIC_APP_URL` and the webhook URLs.

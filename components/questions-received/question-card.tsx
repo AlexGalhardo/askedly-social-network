@@ -9,9 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-
+import { QuestionInterface } from "@/lib/interfaces";
 import { getQuestionStatus, getTimeRemaining } from "@/lib/utils/question-utils";
-import { QuestionInterface } from "@/types/QuestionInterface";
 
 interface QuestionCardProps {
 	question: QuestionInterface;
@@ -247,7 +246,7 @@ export function QuestionCard({
 					</div>
 				)}
 
-				{/* CORREÇÃO: Perguntas respondidas NÃO devem mostrar badge "Pergunta Expirada" nem botão "Deletar" */}
+				{/* FIX: answered questions must NOT show the "Question Expired" badge or the "Delete" button */}
 				{status !== "answered" && (status === "declined" || status === "expired" || status === "reported") && (
 					<div className="mt-4">
 						{status === "expired" && (

@@ -4,8 +4,8 @@ import { CreateQuestionError, createCreditQuestion } from "@/lib/services/questi
 import { type SendTransfer, settleCreditQuestion } from "@/lib/services/stripe-connect.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
-// A Stripe não é chamada: a transferência entra pelo parâmetro `sendTransfer`.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
+// Stripe is not called: the transfer comes in through the `sendTransfer` parameter.
 const run = Date.now();
 const ownerNickname = `sowner${run}`;
 const askerNickname = `sasker${run}`;
@@ -20,11 +20,11 @@ const ask = (amountCents: number) =>
 		askerId,
 		ownerId,
 		amountCents,
-		questionText: "Pergunta paga com créditos",
+		questionText: "Question paid with credits",
 		isAnonymous: false,
 	});
 
-describe("créditos Stripe (integration)", () => {
+describe("Stripe credits (integration)", () => {
 	beforeAll(async () => {
 		const user = (nickname: string, extra: object = {}) =>
 			prisma.user.create({
@@ -49,7 +49,7 @@ describe("créditos Stripe (integration)", () => {
 		await prisma.user.deleteMany({ where: { id: { in: [ownerId, askerId] } } });
 	});
 
-	test("webhook repetido ou concorrente credita a compra uma vez só", async () => {
+	test("repeated or concurrent webhook credits the purchase only once", async () => {
 		const results = await Promise.all([fulfillCreditsPurchase(`cs_${run}`), fulfillCreditsPurchase(`cs_${run}`)]);
 		expect(results.filter(Boolean)).toHaveLength(1);
 		expect(await fulfillCreditsPurchase(`cs_${run}`)).toBe(false);
@@ -57,13 +57,13 @@ describe("créditos Stripe (integration)", () => {
 		expect(await credits()).toBe(2000);
 	});
 
-	test("perguntas simultâneas não gastam o mesmo crédito", async () => {
+	test("simultaneous questions do not spend the same credit", async () => {
 		const results = await Promise.allSettled([ask(1500), ask(1500)]);
 		expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
 		expect(await credits()).toBe(500);
 	});
 
-	test("recusa valor abaixo do mínimo e saldo insuficiente sem debitar", async () => {
+	test("rejects an amount below the minimum and an insufficient balance without debiting", async () => {
 		await expect(ask(100)).rejects.toBeInstanceOf(CreateQuestionError);
 		await expect(ask(501)).rejects.toBeInstanceOf(CreateQuestionError);
 		await expect(
@@ -71,19 +71,19 @@ describe("créditos Stripe (integration)", () => {
 				askerId,
 				ownerId: askerId,
 				amountCents: 200,
-				questionText: "Para mim",
+				questionText: "For me",
 				isAnonymous: false,
 			}),
 		).rejects.toMatchObject({ message: "cannotAskYourself" });
 		expect(await credits()).toBe(500);
 	});
 
-	test("pergunta recusada devolve os créditos inteiros, uma vez só", async () => {
+	test("declined question refunds the full credits, only once", async () => {
 		const question = await ask(500);
 		expect(await credits()).toBe(0);
 
 		await settleCreditQuestion(question.id);
-		expect(await credits()).toBe(0); // ainda aguardando resposta: nada a liquidar
+		expect(await credits()).toBe(0); // still waiting for an answer: nothing to settle
 
 		await prisma.question.update({
 			where: { id: question.id },
@@ -94,7 +94,7 @@ describe("créditos Stripe (integration)", () => {
 		expect(await credits()).toBe(500);
 	});
 
-	test("pergunta respondida transfere ao dono o valor sem a taxa, uma vez só", async () => {
+	test("answered question transfers the amount minus the fee to the owner, only once", async () => {
 		const question = await ask(500);
 		await prisma.question.update({
 			where: { id: question.id },

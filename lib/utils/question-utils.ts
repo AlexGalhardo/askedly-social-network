@@ -1,4 +1,4 @@
-import { QuestionInterface, QuestionStatus } from "@/types/QuestionInterface";
+import { QuestionInterface, QuestionStatus } from "@/lib/interfaces";
 
 export const QUESTION_ANSWER_WINDOW_HOURS = 7 * 24;
 
@@ -46,8 +46,8 @@ export function paginateQuestions(questions: QuestionInterface[], currentPage: n
 	};
 }
 
-// A ordem importa: respondida > reportada > recusada > expirada > pendente. Uma pergunta respondida
-// nunca conta como expirada, mesmo depois do prazo.
+// Order matters: answered > reported > declined > expired > pending. An answered question
+// never counts as expired, even after the deadline.
 export function getQuestionStatus(question: QuestionInterface): QuestionStatus {
 	if (
 		question.question_answered === true &&
@@ -108,14 +108,14 @@ export function getDeleteTimer(declinedAt: string): string {
 	const deleteTime = declined + 7 * 24 * 60 * 60 * 1000;
 	const diff = deleteTime - now;
 
-	if (diff <= 0) return "Pronto para deletar";
+	if (diff <= 0) return "Ready to delete";
 
 	const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 	const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 	const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 	const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-	return `${days}d ${hours}h ${minutes}m ${seconds}s para pergunta ser deletada`;
+	return `${days}d ${hours}h ${minutes}m ${seconds}s until the question is deleted`;
 }
 
 export function sortQuestionsByDate(questions: QuestionInterface[]): QuestionInterface[] {
@@ -245,7 +245,7 @@ interface ExpirableQuestion {
 	question_answer_expired_at: Date | string | null;
 }
 
-/** Marca como expirada (só na resposta, sem gravar) a pergunta que passou do prazo; o cron/rota grava de fato. */
+/** Marks as expired (in the response only, without persisting) the question that is past the deadline; the cron/route actually persists it. */
 export function markExpiredQuestions<T extends ExpirableQuestion>(questions: T[]): T[] {
 	return questions.map((question) =>
 		question.question_is_awaiting_answer &&

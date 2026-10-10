@@ -7,7 +7,7 @@ import type { PublicQuestion } from "@/lib/repositories/questions.repository";
 
 type Asker = PublicQuestion["asked_by"];
 
-/** `asker` é null em pergunta anônima: o servidor nem envia quem perguntou. */
+/** `asker` is null for an anonymous question: the server does not even send who asked. */
 export function AskerAvatar({ asker }: { asker: Asker }) {
 	return (
 		<Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">

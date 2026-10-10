@@ -5,6 +5,15 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.17.0] - 2026-10-10
+
+### Changed
+
+- Translate comments, logs, tests and identifiers to english
+- Translate all documentation to english and document neon, stripe sandbox and base ui
+- Remove dead code and merge single-file folders
+- Define the release process
+
 ## [0.16.0] - 2026-10-10
 
 ### Added

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { QuestionInterface } from "@/types/QuestionInterface";
+import type { QuestionInterface } from "@/lib/interfaces";
 import {
 	filterQuestionsByStatus,
 	getDeleteTimer,
@@ -129,11 +129,11 @@ describe("paginateQuestions", () => {
 describe("getDeleteTimer", () => {
 	test("says ready to delete once 7 days have passed", () => {
 		const eightDaysAgo = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString();
-		expect(getDeleteTimer(eightDaysAgo)).toBe("Pronto para deletar");
+		expect(getDeleteTimer(eightDaysAgo)).toBe("Ready to delete");
 	});
 
 	test("returns a countdown before 7 days have passed", () => {
 		const justDeclined = new Date().toISOString();
-		expect(getDeleteTimer(justDeclined)).toMatch(/^\d+d \d+h \d+m \d+s para pergunta ser deletada$/);
+		expect(getDeleteTimer(justDeclined)).toMatch(/^\d+d \d+h \d+m \d+s until the question is deleted$/);
 	});
 });

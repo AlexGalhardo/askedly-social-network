@@ -7,7 +7,7 @@ import {
 } from "@/lib/services/password-reset.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
 const run = Date.now();
 const email = `reset-${run}@example.com`;
 

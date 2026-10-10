@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { SentQuestionInterface } from "@/types/SentQuestion";
+import type { SentQuestionInterface } from "@/lib/interfaces";
 import {
 	calculateFinancialData,
 	filterSentQuestionsByStatus,

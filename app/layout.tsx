@@ -12,7 +12,6 @@ import { MySidebar } from "@/components/my-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { openGraphLocale } from "@/lib/utils";
-import { ReactQueryProvider } from "../providers/react-query-provider";
 import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -57,8 +56,8 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	// Gerado a cada requisição em proxy.ts. Ler o header torna todas as páginas dinâmicas, o que o CSP por nonce exige:
-	// página estática é gerada no build, sem requisição, e seus scripts seriam bloqueados.
+	// Generated per request in proxy.ts. Reading the header makes every page dynamic, which the nonce-based CSP requires:
+	// a static page is generated at build time, with no request, and its scripts would be blocked.
 	const nonce = (await headers()).get("x-nonce") ?? undefined;
 
 	const locale = await getLocale();
@@ -77,14 +76,12 @@ export default async function RootLayout({
 							disableTransitionOnChange
 							nonce={nonce}
 						>
-							<ReactQueryProvider>
-								<div className="min-h-screen bg-background">
-									<MySidebar />
-									<main className="pt-14 lg:pt-0 lg:max-w-7xl lg:mx-auto lg:pl-96 lg:pr-6 lg:min-h-screen">
-										{children}
-									</main>
-								</div>
-							</ReactQueryProvider>
+							<div className="min-h-screen bg-background">
+								<MySidebar />
+								<main className="pt-14 lg:pt-0 lg:max-w-7xl lg:mx-auto lg:pl-96 lg:pr-6 lg:min-h-screen">
+									{children}
+								</main>
+							</div>
 						</ThemeProvider>
 					</Providers>
 				</NextIntlClientProvider>

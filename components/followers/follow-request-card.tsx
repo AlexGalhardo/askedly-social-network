@@ -10,9 +10,9 @@ import { useAcceptFollowRequest, useRejectFollowRequest } from "@/hooks/use-foll
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "@/hooks/use-toast";
 import { getInitials } from "@/lib/functions";
+import { FollowRequestInterface } from "@/lib/interfaces";
 import TelegramLog from "@/lib/telegram-logger";
 import { formatDate } from "@/lib/utils";
-import { FollowRequestInterface } from "@/types/FollowerUserInterface";
 
 interface FollowRequestCardProps {
 	request: FollowRequestInterface;

@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 		});
 
 		await TelegramLog.info(
-			`NOVA PERGUNTA (créditos): @${question.asked_by.nickname} -> @${question.owner.nickname}, US$ ${question.amount_paid / 100}`,
+			`NEW QUESTION (credits): @${question.asked_by.nickname} -> @${question.owner.nickname}, US$ ${question.amount_paid / 100}`,
 		);
 
 		return NextResponse.json({ message: t("created"), question }, { status: 201 });

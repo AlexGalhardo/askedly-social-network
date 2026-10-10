@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { SentQuestionInterface } from "@/types/SentQuestion";
+import { SentQuestionInterface } from "@/lib/interfaces";
 import { SentQuestionCard } from "./sent-question-card";
 
 interface SentQuestionsListProps {

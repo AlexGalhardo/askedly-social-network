@@ -5,7 +5,7 @@ import { createPasswordResetToken, resetPasswordWithToken } from "@/lib/services
 import { assertSessionIsCurrent, SessionRevokedError } from "@/lib/services/session-revocation.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
 const run = Date.now();
 const email = `revoke-${run}@example.com`;
 let userId = "";

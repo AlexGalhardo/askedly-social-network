@@ -8,7 +8,7 @@ import { FollowingList } from "@/components/following/following-list";
 import LoadingScreen from "@/components/loading-screen";
 import { useFollowing } from "@/hooks/use-following";
 
-export default function SeguindoPage() {
+export default function FollowingPage() {
 	const router = useRouter();
 	const { data: session, status } = useSession();
 	const { data: following, setData: setFollowing } = useFollowing();

@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 		const charge = await createPixCharge({
 			amount,
 			expiresIn: PIX_EXPIRES_IN_SECONDS,
-			description: `Askedly: pergunta para @${String(nickname ?? "").slice(0, 32)}`,
+			description: `Askedly: question for @${String(nickname ?? "").slice(0, 32)}`,
 			metadata: { askerNickname: user.nickname },
 		});
 		await registerCharge(user.id, charge);
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 			expiresAt: charge.expiresAt,
 		});
 	} catch (error: unknown) {
-		await TelegramLog.error(`Catch ERRO ao gerar PIX para pagar: ${(error as Error)?.message}`);
+		await TelegramLog.error(`Catch ERROR generating PIX to pay: ${(error as Error)?.message}`);
 		const status = error instanceof AbacatePayError ? 502 : 500;
 		return NextResponse.json({ error: (await getTranslations("payments"))("api.pixCreateFailed") }, { status });
 	}

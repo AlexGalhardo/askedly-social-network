@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { openGraphLocale } from "@/lib/utils";
-import PoliticaDePrivacidadeClient from "./privacy-policy";
+import PrivacyPolicyClient from "./privacy-policy";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const t = await getTranslations("legal.privacy");
@@ -40,6 +40,6 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function PoliticaDePrivacidadePage() {
-	return <PoliticaDePrivacidadeClient />;
+export default async function PrivacyPolicyPage() {
+	return <PrivacyPolicyClient />;
 }

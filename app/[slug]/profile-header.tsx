@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useFollowUser } from "@/hooks/use-profile-queries";
 import { useToast } from "@/hooks/use-toast";
+import { QuestionInterface } from "@/lib/interfaces";
 import TelegramLog from "@/lib/telegram-logger";
-import { QuestionInterface } from "@/types/QuestionInterface";
 import { ProfileBlockUserButton } from "./profile-block-user-button";
 import { ProfileSocialLinks } from "./profile-social-linkts";
 

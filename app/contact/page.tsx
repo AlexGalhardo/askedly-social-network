@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { openGraphLocale } from "@/lib/utils";
-import ContatoClient from "./contact";
+import ContactClient from "./contact";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const t = await getTranslations("legal.contact");
@@ -43,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function LoginPage() {
 	return (
 		<div>
-			<ContatoClient />
+			<ContactClient />
 		</div>
 	);
 }

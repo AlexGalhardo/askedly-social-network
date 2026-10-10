@@ -19,7 +19,7 @@ import { getInitials } from "@/lib/functions";
 import type { PublicQuestion } from "@/lib/repositories/questions.repository";
 import TelegramLog from "@/lib/telegram-logger";
 
-interface TopCurtidasProps {
+interface TopLikedProps {
 	today: PublicQuestion[];
 	week: PublicQuestion[];
 	month: PublicQuestion[];
@@ -35,7 +35,7 @@ function sortQuestionsByLikes(questions: PublicQuestion[]): PublicQuestion[] {
 	});
 }
 
-export default function TopCurtidasClient({ today, week, month, year, allTime }: TopCurtidasProps) {
+export default function TopLikedClient({ today, week, month, year, allTime }: TopLikedProps) {
 	const { data: session } = useSession();
 	const { toast } = useToast();
 	const t = useTranslations("feed");
@@ -214,7 +214,7 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 
 			updateQuestionInAllStates(updatedQuestion);
 		} catch (error: any) {
-			await TelegramLog.error(`Erro ao descurtir pergunta ${error?.message}`);
+			await TelegramLog.error(`Error unliking question: ${error?.message}`);
 			toast({
 				title: tq("card.dislikeError"),
 				description: tq("card.tryAgain"),
@@ -233,7 +233,7 @@ export default function TopCurtidasClient({ today, week, month, year, allTime }:
 					<div className="flex-1 min-w-0">
 						<AskerName asker={question.asked_by} />
 						<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-							{/* O servidor só envia o valor quando o dono o tornou público (toPublicQuestion). */}
+							{/* The server only sends the amount when the owner made it public (toPublicQuestion). */}
 							{question.amount_paid !== null && (
 								<>
 									<Badge

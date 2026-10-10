@@ -21,7 +21,7 @@ export const FeedQuestionHeader = memo(({ question }: FeedQuestionHeaderProps) =
 			<div className="flex-1 min-w-0">
 				<AskerName asker={question.asked_by} />
 				<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-					{/* O servidor só envia o valor quando o dono o tornou público (toPublicQuestion). */}
+					{/* The server only sends the amount when the owner made it public (toPublicQuestion). */}
 					{question.amount_paid !== null && (
 						<>
 							<Badge

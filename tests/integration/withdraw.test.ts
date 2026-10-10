@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { WithdrawError, withdrawBalance } from "@/lib/services/withdraw.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
 const run = Date.now();
 const ownerNickname = `wowner${run}`;
 const askerNickname = `wasker${run}`;
@@ -25,13 +25,13 @@ async function createAnsweredQuestion(amountPaid: number): Promise<string> {
 	});
 	const question = await prisma.question.create({
 		data: {
-			question_text: "Pergunta de teste de saque",
+			question_text: "Withdraw test question",
 			amount_paid: amountPaid,
 			owner_user_nickname: ownerNickname,
 			asked_by_user_nickname: askerNickname,
 			question_is_awaiting_answer: false,
 			question_answered: true,
-			answer_text: "Resposta",
+			answer_text: "Answer",
 			answered_at: new Date(),
 			webhook_id: webhook.id,
 		},

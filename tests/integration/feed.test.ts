@@ -3,7 +3,7 @@ import { getTopLikedAnswersAllTime } from "@/lib/repositories/questions.reposito
 import { getFeedQuestions } from "@/lib/services/feed.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
 const run = Date.now();
 const owner = `fowner${run}`;
 const privateOwner = `fprivate${run}`;
@@ -28,7 +28,7 @@ async function createAnsweredQuestion(ownerNickname: string, text: string, anony
 	await prisma.question.create({
 		data: {
 			question_text: text,
-			answer_text: "Resposta de teste",
+			answer_text: "Test answer",
 			answered_at: new Date(),
 			question_answered: true,
 			question_is_awaiting_answer: false,
@@ -52,8 +52,8 @@ describe("getFeedQuestions (integration)", () => {
 					nickname,
 					email: `${nickname}@example.com`,
 					api_key: `k-${nickname}`,
-					password: "hash-que-nunca-pode-vazar",
-					pix_key: `pix-que-nunca-pode-vazar-${nickname}`,
+					password: "hash-that-must-never-leak",
+					pix_key: `pix-that-must-never-leak-${nickname}`,
 					privacy_is_private_profile: nickname === privateOwner,
 					privacy_show_questions_answered_only_to_followers: nickname === followersOnlyOwner,
 				},
@@ -79,8 +79,8 @@ describe("getFeedQuestions (integration)", () => {
 
 	test("never sends private user data to the browser", async () => {
 		const serialized = JSON.stringify(await getFeedQuestions("community", null));
-		expect(serialized).not.toContain("hash-que-nunca-pode-vazar");
-		expect(serialized).not.toContain("pix-que-nunca-pode-vazar");
+		expect(serialized).not.toContain("hash-that-must-never-leak");
+		expect(serialized).not.toContain("pix-that-must-never-leak");
 		expect(serialized).not.toContain(`${asker}@example.com`);
 		expect(serialized).not.toContain(`k-${owner}`);
 		expect(serialized).not.toContain("webhook_id");

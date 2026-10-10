@@ -34,7 +34,7 @@ export async function GET(request: Request) {
 
 		return NextResponse.json({ status, expiresAt });
 	} catch (error: unknown) {
-		await TelegramLog.error(`Catch ERRO ao verificar status PIX: ${(error as Error)?.message}`);
+		await TelegramLog.error(`Catch ERROR checking PIX status: ${(error as Error)?.message}`);
 		return NextResponse.json({ error: (await getTranslations("errors"))("internal") }, { status: 500 });
 	}
 }

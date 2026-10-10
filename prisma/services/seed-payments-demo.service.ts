@@ -11,14 +11,14 @@ const CREDIT_AMOUNTS = [500, 1000, 2000, 5000, 10000];
 const QUESTION_AMOUNTS = [200, 500, 1000, 2000, 5000];
 
 /**
- * Dados de pagamento para o painel do admin e para as telas de créditos: compras na Stripe, perguntas pagas com
- * créditos em todos os estados, perguntas PIX recebidas pelo admin e um saque. Nada aqui chama a Stripe.
+ * Payment data for the admin dashboard and the credits screens: Stripe purchases, questions paid with
+ * credits in every state, PIX questions received by the admin and a withdrawal. Nothing here calls Stripe.
  */
 export class SeedPaymentsDemoService {
 	constructor(private readonly prisma: PrismaClient) {}
 
 	async create(users: SeedUserRef[]): Promise<void> {
-		SeedLogger.info("Criando dados de pagamento de demonstração (Stripe, créditos, saque do admin)...");
+		SeedLogger.info("Creating demo payment data (Stripe, credits, admin withdrawal)...");
 
 		const admin = await this.prisma.user.update({
 			where: { email: "admin@gmail.com" },
@@ -50,7 +50,7 @@ export class SeedPaymentsDemoService {
 			]),
 		});
 
-		// Perguntas em créditos: respondidas (já transferidas), aguardando e recusadas (créditos já devolvidos).
+		// Credit questions: answered (already transferred), waiting and declined (credits already refunded).
 		const states = ["answered", "answered", "awaiting", "refused"] as const;
 		for (let i = 0; i < 24; i++) {
 			const state = states[i % states.length];
@@ -114,7 +114,7 @@ export class SeedPaymentsDemoService {
 			pixQuestionIds.push(question.id);
 		}
 
-		// Um saque já feito, para o histórico: marca duas perguntas PIX do admin como sacadas.
+		// A withdrawal already made, for the history: marks two of the admin's PIX questions as withdrawn.
 		const withdrawn = await this.prisma.question.findMany({
 			where: { id: { in: pixQuestionIds.slice(0, 2) } },
 			select: { id: true, amount_paid: true },
@@ -136,6 +136,6 @@ export class SeedPaymentsDemoService {
 			data: { amount_already_withdraw: true },
 		});
 
-		SeedLogger.success("Dados de pagamento de demonstração criados!");
+		SeedLogger.success("Demo payment data created!");
 	}
 }

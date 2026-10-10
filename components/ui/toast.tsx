@@ -26,7 +26,7 @@ function ToastViewport({
 	);
 }
 
-// Os toasts ficam sobrepostos (absolute) para o que entra não empurrar o que está saindo.
+// Toasts are stacked (absolute) so the incoming one does not push the outgoing one.
 const toastVariants = cva(
 	"group pointer-events-auto absolute right-0 top-0 z-[calc(10-var(--toast-index))] w-full overflow-hidden rounded-md border shadow-lg [transform:translateX(var(--toast-swipe-movement-x))] [transition:transform_0.3s,opacity_0.3s] data-[swiping]:transition-none data-[starting-style]:opacity-0 data-[starting-style]:[transform:translateY(-100%)] data-[ending-style]:opacity-0 data-[ending-style]:[transform:translateX(calc(var(--toast-swipe-movement-x)+100%))] sm:bottom-0 sm:top-auto sm:data-[starting-style]:[transform:translateY(100%)]",
 	{

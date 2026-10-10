@@ -1,49 +1,49 @@
 #!/usr/bin/env bash
-# Setup local (Linux/macOS) usando um Postgres já instalado/rodando na máquina (sem Docker).
-# Uso: bash setups/setup-unix-using-postgres.sh
+# Local setup (Linux/macOS) using a Postgres already installed/running on the machine (no Docker).
+# Usage: bash setups/setup-unix-using-postgres.sh
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-echo "==> Verificando Bun..."
+echo "==> Checking Bun..."
 if ! command -v bun >/dev/null 2>&1; then
-	echo "Bun não encontrado. Instalando (curl -fsSL https://bun.sh/install | bash)..."
+	echo "Bun not found. Installing (curl -fsSL https://bun.sh/install | bash)..."
 	curl -fsSL https://bun.sh/install | bash
-	echo "Abra um novo terminal (ou rode 'source ~/.bashrc') e execute este script novamente."
+	echo "Open a new terminal (or run 'source ~/.bashrc') and run this script again."
 	exit 1
 fi
 
-echo "==> Instalando dependências (bun install)..."
+echo "==> Installing dependencies (bun install)..."
 bun install
 
 if [ ! -f .env ]; then
-	echo "==> Criando .env a partir de .env.example..."
+	echo "==> Creating .env from .env.example..."
 	cp .env.example .env
-	echo "Edite o .env com a DATABASE_URL do seu Postgres local antes de continuar, se necessário."
+	echo "Edit .env with your local Postgres DATABASE_URL before continuing, if needed."
 fi
 
 DB_URL="$(grep '^DATABASE_URL=' .env | cut -d= -f2- | tr -d '"')"
-echo "==> Usando DATABASE_URL=${DB_URL}"
+echo "==> Using DATABASE_URL=${DB_URL}"
 
-echo "==> Verificando conexão com o Postgres..."
+echo "==> Checking the Postgres connection..."
 if ! command -v psql >/dev/null 2>&1; then
-	echo "Aviso: 'psql' não encontrado no PATH. Pulando checagem de conexão -- garanta que o Postgres está acessível."
+	echo "Warning: 'psql' not found in PATH. Skipping the connection check -- make sure Postgres is reachable."
 else
 	psql "$DB_URL" -c '\q' 2>/dev/null || {
-		echo "Não foi possível conectar em ${DB_URL}."
-		echo "Confirme que o Postgres está rodando e que o banco existe (ex: createdb askedly_db)."
+		echo "Could not connect to ${DB_URL}."
+		echo "Make sure Postgres is running and that the database exists (e.g. createdb askedly_db)."
 		exit 1
 	}
 fi
 
-echo "==> Gerando client Prisma e aplicando migrations..."
+echo "==> Generating the Prisma client and applying migrations..."
 bun run prisma:generate
 bun run prisma:migrate
 
-echo "==> Populando banco com dados de seed..."
+echo "==> Populating the database with seed data..."
 bun run prisma:db:seed
 
 echo ""
-echo "✅ Setup Postgres (local) concluído."
-echo "   Para rodar o app: bun run dev"
+echo "✅ Postgres (local) setup complete."
+echo "   To run the app: bun run dev"

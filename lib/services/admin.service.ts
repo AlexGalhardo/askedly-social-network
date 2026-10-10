@@ -9,7 +9,7 @@ export async function isAdmin(userId: string): Promise<boolean> {
 export interface CurrencyTotals {
 	questions: number;
 	volumeCents: number;
-	/** Parte da plataforma nas perguntas respondidas. */
+	/** The platform's share of answered questions. */
 	platformRevenueCents: number;
 }
 
@@ -37,7 +37,7 @@ async function currencyTotals(currency: "BRL" | "USD"): Promise<CurrencyTotals> 
 	};
 }
 
-/** Números da plataforma inteira. Quem chama deve conferir `isAdmin` com o id da sessão antes. */
+/** Numbers for the whole platform. The caller must check `isAdmin` with the session id first. */
 export async function getAdminDashboard(): Promise<AdminDashboard> {
 	const [
 		users,

@@ -6,8 +6,8 @@ import { toast } from "sonner";
 import { acceptFollowRequest, rejectFollowRequest, removeFollower } from "@/actions/follower-actions";
 import { getMyFollowers } from "@/actions/my-account-actions";
 import { useSessionBoundList } from "@/hooks/use-session-bound-list";
+import { FollowerUserInterface, FollowRequestInterface } from "@/lib/interfaces";
 import { followerService } from "@/lib/services/follower-service";
-import { FollowerUserInterface, FollowRequestInterface } from "@/types/FollowerUserInterface";
 
 const loadFollowers = async (): Promise<FollowerUserInterface[]> =>
 	(await getMyFollowers()) as unknown as FollowerUserInterface[];

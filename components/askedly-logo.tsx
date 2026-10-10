@@ -1,4 +1,4 @@
-/** Ícone oficial: balão de conversa com um ponto de interrogação. O mesmo desenho é o favicon (app/icon.svg). */
+/** Official icon: a speech bubble with a question mark. The same artwork is the favicon (app/icon.svg). */
 export function AskedlyLogo({ className }: { className?: string }) {
 	return (
 		<svg viewBox="0 0 64 64" fill="none" className={className}>

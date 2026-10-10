@@ -1,7 +1,7 @@
 "use client";
 
-// Último recurso: erro no próprio layout raiz. Aqui não há provider de idioma nem CSS do app, então o texto é fixo
-// em inglês (idioma padrão) e o estilo é inline.
+// Last resort: an error in the root layout itself. There is no locale provider or app CSS here, so the text is
+// hardcoded in English (the default locale) and the styling is inline.
 export default function GlobalError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
 	return (
 		<html lang="en">

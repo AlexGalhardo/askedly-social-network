@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import TelegramLog from "@/lib/telegram-logger";
 
-export default function ResetarSenhaComponent() {
+export default function ChangePasswordComponent() {
 	const router = useRouter();
 	const t = useTranslations("auth");
 	const searchParams = useSearchParams();
@@ -53,7 +53,7 @@ export default function ResetarSenhaComponent() {
 
 				setTokenValid(true);
 			} catch (error: any) {
-				await TelegramLog.error(`Catch Error file resetar-senha.ts verifyToken: ${error?.message}`);
+				await TelegramLog.error(`Catch Error file change-password.tsx verifyToken: ${error?.message}`);
 				router.push("/");
 			} finally {
 				setTokenChecking(false);
@@ -130,7 +130,7 @@ export default function ResetarSenhaComponent() {
 		);
 	}
 
-	// O efeito de validação acima já redireciona quando o token é inválido.
+	// The validation effect above already redirects when the token is invalid.
 	if (!tokenValid) return null;
 
 	return (

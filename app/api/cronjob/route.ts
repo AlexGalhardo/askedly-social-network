@@ -54,10 +54,10 @@ async function deleteOldUsers(): Promise<number> {
 }
 
 export async function GET(request: Request) {
-	// A Vercel envia este header nas execuções agendadas; sem ele qualquer um dispararia a exclusão de contas.
+	// Vercel sends this header on scheduled runs; without it anyone could trigger account deletion.
 	const cronSecret = process.env.CRON_SECRET;
 	if (!cronSecret || request.headers.get("authorization") !== `Bearer ${cronSecret}`) {
-		return Response.json({ error: "Não autorizado" }, { status: 401 });
+		return Response.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
 	try {
@@ -76,14 +76,14 @@ export async function GET(request: Request) {
 		const creditQuestions = await settlePendingCreditQuestions();
 
 		await TelegramLog.info(
-			`🕒 Cronjob executado em ${formattedNow}\n🔁 Contadores resetados para ${resetResult.count} usuários.\n🗑️ Usuários deletados (30 dias marcados como deletados ou 2 anos sem login): ${deletedCount}
-	🧹 Janelas de rate limit vencidas apagadas: ${expiredRateLimits}
-	💸 Perguntas em créditos com liquidação pendente processadas: ${creditQuestions}`,
+			`🕒 Cronjob ran at ${formattedNow}\n🔁 Counters reset for ${resetResult.count} users.\n🗑️ Users deleted (30 days marked as deleted or 2 years without login): ${deletedCount}
+	🧹 Expired rate limit windows deleted: ${expiredRateLimits}
+	💸 Credit questions with pending settlement processed: ${creditQuestions}`,
 		);
 
 		return new Response("OK");
 	} catch (error: unknown) {
-		// Uma etapa falhar não pode virar 500 sem rastro: a Vercel não avisa, o log no Telegram avisa.
+		// A failing step must not become an untraceable 500: Vercel does not alert, the Telegram log does.
 		await TelegramLog.error(`Cronjob failed: ${error instanceof Error ? error.message : error}`);
 		return Response.json({ error: "Cron failed" }, { status: 500 });
 	}

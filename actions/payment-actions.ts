@@ -10,7 +10,7 @@ import {
 import { WithdrawError, withdrawBalance } from "@/lib/services/withdraw.service";
 import TelegramLog from "@/lib/telegram-logger";
 
-// Server Actions são endpoints públicos: a identidade vem sempre da sessão, nunca dos argumentos.
+// Server Actions are public endpoints: the identity always comes from the session, never from the arguments.
 async function requireSessionUser(): Promise<{ id: string; nickname: string }> {
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id || !session.user.nickname)

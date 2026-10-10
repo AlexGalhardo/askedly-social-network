@@ -1,12 +1,12 @@
-// Checagem manual do modo demonstração (docs/docker.md):
-//   node tests/e2e/demo-check.mjs http://localhost:3000 <id de um usuário> <nickname dele>
-// Para pegar um usuário: docker compose -f infra/docker-compose.demo.yaml exec db \n//   psql -U postgres -d askedly_demo -Atc "select id, nickname from users where not is_admin limit 1"
-// Não entra na suíte do Playwright (não é *.spec.ts): precisa da stack Docker de demonstração no ar.
+// Manual check of demo mode (docs/docker.md):
+//   node tests/e2e/demo-check.mjs http://localhost:3000 <a user's id> <their nickname>
+// To get a user: docker compose -f infra/docker-compose.demo.yaml exec db \n//   psql -U postgres -d askedly_demo -Atc "select id, nickname from users where not is_admin limit 1"
+// Not part of the Playwright suite (it is not *.spec.ts): it needs the demo Docker stack up.
 import { chromium } from "@playwright/test";
 
 const [base = "http://localhost:3000", ownerId, nickname] = process.argv.slice(2);
 if (!ownerId || !nickname) {
-	console.error("Uso: node tests/e2e/demo-check.mjs <url> <id do usuário> <nickname>");
+	console.error("Usage: node tests/e2e/demo-check.mjs <url> <user id> <nickname>");
 	process.exit(1);
 }
 const results = [];

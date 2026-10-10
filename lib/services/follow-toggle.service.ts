@@ -3,13 +3,13 @@ import { prisma } from "@/prisma/prisma-client";
 export interface FollowToggleResult {
 	isFollowing: boolean;
 	hasPendingRequest: boolean;
-	/** Chave de mensagem do namespace `account.follow`; quem chama traduz. */
+	/** Message key of the `account.follow` namespace; the caller translates. */
 	message: "stoppedFollowing" | "requestCancelled" | "requestSent" | "nowFollowing";
 }
 
 /**
- * Seguir/deixar de seguir como botão único. Perfil privado recebe solicitação em vez de seguidor. `followerId` tem
- * que vir da sessão: quem chama nunca escolhe em nome de quem segue. Null se o alvo não existe ou é o próprio usuário.
+ * Follow/unfollow as a single button. A private profile gets a request instead of a follower. `followerId` must
+ * come from the session: the caller never chooses on whose behalf to follow. Null if the target does not exist or is the user themselves.
  */
 export async function toggleFollow(followerId: string, followingId: string): Promise<FollowToggleResult | null> {
 	if (followerId === followingId) return null;

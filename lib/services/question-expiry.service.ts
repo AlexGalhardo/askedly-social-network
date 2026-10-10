@@ -2,8 +2,8 @@ import { QUESTION_ANSWER_WINDOW_HOURS } from "@/lib/utils/question-utils";
 import { prisma } from "@/prisma/prisma-client";
 
 /**
- * Marca como expirada uma pergunta não respondida cujo prazo já passou, se `nickname` participa dela.
- * O prazo é conferido no servidor: expirar libera o reembolso para quem perguntou.
+ * Marks as expired an unanswered question whose deadline has passed, if `nickname` takes part in it.
+ * The deadline is checked on the server: expiring releases the refund to the asker.
  */
 export async function expireQuestion(questionId: string, nickname: string): Promise<boolean> {
 	const deadline = new Date(Date.now() - QUESTION_ANSWER_WINDOW_HOURS * 60 * 60 * 1000);

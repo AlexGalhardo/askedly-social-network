@@ -9,7 +9,7 @@ import LoadingScreen from "@/components/loading-screen";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMySocialGraph } from "@/hooks/use-my-social-graph";
 import { useProfile } from "@/hooks/use-profile-queries";
-import { QuestionInterface } from "@/lib/interfaces";
+import { ProfileQuestionInterface } from "@/lib/interfaces";
 import { ProfileHeader } from "./profile-header";
 import { ProfilePagination } from "./profile-pagination";
 import { ProfilePaymentModal } from "./profile-payment-modal";
@@ -66,7 +66,8 @@ export default function ProfileClient() {
 
 	const { publicQuestions, topPaidQuestions, topLikedQuestions } = useMemo(() => {
 		const answered = questionsData.filter(
-			(q: QuestionInterface) => q.question_answered && canViewQuestions && !q.asker_want_answer_to_be_private,
+			(q: ProfileQuestionInterface) =>
+				q.question_answered && canViewQuestions && !q.asker_want_answer_to_be_private,
 		);
 
 		const publicQuestions = [...answered].sort(
@@ -90,13 +91,13 @@ export default function ProfileClient() {
 		return { publicQuestions, topPaidQuestions, topLikedQuestions };
 	}, [questionsData, canViewQuestions]);
 
-	const getPaginatedQuestions = (questionsList: QuestionInterface[]) => {
+	const getPaginatedQuestions = (questionsList: ProfileQuestionInterface[]) => {
 		const startIndex = (currentPage - 1) * QUESTIONS_PER_PAGE;
 		const endIndex = startIndex + QUESTIONS_PER_PAGE;
 		return questionsList.slice(startIndex, endIndex);
 	};
 
-	const getTotalPages = (questionsList: QuestionInterface[]) => {
+	const getTotalPages = (questionsList: ProfileQuestionInterface[]) => {
 		return Math.ceil(questionsList.length / QUESTIONS_PER_PAGE);
 	};
 
@@ -133,7 +134,7 @@ export default function ProfileClient() {
 		return null;
 	}
 
-	const renderQuestionsList = (questions: QuestionInterface[]) => {
+	const renderQuestionsList = (questions: ProfileQuestionInterface[]) => {
 		if (questions.length === 0) {
 			return (
 				<div className="text-center py-12 text-gray-500">

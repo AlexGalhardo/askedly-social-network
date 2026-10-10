@@ -1,72 +1,79 @@
-# Askedly Social Network — Guia para Agentes de IA
+# Askedly Social Network — AI Agent Guide
 
-Rede social global de perguntas e respostas (estilo Retrospectiva/NGL) com perguntas pagas via PIX (BRL) ou com créditos comprados na Stripe (USD), com repasse por Stripe Connect.
+Global Q&A social network (Retrospectiva/NGL style) with paid questions, either by PIX (BRL) or with credits bought on Stripe (USD), with payouts through Stripe Connect.
 Next.js 16 (App Router) + React 19 + Prisma 7/PostgreSQL + NextAuth + next-intl (en, pt, es) + AbacatePay + Stripe + Resend + UploadThing.
 
-## Comandos essenciais
+## Essential commands
 
-- Package manager: **Bun 1.4.2** (`packageManager` no `package.json`). Use `npm`/`node` só se o Bun não suportar algo.
-- `bun install` — instalar dependências
-- `bun run dev` — servidor de desenvolvimento (Turbopack)
-- `bun run build` / `bun run start` — build e servidor de produção
-- `bun run lint` / `bun run format` — Biome (lint e format); `bun run lint:md` — markdownlint
-- `bun run prisma:migrate` / `bun run prisma:studio` / `bun run prisma:db:seed` — banco de dados
+- Package manager: **Bun 1.4.2** (`packageManager` in `package.json`). Use `npm`/`node` only when Bun does not support something.
+- `bun install` — install dependencies
+- `bun run dev` — development server (Turbopack)
+- `bun run build` / `bun run start` — production build and server
+- `bun run lint` / `bun run format` — Biome (lint and format); `bun run lint:md` — markdownlint
+- `bun run prisma:migrate` / `bun run prisma:studio` / `bun run prisma:db:seed` — database
 
-## Setup local
+## Local setup
 
-Veja `setups/` para os 6 scripts prontos (Windows/Unix × SQLite/Postgres/Postgres+Docker).
-Infra (Docker/docker-compose) fica em `infra/`. Aplicação completa com pagamentos simulados e seed: `docker compose -f infra/docker-compose.demo.yaml up --build` (admin: `admin@gmail.com` / `adminBR@123`, painel em `/admin`).
+See `setups/` for the 6 ready-made scripts (Windows/Unix × SQLite/Postgres/Postgres+Docker).
+Infra (Docker/docker-compose) lives in `infra/`. Full application with simulated payments and seed: `docker compose -f infra/docker-compose.demo.yaml up --build` (admin: `admin@gmail.com` / `adminBR@123`, panel at `/admin`).
 
-## Estrutura
+## Structure
 
-- `app/` — rotas App Router (páginas em português: `entrar`, `criar-conta`, `feed`, `minha-conta`, `[slug]` = perfil público) e `app/api/*/route.ts` (API routes)
+- `app/` — App Router routes (pages in English: `login`, `signup`, `feed`, `my-account`, `payments`, `[slug]` = public profile; the old Portuguese paths 301-redirect in `proxy.ts`), `app/api/*/route.ts` (API routes) and the error pages `app/error.tsx` and `app/global-error.tsx`
 - `actions/` — Server Actions
-- `lib/` — auth, integrações PIX e Stripe, repositórios, serviços, utils
-- `i18n/` e `messages/` — configuração do next-intl e textos por idioma (`en` é a fonte da verdade)
-- `hooks/` — hooks React Query por domínio
+- `components/` — shared components; `components/ui/` holds the Base UI wrappers
+- `lib/` — auth, PIX and Stripe integrations, repositories, services, utils, env validation (`lib/env.ts`)
+- `i18n/` and `messages/` — next-intl configuration and the texts per language (`en` is the source of truth)
+- `hooks/` — React Query hooks per domain
 - `prisma/` — schema, migrations, seed
-- `emails/` — templates React Email
+- `emails/` — React Email templates
 
-## Documentação detalhada (`docs/`)
+## Detailed documentation (`docs/`)
 
-- [`docs/architecture.md`](docs/architecture.md) — camadas e fluxo de dados
-- [`docs/database.md`](docs/database.md) — schema Prisma e estratégia SQLite/dev
-- [`docs/auth.md`](docs/auth.md) — NextAuth e sessões
-- [`docs/payments-pix.md`](docs/payments-pix.md) — AbacatePay e webhook PIX
-- [`docs/payments-stripe.md`](docs/payments-stripe.md) — créditos, webhook Stripe e repasse por Connect
-- [`docs/stripe-setup.md`](docs/stripe-setup.md) — configurar a Stripe (manual e com agentes de IA)
-- [`docs/i18n.md`](docs/i18n.md) — idiomas, onde ficam os textos, como traduzir
-- [`docs/email.md`](docs/email.md) — Resend e templates
+- [`docs/architecture.md`](docs/architecture.md) — layers and data flow
+- [`docs/database.md`](docs/database.md) — Prisma schema, SQLite strategy for dev, Neon provisioning and seed
+- [`docs/auth.md`](docs/auth.md) — NextAuth and sessions
+- [`docs/payments-pix.md`](docs/payments-pix.md) — AbacatePay and the PIX webhook
+- [`docs/payments-stripe.md`](docs/payments-stripe.md) — credits, Stripe webhook and payouts through Connect
+- [`docs/stripe-setup.md`](docs/stripe-setup.md) — setting up Stripe (manually and with AI agents)
+- [`docs/i18n.md`](docs/i18n.md) — languages, where the texts live, how to translate
+- [`docs/email.md`](docs/email.md) — Resend and templates
 - [`docs/uploads.md`](docs/uploads.md) — UploadThing
-- [`docs/telegram-bot.md`](docs/telegram-bot.md) — logger/bot Telegram
-- [`docs/testing.md`](docs/testing.md) — como rodar cada tipo de teste
-- [`docs/deployment.md`](docs/deployment.md) — CI/CD e deploy
-- [`docs/vercel-deploy.md`](docs/vercel-deploy.md) — roteiro de deploy na Vercel (manual e com agentes de IA)
-- [`docs/docker.md`](docs/docker.md) — aplicação completa em Docker com pagamentos simulados e seed
-- [`docs/tooling.md`](docs/tooling.md) — ferramentas, hooks do git e como validar como o CI
-- [`docs/security.md`](docs/security.md) — auditoria OWASP Top 10:2025, riscos aceitos
+- [`docs/telegram-bot.md`](docs/telegram-bot.md) — Telegram logger/bot
+- [`docs/testing.md`](docs/testing.md) — how to run each kind of test
+- [`docs/deployment.md`](docs/deployment.md) — CI/CD and deployment
+- [`docs/vercel-deploy.md`](docs/vercel-deploy.md) — Vercel deployment walkthrough (manually and with AI agents)
+- [`docs/docker.md`](docs/docker.md) — full application in Docker with simulated payments and seed
+- [`docs/tooling.md`](docs/tooling.md) — tools, git hooks and how to validate like CI
+- [`docs/security.md`](docs/security.md) — OWASP Top 10:2025 audit, accepted risks
 
-## Skills (uso obrigatório)
+## Skills (mandatory)
 
-Skills de terceiros vendorizadas em `.claude/skills/` (origem/commit em `.claude/skills/SOURCES.md`), mais agentes em `.claude/agents/` e checklists em `.claude/references/`. **Toda sessão/agente deve usá-las na refatoração** (plano em `PLAN.md`):
+Third-party skills are vendored in `.claude/skills/` (origin/commit in `.claude/skills/SOURCES.md`), plus agents in `.claude/agents/` and checklists in `.claude/references/`. **Every session/agent must use them in the refactoring** (plan in `PLAN.md`):
 
-- Antes de qualquer tarefa: `using-agent-skills` para escolher a skill; `graphify` para mapear o código (CLI `graphifyy==0.9.68`) em vez de grep cego
-- Código: `ponytail` (solução mínima, YAGNI), `code-simplification`, `incremental-implementation`, `test-driven-development`, `debugging-and-error-recovery`
-- Revisão: `code-review-and-quality`, `ponytail-review`/`ponytail-audit`, `security-and-hardening` (OWASP), `performance-optimization`
+- Before any task: `using-agent-skills` to pick the skill; `graphify` to map the code (CLI `graphifyy==0.9.68`) instead of blind grep
+- Code: `ponytail` (minimal solution, YAGNI), `code-simplification`, `incremental-implementation`, `test-driven-development`, `debugging-and-error-recovery`
+- Review: `code-review-and-quality`, `ponytail-review`/`ponytail-audit`, `security-and-hardening` (OWASP), `performance-optimization`
 - UI: `impeccable`, `frontend-design`, `frontend-ui-engineering`, `ui-ux-pro-max`, `web-design-guidelines`, `vercel-react-best-practices`
-- Processo: `git-workflow-and-versioning`, `ci-cd-and-automation`, `documentation-and-adrs`, `planning-and-task-breakdown`
-- Do projeto: `askedly-secure-endpoint` (toda action/rota/dado que vai ao browser) e `askedly-local-verification` (validar como o CI antes de dar como pronto)
+- Process: `git-workflow-and-versioning`, `ci-cd-and-automation`, `documentation-and-adrs`, `planning-and-task-breakdown`
+- Project-specific: `askedly-secure-endpoint` (every action/route/piece of data that reaches the browser) and `askedly-local-verification` (validate like CI before calling something done)
 
-## Convenções
+## Conventions
 
-- Formatação: `.editorconfig` (tab, largura 4, LF) é a fonte da verdade; Biome lê via `formatter.useEditorconfig`. YAML e `package.json` usam espaços
-- Conventional Commits obrigatório (validado por commitlint no `commit-msg`)
-- Comentários só para edge cases/decisões não óbvias — nunca comentário redundante
-- TypeScript com tipagem forte; evite `any` não justificado
-- Texto de interface nunca é hardcoded: chave em `messages/en`, `pt` e `es` (o `tsc` falha se faltar em algum). Conteúdo de usuário não é traduzido. Detalhes em [`docs/i18n.md`](docs/i18n.md)
-- Segurança: quem age vem de `getSessionUser()` (`lib/session.ts`), nunca do body; `"use server"` só em `actions/` (em `lib/` vira endpoint público); nenhuma linha inteira de `User` vai para o browser; valores de dinheiro são calculados no servidor; segredo nunca é `NEXT_PUBLIC_*`. Detalhes em [`docs/architecture.md`](docs/architecture.md)
-- Prisma 7: rode `bun run prisma:generate` após `bun install`; use só a instância de `@/prisma/prisma-client`
-- Antes de considerar algo pronto: `bun run lint:ci`, `bun run lint:md`, `bunx tsc --noEmit`, `bun run build` e os testes relevantes devem passar (o CI bloqueia em todos)
+- Formatting: `.editorconfig` (tab, width 4, LF) is the source of truth; Biome reads it through `formatter.useEditorconfig`. YAML and `package.json` use spaces
+- Conventional Commits are mandatory (validated by commitlint in `commit-msg`)
+- Every commit on `main` is a release: bump `version` in `package.json` (SemVer, `0.x` until Phase 4 of `PLAN.md`), add the section to `CHANGELOG.md`, tag `vX.Y.Z` and publish the GitHub release (steps in `CONTRIBUTE.md`)
+- Language: code, comments, docs and commit messages are in English. The UI is translated (en default, pt, es) through next-intl; user content is never translated
+- Comments only for edge cases/non-obvious decisions — never a redundant comment
+- Strongly typed TypeScript; avoid unjustified `any`
+- UI text is never hardcoded: a key in `messages/en`, `pt` and `es` (`tsc` fails if one is missing). Details in [`docs/i18n.md`](docs/i18n.md)
+- UI library: Base UI (`@base-ui/react`), not shadcn/Radix. Wrappers live in `components/ui/`; composition uses the `render` prop instead of `asChild` (`<Button render={<Link href="/" />}>`); state selectors are `data-[checked]`/`data-[active]`/`data-[open]`. Tailwind 4 is CSS-first: design tokens live in the `@theme inline` block of `app/globals.css`; there is no `tailwind.config.ts` and no `components.json`
+- Brand: the name shown in the UI is "Askedly" (logo in `components/askedly-logo.tsx`, favicon in `app/icon.svg`); the repository/project name stays "Askedly Social Network"
+- Environment: `lib/env.ts` (Zod) is called from `next.config.ts`. A missing essential variable fails the build, a missing optional one only turns the feature off and warns; `SKIP_ENV_VALIDATION=true` exists only for the Docker image build. Captcha (Cloudflare Turnstile) is optional: on only when both `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY` and `CLOUDFLARE_TURNSTILE_SECRET` are set
+- Routes: a nickname equal to a route is rejected at signup (`RESERVED_NICKNAMES` in `lib/schemas/signup.ts`); add new top-level routes to that list
+- Security: the acting user comes from `getSessionUser()` (`lib/session.ts`), never from the body; `"use server"` only in `actions/` (in `lib/` it becomes a public endpoint); no whole `User` row goes to the browser; money values are computed on the server; a secret is never `NEXT_PUBLIC_*`. Details in [`docs/architecture.md`](docs/architecture.md)
+- Prisma 7: run `bun run prisma:generate` after `bun install`; use only the instance from `@/prisma/prisma-client`
+- Before calling something done: `bun run lint:ci`, `bun run lint:md`, `bunx tsc --noEmit`, `bun run build` and the relevant tests must pass (CI blocks on all of them)
 
 <!-- BEGIN:nextjs-agent-rules -->
 

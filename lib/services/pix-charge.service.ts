@@ -3,7 +3,7 @@ import { prisma } from "@/prisma/prisma-client";
 
 export type CheckCharge = typeof checkPixCharge;
 
-/** Guarda a cobrança recém-criada: o valor é o que a AbacatePay confirmou, e fica ligada a quem vai pagar. */
+/** Stores the newly created charge: the amount is what AbacatePay confirmed, and it stays linked to whoever is going to pay. */
 export async function registerCharge(userId: string, charge: PixCharge): Promise<void> {
 	await prisma.webhookAbacatePay.create({
 		data: {
@@ -21,7 +21,7 @@ export async function registerCharge(userId: string, charge: PixCharge): Promise
 	});
 }
 
-/** Idempotente: retentativas do webhook (mesmo evento) e o polling não reprocessam uma cobrança já paga. */
+/** Idempotent: webhook retries (same event) and polling do not reprocess an already paid charge. */
 export async function markChargePaid(pixId: string, completeEvent: string, eventStatus = "transparent.completed") {
 	const { count } = await prisma.webhookAbacatePay.updateMany({
 		where: { pix_id: pixId, status: { not: "PAID" } },
@@ -31,8 +31,8 @@ export async function markChargePaid(pixId: string, completeEvent: string, event
 }
 
 /**
- * Garante que a cobrança do usuário está paga. Se o webhook ainda não chegou, confirma direto na AbacatePay.
- * Retorna false para cobrança inexistente, de outro usuário ou não paga.
+ * Ensures the user's charge is paid. If the webhook has not arrived yet, confirms directly with AbacatePay.
+ * Returns false for a charge that does not exist, belongs to another user or is not paid.
  */
 export async function ensureChargePaid(pixId: string, userId: string, check: CheckCharge = checkPixCharge) {
 	const row = await prisma.webhookAbacatePay.findUnique({

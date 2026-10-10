@@ -1,21 +1,24 @@
-# Bot/Logger do Telegram
+# Telegram bot/logger
 
-`lib/telegram-logger.ts` é um logger de observabilidade, não um bot interativo: envia mensagens para um canal do Telegram via `sendMessage` da Bot API. Não recebe nem processa comandos.
+`lib/telegram-logger.ts` is an observability logger, not an interactive bot: it sends messages to a Telegram channel through the Bot API's `sendMessage`. It does not receive or process commands.
 
-## Configuração
+## Configuration
 
-- `TELEGRAM_BOT_HTTP_TOKEN` — token do bot (`https://api.telegram.org/bot<TOKEN>/getUpdates` para descobrir/validar)
-- `TELEGRAM_BOT_CHANNEL_ID` — id numérico do canal/chat de destino
+- `TELEGRAM_BOT_HTTP_TOKEN` — the bot token (`https://api.telegram.org/bot<TOKEN>/getUpdates` to find/validate it)
+- `TELEGRAM_BOT_CHANNEL_ID` — numeric id of the destination channel/chat
 
-Sem essas variáveis, a classe apenas loga um aviso no console (`"There is no Telegram Token..."`) e segue sem enviar nada — não quebra a aplicação.
+Both are optional (`lib/env.ts` only warns at build time when they are missing). Without them, the class just logs a warning to the console (`"There is no Telegram Token..."`) and carries on without sending anything — it does not break the application.
 
-## Uso
+## Usage
 
 ```ts
 import TelegramLog from "@/lib/telegram-logger";
 
-await TelegramLog.info("mensagem informativa");
-await TelegramLog.error("mensagem de erro");
+await TelegramLog.info("informational message");
+await TelegramLog.warning("warning message");
+await TelegramLog.error("error message");
 ```
 
-Usado hoje para: erros de autenticação (`lib/auth.ts`), erros de criação de pagamento PIX (`lib/create-pix-payment.ts`), e confirmação de pagamento recebido pelo webhook (`app/api/webhook/abacatepay/route.ts`). Timeout de 8s por requisição via `AbortController` — falha de envio nunca deve derrubar o fluxo principal.
+Used today for: authentication errors (`lib/auth.ts`), captcha errors (`lib/captcha.ts`), the first rate limit violation of each window (`lib/services/rate-limit.service.ts`), payments confirmed by the webhooks (`app/api/webhook/abacatepay/route.ts`, `app/api/webhook/stripe/route.ts`), failed Stripe transfers (`lib/services/stripe-connect.service.ts`) and cron errors (`app/api/cronjob/route.ts`). 8 s timeout per request through `AbortController` — a failed send must never bring down the main flow.
+
+Log messages are internal and are not translated.

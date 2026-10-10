@@ -1,20 +1,20 @@
 import { createUser, getUserByEmail, getUserByNickname } from "@/lib/repositories/users.repository";
 import { type AuthErrorKey, type SignupField, signupSchema } from "@/lib/schemas/signup";
 
-/** No service as mensagens são chaves de `auth.errors`; a action traduz e devolve `SignupResult<string>`. */
+/** In the service the messages are `auth.errors` keys; the action translates and returns `SignupResult<string>`. */
 export type SignupResult<Message extends string = AuthErrorKey> =
 	| { ok: true }
 	| { ok: false; fieldErrors: Partial<Record<SignupField, Message>>; error?: Message };
 
-/** Cadastro com senha. `input` vem do browser: a validação do client é só conveniência, a que vale é esta. */
+/** Password signup. `input` comes from the browser: the client validation is only a convenience, this is the one that counts. */
 export interface SignupCaptcha {
 	captchaToken: string | undefined;
-	/** Em produção, `isCaptchaValid` (lib/captcha.ts). Injetável para testar sem rede. */
+	/** In production, `isCaptchaValid` (lib/captcha.ts). Injectable to test without network. */
 	verifyCaptcha: (token: string | undefined) => Promise<boolean>;
 }
 
 export async function signUp(input: unknown, captcha?: SignupCaptcha): Promise<SignupResult> {
-	// Captcha antes de qualquer consulta: robô nem chega a testar quais nicknames/emails existem.
+	// Captcha before any query: a bot does not even get to test which nicknames/emails exist.
 	if (captcha && !(await captcha.verifyCaptcha(captcha.captchaToken))) {
 		return { ok: false, fieldErrors: {}, error: "captchaRequired" };
 	}

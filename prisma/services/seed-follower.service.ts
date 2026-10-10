@@ -17,11 +17,11 @@ export class SeedFollowerService {
 
 		if (actualCount < count) {
 			SeedLogger.warning(
-				`⚠️ Ajustando número de relações de ${count} para ${actualCount} (máximo possível com ${users.length} usuários)`,
+				`⚠️ Adjusting number of relations from ${count} to ${actualCount} (maximum possible with ${users.length} users)`,
 			);
 		}
 
-		SeedLogger.info(`Criando ${actualCount} relações de seguidores...`);
+		SeedLogger.info(`Creating ${actualCount} follower relations...`);
 
 		let created = 0;
 		const relations: SeedFollowerInterface[] = [];
@@ -47,11 +47,11 @@ export class SeedFollowerService {
 				consecutiveFailures = 0;
 
 				SeedLogger.info(
-					`👥 Relação ${created}/${actualCount} preparada: @${followerUser.nickname} → @${followingUser.nickname}`,
+					`👥 Relation ${created}/${actualCount} prepared: @${followerUser.nickname} → @${followingUser.nickname}`,
 				);
 
 				if (relations.length >= 10 || created === actualCount) {
-					SeedLogger.info(`💾 Salvando lote de ${relations.length} relações no banco...`);
+					SeedLogger.info(`💾 Saving batch of ${relations.length} relations to the database...`);
 
 					try {
 						await this.prisma.follower.createMany({
@@ -65,13 +65,15 @@ export class SeedFollowerService {
 						for (const rel of relations) {
 							const fUser = users.find((u) => u.id === rel.followerId);
 							const fgUser = users.find((u) => u.id === rel.followingId);
-							SeedLogger.success(`  ✅ Relação salva: @${fUser?.nickname} seguiu @${fgUser?.nickname}`);
+							SeedLogger.success(
+								`  ✅ Relation saved: @${fUser?.nickname} followed @${fgUser?.nickname}`,
+							);
 						}
 
 						relations.length = 0;
-						SeedLogger.progress(created, actualCount, "Relações de seguidores criadas");
+						SeedLogger.progress(created, actualCount, "Follower relations created");
 					} catch (error: any) {
-						SeedLogger.error(`❌ Erro ao salvar lote: ${error}`);
+						SeedLogger.error(`❌ Error saving batch: ${error}`);
 						for (const rel of relations) {
 							try {
 								await this.prisma.follower.create({
@@ -83,10 +85,10 @@ export class SeedFollowerService {
 								const fUser = users.find((u) => u.id === rel.followerId);
 								const fgUser = users.find((u) => u.id === rel.followingId);
 								SeedLogger.success(
-									`  ✅ Relação salva individualmente: @${fUser?.nickname} seguiu @${fgUser?.nickname}`,
+									`  ✅ Relation saved individually: @${fUser?.nickname} followed @${fgUser?.nickname}`,
 								);
 							} catch (individualError) {
-								SeedLogger.warning(`⚠️ Erro individual: ${individualError}`);
+								SeedLogger.warning(`⚠️ Individual error: ${individualError}`);
 							}
 						}
 						relations.length = 0;
@@ -98,17 +100,17 @@ export class SeedFollowerService {
 
 			if (consecutiveFailures > 0 && consecutiveFailures % 100 === 0) {
 				SeedLogger.warning(
-					`⚠️ ${consecutiveFailures} tentativas consecutivas falharam. Pode estar esgotando combinações...`,
+					`⚠️ ${consecutiveFailures} consecutive attempts failed. Combinations may be running out...`,
 				);
 			}
 		}
 
 		if (consecutiveFailures >= maxConsecutiveFailures) {
 			SeedLogger.warning(
-				`⚠️ Parou após ${maxConsecutiveFailures} tentativas consecutivas falhadas. Criadas ${created} relações.`,
+				`⚠️ Stopped after ${maxConsecutiveFailures} consecutive failed attempts. Created ${created} relations.`,
 			);
 		}
 
-		SeedLogger.success(`${created} relações de seguidores criadas!`);
+		SeedLogger.success(`${created} follower relations created!`);
 	}
 }

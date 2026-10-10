@@ -1,17 +1,17 @@
 ---
 name: askedly-local-verification
 description: >
-  Como validar uma mudança no Askedly Social Network localmente do mesmo jeito que o CI valida (lint, tipos, unit, integração,
-  build, smoke, e2e em dev e em modo produção). Use antes de dar qualquer tarefa como pronta, quando um teste passa
-  local e falha no CI, ou quando build/e2e falham por banco, captcha, Bun vs Node ou Prisma.
+  How to validate a change in Askedly Social Network locally the same way CI validates it (lint, types, unit, integration,
+  build, smoke, e2e in dev and in production mode). Use it before calling any task done, when a test passes
+  locally and fails in CI, or when build/e2e fail because of the database, captcha, Bun vs Node, env validation or Prisma.
 ---
 
-# Validar como o CI valida
+# Validate the way CI validates
 
-## Banco descartável
+## Disposable database
 
-Nunca rode integração/smoke/e2e contra o banco do `.env` (é o banco de dev, com dados). Suba um Postgres descartável e
-exporte a URL só para o comando:
+Never run integration/smoke/e2e against the database in `.env` (it is the dev database, with data). Start a disposable Postgres and
+export the URL only for the command:
 
 ```bash
 docker run -d --name askedly-ci-pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=askedly_db -p 55432:5432 postgres:17-alpine
@@ -19,23 +19,24 @@ export DATABASE_URL="postgresql://postgres:postgres@localhost:55432/askedly_db"
 bunx prisma migrate deploy
 ```
 
-O `next build` faz queries (páginas estáticas como `/top-curtidas`), então também precisa desse `DATABASE_URL`.
+`next build` runs queries (static pages such as `/top-liked`), so it needs this `DATABASE_URL` too.
 
-## Sequência (mesma ordem do CI)
+## Sequence (same order as CI)
 
 ```bash
-bun run lint:ci            # falha também com warning
+bun run lint:ci            # also fails on warnings
+bun run lint:md            # markdownlint
 bunx tsc --noEmit
 bun run test               # unit
 bun run test:integration
 bun run build && bun run test:smoke
-bunx playwright test       # e2e contra next dev
+bunx playwright test       # e2e against next dev
 ```
 
-## E2E em modo produção (o que o CI roda)
+## E2E in production mode (what CI runs)
 
-O CI roda o e2e contra `next start`, onde o captcha é obrigatório. Use as chaves de teste da Cloudflare, que sempre
-passam, **no build** (`NEXT_PUBLIC_*` é embutido em build time):
+CI runs the e2e against `next start` with the captcha on. The captcha is optional (on only with both keys below); use
+Cloudflare's test keys, which always pass, **at build time** (`NEXT_PUBLIC_*` is embedded at build time):
 
 ```bash
 export NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY=1x00000000000000000000AA
@@ -43,16 +44,22 @@ export CLOUDFLARE_TURNSTILE_SECRET=1x0000000000000000000000000000000AA
 bun run build && CI=true bunx playwright test --retries=0
 ```
 
-## Armadilhas já encontradas
+## Pitfalls already found
 
-- **Rode o Next com Node, não Bun**: sob o runtime do Bun, `@prisma/client` e `pg` externalizados pelo Turbopack não
-  resolvem (`ResolveMessage: Cannot find module '@prisma/client-<hash>'`). Playwright e smoke já usam `node`.
-- **Prisma 7 não regenera o client no `migrate dev`**: rode `bun run prisma:generate` depois de mudar o schema, e
-  replique a mudança em `prisma/schema.sqlite.prisma`.
-- **Gerar o client com `DATABASE_URL=file:...`** troca o client para SQLite; regenere com a URL Postgres depois.
-- **Rate limit nos e2e**: cadastro é limitado por IP. Testes que cadastram chamam `useUniqueClientIp(page)`
-  (`tests/e2e/helpers.ts`) e esperam o captcha com `waitForCaptcha(page)`.
-- **Primeira execução do `next dev` é lenta** (compila rota por rota); um timeout isolado de `waitForURL` na primeira
-  rodada não é bug, rode de novo antes de investigar.
-- **`NEXTAUTH_URL` na porta do teste**: o Playwright sobe o Next na 3200. Com o `NEXTAUTH_URL` do `.env` em outra porta, todo `signOut` (troca de senha, excluir conta) redireciona para um servidor que não existe (`ERR_CONNECTION_REFUSED`). Rode com `NEXTAUTH_URL=http://localhost:3200`.
-- **Hook `pre-push`** roda unit + build: exporte o `DATABASE_URL` descartável ao dar push.
+- **Run Next with Node, not Bun**: under the Bun runtime, `@prisma/client` and `pg`, externalized by Turbopack, do not
+  resolve (`ResolveMessage: Cannot find module '@prisma/client-<hash>'`). Playwright and smoke already use `node`.
+- **Prisma 7 does not regenerate the client on `migrate dev`**: run `bun run prisma:generate` after changing the schema, and
+  replicate the change in `prisma/schema.sqlite.prisma`.
+- **Generating the client with `DATABASE_URL=file:...`** switches the client to SQLite; regenerate with the Postgres URL afterwards.
+- **Env validation breaks the build**: `lib/env.ts` runs from `next.config.ts` on every build and start. Without
+  `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL` and `NEXT_PUBLIC_APP_URL` the build fails with
+  `Invalid environment variables`; missing optional features only print `[env] ...` warnings. `SKIP_ENV_VALIDATION=true`
+  exists only for the Docker image build: do not use it to make a local build pass.
+- **Rate limit in the e2e**: signup is limited per IP. Tests that sign up call `useUniqueClientIp(page)`
+  (`tests/e2e/helpers.ts`) and wait for the captcha with `waitForCaptcha(page)`.
+- **The first run of `next dev` is slow** (it compiles route by route); an isolated `waitForURL` timeout on the first
+  run is not a bug, run again before investigating.
+- **`NEXTAUTH_URL` on the test port**: Playwright starts Next on 3200. With the `NEXTAUTH_URL` from `.env` on another port, every `signOut` (password change, account deletion) redirects to a server that does not exist (`ERR_CONNECTION_REFUSED`). Run with `NEXTAUTH_URL=http://localhost:3200`.
+- **The e2e specs check Portuguese texts**: Playwright runs with `locale: "pt-BR"` (`playwright.config.ts`). The routes
+  are in English (`/login`, `/signup`, `/my-account`); the old Portuguese paths only exist as 301 redirects in `proxy.ts`.
+- **The `pre-push` hook** runs unit + build: export the disposable `DATABASE_URL` when pushing.

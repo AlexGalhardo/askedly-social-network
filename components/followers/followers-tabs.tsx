@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FollowerUserInterface, FollowRequestInterface } from "@/types/FollowerUserInterface";
+import { FollowerUserInterface, FollowRequestInterface } from "@/lib/interfaces";
 import { FollowRequestsList } from "./follow-requests-list";
 import { FollowersList } from "./followers-list";
 

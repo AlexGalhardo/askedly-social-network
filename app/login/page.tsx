@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import LoadingScreen from "@/components/loading-screen";
-import EntrarClient from "./login";
+import LoginClient from "./login";
 
 const OG_LOCALE = { en: "en_US", pt: "pt_BR", es: "es_ES" } as const;
 
@@ -47,7 +47,7 @@ export default function LoginPage() {
 	return (
 		<div>
 			<Suspense fallback={<LoadingScreen />}>
-				<EntrarClient />
+				<LoginClient />
 			</Suspense>
 		</div>
 	);

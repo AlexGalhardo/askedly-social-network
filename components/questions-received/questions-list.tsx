@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { QuestionInterface } from "@/types/QuestionInterface";
+import { QuestionInterface } from "@/lib/interfaces";
 import { QuestionCard } from "./question-card";
 
 interface QuestionsListProps {
@@ -12,7 +12,7 @@ interface QuestionsListProps {
 	onDecline?: (questionId: string) => void;
 	onDelete?: (questionId: string) => void;
 	onReport?: (questionId: string) => void;
-	onExpire?: (questionId: string) => void; // NOVO
+	onExpire?: (questionId: string) => void; // NEW
 	loadingStates?: {
 		answering?: string;
 		declining?: string;
@@ -27,7 +27,7 @@ export function QuestionsList({
 	onDecline,
 	onDelete,
 	onReport,
-	onExpire, // NOVO
+	onExpire, // NEW
 	loadingStates = {},
 }: QuestionsListProps) {
 	const t = useTranslations("questions");
@@ -47,7 +47,7 @@ export function QuestionsList({
 					onDecline={onDecline}
 					onDelete={onDelete}
 					onReport={onReport}
-					onExpire={onExpire} // NOVO
+					onExpire={onExpire} // NEW
 					isAnswering={loadingStates.answering === question.id}
 					isDeclining={loadingStates.declining === question.id}
 					isDeleting={loadingStates.deleting === question.id}

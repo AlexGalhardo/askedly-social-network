@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { toggleFollow } from "@/lib/services/follow-toggle.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
 const run = Date.now();
 const nicknames = { fan: `tfan${run}`, open: `topen${run}`, closed: `tclosed${run}` };
 const ids: Record<keyof typeof nicknames, string> = { fan: "", open: "", closed: "" };

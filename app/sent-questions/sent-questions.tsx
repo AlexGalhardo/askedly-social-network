@@ -9,10 +9,10 @@ import LoadingScreen from "@/components/loading-screen";
 import { ReportModal } from "@/components/sent-questions/report-modal";
 import { SentQuestionsTabs } from "@/components/sent-questions/sent-questions-tabs";
 import { useReportAnswer, useSentQuestions } from "@/hooks/use-sent-questions";
+import { SentQuestionInterface } from "@/lib/interfaces";
 import TelegramLog from "@/lib/telegram-logger";
-import { SentQuestionInterface } from "@/types/SentQuestion";
 
-export default function PerguntasEnviadasPage() {
+export default function SentQuestionsClient() {
 	const router = useRouter();
 	const { data: session, status } = useSession();
 	const { data: questions, setData: setQuestions } = useSentQuestions();
@@ -70,7 +70,7 @@ export default function PerguntasEnviadasPage() {
 				),
 			);
 		} catch (error: any) {
-			await TelegramLog.error(`Error perguntas-enviadas.ts handleConfirmReport: ${error?.message}`);
+			await TelegramLog.error(`Error sent-questions.tsx handleConfirmReport: ${error?.message}`);
 		} finally {
 			setLoadingStates((prev) => ({ ...prev, reporting: "" }));
 			setIsReportModalOpen(false);

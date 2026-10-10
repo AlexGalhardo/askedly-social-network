@@ -2,7 +2,7 @@ import { prisma } from "@/prisma/prisma-client";
 
 export type WithdrawErrorKey = "noQuestions" | "userNotFound" | "noPixKey" | "invalidQuestions";
 
-/** `message` é uma chave de `payments.withdrawErrors`; quem captura traduz. */
+/** `message` is a `payments.withdrawErrors` key; whoever catches it translates. */
 export class WithdrawError extends Error {
 	declare message: WithdrawErrorKey;
 
@@ -11,14 +11,14 @@ export class WithdrawError extends Error {
 	}
 }
 
-/** Valor repassado ao usuário, em centavos, por uma pergunta paga (resposta ou reembolso). */
+/** Amount paid out to the user, in cents, for a paid question (answer or refund). */
 export function calculatePayout(amountPaidInCents: number): number {
 	return Math.ceil(amountPaidInCents * (amountPaidInCents <= 500 ? 0.5 : 0.7));
 }
 
 /**
- * Saca o saldo das perguntas informadas para a chave PIX cadastrada do próprio usuário.
- * Quem chama deve passar o id vindo da sessão, nunca do body da requisição.
+ * Withdraws the balance of the given questions to the user's own registered PIX key.
+ * The caller must pass the id coming from the session, never from the request body.
  */
 export async function withdrawBalance(
 	userId: string,
@@ -63,8 +63,8 @@ export async function withdrawBalance(
 			throw new WithdrawError("invalidQuestions");
 		}
 
-		// O filtro em amount_already_withdraw faz o UPDATE esperar o lock da linha: um saque concorrente das
-		// mesmas perguntas encontra count menor, lança e desfaz a transação inteira.
+		// The filter on amount_already_withdraw makes the UPDATE wait for the row lock: a concurrent withdrawal of the
+		// same questions finds a smaller count, throws and rolls back the whole transaction.
 		const claimed = await tx.question.updateMany({
 			where: { id: { in: ids }, amount_already_withdraw: false },
 			data: { amount_already_withdraw: true },

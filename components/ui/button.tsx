@@ -33,13 +33,13 @@ const buttonVariants = cva(
 
 export interface ButtonProps extends useRender.ComponentProps<"button">, VariantProps<typeof buttonVariants> {}
 
-// Para renderizar outro elemento: `render={<Link href="/" />}`.
+// To render another element: `render={<Link href="/" />}`.
 function Button({ className, variant, size, render, ...props }: ButtonProps): React.ReactElement {
 	return useRender({
 		defaultTagName: "button",
 		render,
 		props: {
-			// O Base UI põe `type="button"` em todo <button> sem tipo; os formulários daqui dependem do submit implícito.
+			// Base UI sets `type="button"` on every untyped <button>; the forms here rely on implicit submit.
 			...(!render && { type: "submit" }),
 			...props,
 			className: cn(buttonVariants({ variant, size, className })),

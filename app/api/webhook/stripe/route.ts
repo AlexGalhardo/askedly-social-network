@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
 	let event: Stripe.Event;
 	try {
-		// A assinatura cobre o corpo cru: ler como texto antes de qualquer parse.
+		// The signature covers the raw body: read it as text before any parsing.
 		event = getStripe().webhooks.constructEvent(await req.text(), signature, secret);
 	} catch {
 		return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
@@ -22,10 +22,10 @@ export async function POST(req: NextRequest) {
 			case "checkout.session.completed":
 			case "checkout.session.async_payment_succeeded": {
 				const session = event.data.object;
-				// Meio de pagamento com confirmação tardia chega em `completed` ainda sem pagar.
+				// A payment method with delayed confirmation arrives in `completed` still unpaid.
 				if (session.payment_status !== "unpaid" && (await fulfillCreditsPurchase(session.id))) {
 					await TelegramLog.info(
-						`CRÉDITOS COMPRADOS (Stripe): ${session.id} US$ ${(session.amount_total ?? 0) / 100}`,
+						`CREDITS PURCHASED (Stripe): ${session.id} US$ ${(session.amount_total ?? 0) / 100}`,
 					);
 				}
 				break;

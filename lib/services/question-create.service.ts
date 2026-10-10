@@ -12,7 +12,7 @@ export type CreateQuestionErrorKey =
 	| "insufficientCredits"
 	| "cannotAskYourself";
 
-/** `message` é uma chave de `questions.createErrors`: quem captura traduz. */
+/** `message` is a `questions.createErrors` key: whoever catches it translates. */
 export class CreateQuestionError extends Error {
 	declare message: CreateQuestionErrorKey;
 
@@ -25,7 +25,7 @@ export class CreateQuestionError extends Error {
 }
 
 export interface CreatePaidQuestionInput {
-	/** Sempre o usuário da sessão. */
+	/** Always the session user. */
 	askerId: string;
 	ownerId: string;
 	pixId: string;
@@ -36,8 +36,8 @@ export interface CreatePaidQuestionInput {
 }
 
 /**
- * Cria a pergunta ligada a um pagamento PIX confirmado. O valor registrado é o do webhook pago,
- * nunca um valor informado pelo client: ele define o repasse ao dono e o reembolso a quem perguntou.
+ * Creates the question linked to a confirmed PIX payment. The recorded amount is the paid webhook's,
+ * never an amount provided by the client: it defines the payout to the owner and the refund to the asker.
  */
 export async function createPaidQuestion(input: CreatePaidQuestionInput, checkCharge?: CheckCharge) {
 	if (!(await ensureChargePaid(input.pixId, input.askerId, checkCharge))) {
@@ -98,8 +98,8 @@ export interface CreateCreditQuestionInput extends Omit<CreatePaidQuestionInput,
 }
 
 /**
- * Cria a pergunta paga com créditos (dólar). O débito é condicional ao saldo e roda na mesma transação da
- * pergunta: duas requisições simultâneas não gastam o mesmo crédito, e uma falha desfaz o débito.
+ * Creates the question paid with credits (US dollar). The debit is conditional on the balance and runs in the same transaction as the
+ * question: two simultaneous requests do not spend the same credit, and a failure rolls back the debit.
  */
 export async function createCreditQuestion(input: CreateCreditQuestionInput) {
 	if (
@@ -110,7 +110,7 @@ export async function createCreditQuestion(input: CreateCreditQuestionInput) {
 		throw new CreateQuestionError("invalidAmount", 400);
 	}
 
-	// Sem isto, créditos viram repasse para a própria conta Stripe de quem os comprou.
+	// Without this, credits become a payout to the Stripe account of whoever bought them.
 	if (input.askerId === input.ownerId) throw new CreateQuestionError("cannotAskYourself", 400);
 
 	return prisma.$transaction(async (tx) => {

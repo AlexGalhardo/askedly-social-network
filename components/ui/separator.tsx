@@ -14,7 +14,7 @@ function Separator({
 	return (
 		<SeparatorPrimitive
 			orientation={orientation}
-			// O Base UI sempre expõe `role="separator"`; o decorativo (padrão) fica fora da árvore de acessibilidade.
+			// Base UI always exposes `role="separator"`; the decorative one (default) stays out of the accessibility tree.
 			{...(decorative && { role: "none", "aria-orientation": undefined })}
 			className={cn(
 				"shrink-0 bg-border",

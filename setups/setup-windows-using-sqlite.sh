@@ -1,43 +1,43 @@
 #!/usr/bin/env bash
-# Setup local (Windows, via Git Bash) usando SQLite -- sem Postgres, sem Docker.
-# Uso: bash setups/setup-windows-using-sqlite.sh
+# Local setup (Windows, via Git Bash) using SQLite -- no Postgres, no Docker.
+# Usage: bash setups/setup-windows-using-sqlite.sh
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-echo "==> Verificando Bun..."
+echo "==> Checking Bun..."
 if ! command -v bun >/dev/null 2>&1; then
-	echo "Bun não encontrado. Instale rodando no PowerShell:"
+	echo "Bun not found. Install it by running in PowerShell:"
 	echo '  powershell -c "irm bun.sh/install.ps1 | iex"'
-	echo "Depois abra um novo terminal Git Bash e execute este script novamente."
+	echo "Then open a new Git Bash terminal and run this script again."
 	exit 1
 fi
 
-echo "==> Instalando dependências (bun install)..."
+echo "==> Installing dependencies (bun install)..."
 bun install
 
 if [ ! -f .env ]; then
-	echo "==> Criando .env a partir de .env.example..."
+	echo "==> Creating .env from .env.example..."
 	cp .env.example .env
 fi
 
-echo "==> Apontando DATABASE_URL para SQLite (file:./dev.db)..."
+echo "==> Pointing DATABASE_URL to SQLite (file:./dev.db)..."
 sed -i.bak '/^DATABASE_URL=/d' .env && rm -f .env.bak
 echo 'DATABASE_URL="file:./dev.db"' >>.env
 
-echo "==> Gerando client e sincronizando schema SQLite (prisma/schema.sqlite.prisma)..."
-# prisma.config.ts seleciona schema.sqlite.prisma porque DATABASE_URL começa com `file:`.
+echo "==> Generating the client and syncing the SQLite schema (prisma/schema.sqlite.prisma)..."
+# prisma.config.ts selects schema.sqlite.prisma because DATABASE_URL starts with `file:`.
 bunx prisma generate
 bunx prisma db push
 
-echo "==> Populando banco com dados de seed..."
+echo "==> Populating the database with seed data..."
 bunx prisma db seed || {
-	echo "Aviso: o seed usa createMany({ skipDuplicates }), que o SQLite não suporta (ver PLAN.md, Fase 11)."
-	echo "O banco foi criado vazio; cadastre usuários pela aplicação."
+	echo "Warning: the seed uses createMany({ skipDuplicates }), which SQLite does not support (see PLAN.md, Phase 11)."
+	echo "The database was created empty; register users through the app."
 }
 
 echo ""
-echo "✅ Setup SQLite concluído. Banco em: .\\dev.db"
-echo "   Lembrete: prisma/schema.sqlite.prisma é um espelho manual de prisma/schema.prisma (ver docs/database.md)."
-echo "   Para rodar o app: bun run dev"
+echo "✅ SQLite setup complete. Database at: .\\dev.db"
+echo "   Reminder: prisma/schema.sqlite.prisma is a manual mirror of prisma/schema.prisma (see docs/database.md)."
+echo "   To run the app: bun run dev"

@@ -3,8 +3,8 @@
 import { useTranslations } from "next-intl";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SentQuestionInterface } from "@/lib/interfaces";
 import { filterSentQuestionsByStatus, paginateSentQuestions } from "@/lib/utils/sent-question-utils";
-import { SentQuestionInterface } from "@/types/SentQuestion";
 import { QuestionsPagination } from "../questions-received/questions-pagination";
 import { SentQuestionsList } from "./sent-questions-list";
 

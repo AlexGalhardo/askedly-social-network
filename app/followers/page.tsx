@@ -7,7 +7,7 @@ import { FollowersTabs } from "@/components/followers/followers-tabs";
 import LoadingScreen from "@/components/loading-screen";
 import { useFollowers, useFollowRequests } from "@/hooks/use-follower";
 
-export default function SeguidoresPage() {
+export default function FollowersPage() {
 	const router = useRouter();
 	const { data: session, status } = useSession();
 	const { data: followers, setData: setFollowers } = useFollowers();

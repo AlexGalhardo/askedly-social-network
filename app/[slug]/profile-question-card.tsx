@@ -13,11 +13,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useDislikeQuestion, useLikeQuestion } from "@/hooks/use-profile-queries";
 import { useToast } from "@/hooks/use-toast";
 import { getInitials } from "@/lib/functions";
-import { QuestionInterface } from "@/lib/interfaces";
+import { ProfileQuestionInterface } from "@/lib/interfaces";
 import TelegramLog from "@/lib/telegram-logger";
 
 interface QuestionCardProps {
-	question: QuestionInterface;
+	question: ProfileQuestionInterface;
 }
 
 export function ProfileQuestionCard({ question }: QuestionCardProps) {

@@ -2,7 +2,7 @@ import Stripe from "stripe";
 
 let client: Stripe | undefined;
 
-/** Cliente server-only. Use uma chave restrita (`rk_`) com acesso a Checkout, Transfers e Connect. */
+/** Server-only client. Use a restricted key (`rk_`) with access to Checkout, Transfers and Connect. */
 export function getStripe(): Stripe {
 	const key = process.env.STRIPE_SECRET_KEY;
 	if (!key) throw new Error("STRIPE_SECRET_KEY is not set");

@@ -3,7 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function TermosDeUsoClient() {
+export default function TermsOfUseClient() {
 	const t = useTranslations("legal");
 	const format = useFormatter();
 

@@ -3,7 +3,7 @@ import { createUser, verifyCredentials } from "@/lib/repositories/users.reposito
 import { changePassword, PasswordChangeError } from "@/lib/services/password.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
 const run = Date.now();
 const withPassword = `pwuser${run}`;
 const googleOnly = `pwgoogle${run}`;
@@ -12,7 +12,7 @@ let googleOnlyId = "";
 
 describe("changePassword (integration)", () => {
 	beforeAll(async () => {
-		await createUser("Com Senha", withPassword, `${withPassword}@example.com`, "Old!Pass123");
+		await createUser("With Password", withPassword, `${withPassword}@example.com`, "Old!Pass123");
 		await createUser("Google", googleOnly, `${googleOnly}@example.com`);
 		withPasswordId = (await prisma.user.findUniqueOrThrow({ where: { nickname: withPassword } })).id;
 		googleOnlyId = (await prisma.user.findUniqueOrThrow({ where: { nickname: googleOnly } })).id;

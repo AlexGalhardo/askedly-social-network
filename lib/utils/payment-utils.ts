@@ -1,4 +1,4 @@
-import { PaymentData } from "@/types/PaymentInterface";
+import { PaymentData } from "@/lib/interfaces";
 
 export const MIN_WITHDRAW_CENTS = 10000; // R$ 100.00
 

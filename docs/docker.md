@@ -1,68 +1,69 @@
-# Aplicação completa em Docker (modo demonstração)
+# Full application in Docker (demo mode)
 
-Sobe o produto inteiro sem nenhuma conta externa: Postgres, migrations, seed e o app em build de produção, com pagamentos simulados.
+Brings up the whole product with no external account at all: Postgres, migrations, seed and the app in a production build, with simulated payments.
 
 ```bash
 docker compose -f infra/docker-compose.demo.yaml up --build
 ```
 
-Abra <http://localhost:3000>. Para zerar tudo: `docker compose -f infra/docker-compose.demo.yaml down -v`.
+Open <http://localhost:3000>. To reset everything: `docker compose -f infra/docker-compose.demo.yaml down -v`.
 
-Porta 3000 ocupada? `APP_PORT=3300 docker compose -f infra/docker-compose.demo.yaml up --build` (a porta entra no build, por isso o `--build`).
+Port 3000 taken? `APP_PORT=3300 docker compose -f infra/docker-compose.demo.yaml up --build` (the port goes into the build, hence the `--build`).
 
-## Contas do seed
+## Seed accounts
 
-| Conta | Email | Senha |
+| Account | Email | Password |
 | --- | --- | --- |
-| Admin (painel em `/admin`) | `admin@gmail.com` | `adminBR@123` |
+| Admin (panel at `/admin`) | `admin@gmail.com` | `adminBR@123` |
 
-O seed cria também 60 usuários aleatórios, seguidores, 200 perguntas PIX em todos os estados e os dados de pagamento de demonstração (`prisma/services/seed-payments-demo.service.ts`): compras de créditos concluídas e expiradas, 24 perguntas pagas com créditos (respondidas, aguardando e recusadas), perguntas PIX recebidas pelo admin, um saque no histórico, e o admin com US$ 50 de créditos e conta de recebimento já cadastrada.
+The seed also creates 60 random users, followers, 200 PIX questions in every state and the demo payment data (`prisma/services/seed-payments-demo.service.ts`): completed and expired credit purchases, 24 questions paid with credits (answered, waiting and declined), PIX questions received by the admin, a withdrawal in the history, and the admin with US$ 50 of credits and a payout account already registered.
 
-## O que cada serviço faz
+## What each service does
 
-| Serviço | Papel |
+| Service | Role |
 | --- | --- |
 | `db` | Postgres 17, volume `demo_pgdata` |
-| `setup` | Roda uma vez (`infra/demo-setup.sh`): `prisma migrate deploy` e, só se o banco estiver vazio, o seed |
-| `app` | `next start` na porta 3000, depois que o `setup` termina com sucesso |
+| `setup` | Runs once (`infra/demo-setup.sh`): `prisma migrate deploy` and, only if the database is empty, the seed |
+| `app` | `next start` on port 3000, after `setup` finishes successfully |
 
-## Pagamentos simulados
+## Simulated payments
 
-`PAYMENTS_SIMULATED=true` (`lib/payment-simulation.ts`) troca as chamadas aos gateways por respostas locais:
+`PAYMENTS_SIMULATED=true` (`lib/payment-simulation.ts`) replaces the calls to the gateways with local responses:
 
-| Ação | Em produção | No modo demonstração |
+| Action | In production | In demo mode |
 | --- | --- | --- |
-| Gerar PIX | cobrança na AbacatePay | cobrança fictícia `sim_...`, com QR code de 1 pixel |
-| Confirmar PIX | webhook ou consulta | a primeira consulta do modal já devolve `PAID` (cerca de 5 s) |
-| Comprar créditos | Stripe Checkout + webhook | creditado na hora, sem sair do app |
-| Cadastrar conta de recebimento | onboarding da Stripe | conta `acct_sim_...` gravada na hora |
-| Repasse ao responder | `transfers.create` | transferência `tr_sim_...` registrada |
+| Generate a PIX | charge on AbacatePay | fictitious charge `sim_...`, with a 1-pixel QR code |
+| Confirm a PIX | webhook or polling | the modal's first check already returns `PAID` (about 5 s) |
+| Buy credits | Stripe Checkout + webhook | credited on the spot, without leaving the app |
+| Register a payout account | Stripe onboarding | account `acct_sim_...` stored on the spot |
+| Payout on answering | `transfers.create` | transfer `tr_sim_...` recorded |
 
-O resto do código é o mesmo de produção: débito de créditos, liquidação, taxa da plataforma, saque e painel do admin rodam de verdade contra o banco.
+The rest of the code is the same as in production: credit debit, settlement, platform fee, withdrawal and admin panel run for real against the database.
 
-**Isso dá dinheiro de graça.** A variável é ignorada quando `VERCEL_ENV=production`. Fora da Vercel, nunca a defina em um ambiente com usuários reais.
+**This gives away free money.** The variable is ignored when `VERCEL_ENV=production`. Outside Vercel, never set it in an environment with real users.
 
-## Roteiro para ver tudo funcionando
+## Walkthrough to see everything working
 
-1. Entre como `admin@gmail.com` e abra `/admin`: totais por moeda, receita da plataforma, compras e saques.
-2. Em Minha Conta, compre créditos: o saldo sobe na hora.
-3. Abra o perfil de outro usuário e envie uma pergunta, uma vez por PIX (confirma sozinho) e outra com créditos.
-4. Em Pagamentos, saque o saldo PIX do admin (mínimo de R$ 100).
-5. Troque o idioma no seletor da barra lateral.
+1. Sign in as `admin@gmail.com` and open `/admin`: totals per currency, platform revenue, purchases and withdrawals.
+2. In My Account, buy credits: the balance goes up on the spot.
+3. Open another user's profile and send a question, once by PIX (it confirms by itself) and once with credits.
+4. In Payments, withdraw the admin's PIX balance (minimum of R$ 100).
+5. Switch the language in the selector in the sidebar.
 
-## Checagem automática
+## Automated check
 
-`tests/e2e/demo-check.mjs` percorre a stack no ar com o Chromium do Playwright: idioma por `Accept-Language`, login do admin com captcha, painel, compra simulada de créditos, pergunta paga com créditos (débito conferido), recusas (dono inexistente, saldo insuficiente), PIX simulado e ausência de violação de CSP.
+`tests/e2e/demo-check.mjs` walks through the running stack with Playwright's Chromium: language by `Accept-Language`, admin login with captcha, panel, simulated credit purchase, question paid with credits (debit verified), refusals (nonexistent owner, insufficient balance), simulated PIX and absence of CSP violations.
 
 ```bash
 docker compose -f infra/docker-compose.demo.yaml exec db   psql -U postgres -d askedly_demo -Atc "select id, nickname from users where not is_admin limit 1"
 node tests/e2e/demo-check.mjs http://localhost:3000 <id> <nickname>
 ```
 
-## Detalhes
+## Details
 
-- O captcha usa as chaves de teste oficiais da Cloudflare Turnstile, que sempre passam. O navegador precisa alcançar `challenges.cloudflare.com`.
-- Emails (reset de senha, contato), upload de avatar, login com Google e logs no Telegram ficam sem chave e não funcionam no modo demonstração.
-- O cron diário não roda sozinho. Para disparar: `curl -H "Authorization: Bearer docker-demo-cron" http://localhost:3000/api/cronjob`.
-- `NEXTAUTH_SECRET` e `CRON_SECRET` do compose são valores de demonstração, públicos. Não reutilize.
-- Só o banco, para desenvolver com `bun run dev`: `infra/docker-compose.yaml` e os scripts de `setups/`.
+- The image is built with `SKIP_ENV_VALIDATION=true` (`infra/Dockerfile`): the build does not have the runtime variables, which only arrive when the container starts.
+- The captcha uses Cloudflare Turnstile's official test keys, which always pass. The browser must be able to reach `challenges.cloudflare.com`.
+- Emails (password reset, contact), avatar upload, Google login and Telegram logs have no key and do not work in demo mode.
+- The daily cron does not run by itself. To trigger it: `curl -H "Authorization: Bearer docker-demo-cron" http://localhost:3000/api/cronjob`.
+- `NEXTAUTH_SECRET` and `CRON_SECRET` in the compose file are public demo values. Do not reuse them.
+- Database only, to develop with `bun run dev`: `infra/docker-compose.yaml` and the scripts in `setups/`.

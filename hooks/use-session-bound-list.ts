@@ -11,8 +11,8 @@ export interface SessionBoundList<T> {
 }
 
 /**
- * Lista do usuário logado buscada por Server Action (antes vinha pronta dentro da sessão). Mantém a interface
- * `{ data, setData }` que as telas já usavam para atualização otimista.
+ * List of the logged-in user fetched by Server Action (it used to come ready inside the session). Keeps the
+ * `{ data, setData }` interface the screens already used for optimistic updates.
  */
 export function useSessionBoundList<T>(load: () => Promise<T[]>): SessionBoundList<T> {
 	const { data: session, status } = useSession();

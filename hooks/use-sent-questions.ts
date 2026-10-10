@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { getMySentQuestions } from "@/actions/my-account-actions";
 import { reportAnswer } from "@/actions/sent-question-actions";
 import { useSessionBoundList } from "@/hooks/use-session-bound-list";
-import { SentQuestionInterface } from "@/types/SentQuestion";
+import { SentQuestionInterface } from "@/lib/interfaces";
 
 const loadSentQuestions = async (): Promise<SentQuestionInterface[]> =>
 	(await getMySentQuestions()).map((q) => ({

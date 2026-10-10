@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { updateUserPassword } from "@/lib/repositories/users.repository";
 import { prisma } from "@/prisma/prisma-client";
 
-/** Chave de mensagem do namespace `account.errors`; quem captura o erro traduz. */
+/** Message key of the `account.errors` namespace; whoever catches the error translates. */
 export type PasswordChangeErrorKey = "userNotFound" | "currentPasswordIncorrect";
 
 export class PasswordChangeError extends Error {
@@ -14,8 +14,8 @@ export class PasswordChangeError extends Error {
 }
 
 /**
- * Troca a senha exigindo a senha atual, para que uma sessão roubada não baste para tomar a conta.
- * Contas criadas pelo Google não têm senha: nelas esta é a definição da primeira senha.
+ * Changes the password requiring the current password, so that a stolen session is not enough to take over the account.
+ * Accounts created through Google have no password: for them this sets the first password.
  */
 export async function changePassword(userId: string, currentPassword: string | undefined, newPassword: string) {
 	const user = await prisma.user.findUnique({ where: { id: userId }, select: { password: true } });

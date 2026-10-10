@@ -2,7 +2,7 @@ import { afterAll, describe, expect, test } from "bun:test";
 import { signUp } from "@/lib/services/signup.service";
 import { prisma } from "@/prisma/prisma-client";
 
-// Integração contra Postgres real e descartável (DATABASE_URL); nunca rode num banco com dados reais.
+// Integration against a real, disposable Postgres (DATABASE_URL); never run it on a database with real data.
 const run = Date.now();
 const nickname = `signup_${run}`.slice(0, 16);
 const email = `signup-${run}@example.com`;

@@ -20,7 +20,7 @@ import { createSignupSchema } from "@/lib/schemas/signup";
 import TelegramLog from "@/lib/telegram-logger";
 import { getTurnstile, TURNSTILE_ENABLED, waitForFreshTurnstileToken } from "@/lib/turnstile";
 
-export default function CriarContaClient() {
+export default function SignupClient() {
 	const { data: session } = useSession();
 	const router = useRouter();
 	const t = useTranslations("auth");
@@ -41,7 +41,7 @@ export default function CriarContaClient() {
 	const [password, setPassword] = useState("");
 	const [showPasswordCriteria, setShowPasswordCriteria] = useState(false);
 
-	// Quem já estava logado vai para o feed; quem acabou de criar a conta segue para /my-account (handleSignup).
+	// Already logged-in users go to the feed; someone who just signed up continues to /my-account (handleSignup).
 	useEffect(() => {
 		if (session?.user?.nickname && !accountCreated) router.push("/feed");
 	}, [session, accountCreated, router]);
@@ -65,7 +65,7 @@ export default function CriarContaClient() {
 				acceptTerms,
 			});
 		} catch (err) {
-			await TelegramLog.error(`Error criar-conta.ts: ${err}`);
+			await TelegramLog.error(`Error signup.tsx: ${err}`);
 			if (err instanceof z.ZodError) {
 				err.issues.forEach((error) => {
 					const path = error.path[0];
@@ -127,12 +127,12 @@ export default function CriarContaClient() {
 				return;
 			}
 
-			// O cadastro gastou o token do captcha; o login precisa de outro.
+			// Signup consumed the captcha token; login needs a fresh one.
 			let loginToken: string | null = null;
 			if (TURNSTILE_ENABLED && process.env.NODE_ENV === "production") {
 				loginToken = await waitForFreshTurnstileToken();
 				if (!loginToken) {
-					router.push("/login?conta-criada=1");
+					router.push("/login?account-created=1");
 					return;
 				}
 			}
@@ -153,7 +153,7 @@ export default function CriarContaClient() {
 			setAccountCreated(true);
 			router.push("/my-account");
 		} catch (err: any) {
-			await TelegramLog.error(`Catch Error file criar-conta.ts handleSignup: ${err?.message}`);
+			await TelegramLog.error(`Catch Error file signup.tsx handleSignup: ${err?.message}`);
 			setError(t("signup.genericError"));
 		} finally {
 			setLoading(false);

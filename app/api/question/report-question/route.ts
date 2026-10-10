@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
 		await settleCreditQuestion(questionId);
 
-		await TelegramLog.info(`PERGUNTA REPORTADA: ${questionId} por @${user.nickname} (${reason})`);
+		await TelegramLog.info(`QUESTION REPORTED: ${questionId} by @${user.nickname} (${reason})`);
 		return NextResponse.json({ message: t("reported") });
 	} catch (error: unknown) {
 		await TelegramLog.error(`Question Report catch error: ${error instanceof Error ? error.message : error}`);

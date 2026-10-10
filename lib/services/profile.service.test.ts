@@ -13,7 +13,7 @@ const secrets = {
 const question = (id: string, overrides: Record<string, unknown> = {}) => ({
 	id,
 	question_text: `texto-${id}`,
-	answer_text: `resposta-${id}`,
+	answer_text: `answer-${id}`,
 	amount_paid: 500,
 	amount_paid_is_private: false,
 	question_answered: true,

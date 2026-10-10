@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { openGraphLocale } from "@/lib/utils";
-import TermosDeUsoClient from "./terms-of-use";
+import TermsOfUseClient from "./terms-of-use";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const t = await getTranslations("legal.terms");
@@ -40,6 +40,6 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function TermosDeUsoPage() {
-	return <TermosDeUsoClient />;
+export default async function TermsOfUsePage() {
+	return <TermsOfUseClient />;
 }

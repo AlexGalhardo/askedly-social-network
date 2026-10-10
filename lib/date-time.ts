@@ -11,7 +11,7 @@ export class DateTime {
 		} else if (typeof input === "number") {
 			this.date = new Date(input);
 		} else {
-			throw new Error("Formato de entrada inválido");
+			throw new Error("Invalid input format");
 		}
 	}
 
@@ -35,41 +35,41 @@ export class DateTime {
 
 		const parsedDate = new Date(dateString);
 		if (Number.isNaN(parsedDate.getTime())) {
-			throw new Error("Formato de data inválido. Use dd/mm/yyyy ou dd/mm/yyyy hh:mm:ss");
+			throw new Error("Invalid date format. Use dd/mm/yyyy or dd/mm/yyyy hh:mm:ss");
 		}
 		return parsedDate;
 	}
 
-	formatarData(): string {
-		const dia = this.date.getDate().toString().padStart(2, "0");
-		const mes = (this.date.getMonth() + 1).toString().padStart(2, "0");
-		const ano = this.date.getFullYear();
-		return `${dia}/${mes}/${ano}`;
+	formatDate(): string {
+		const day = this.date.getDate().toString().padStart(2, "0");
+		const month = (this.date.getMonth() + 1).toString().padStart(2, "0");
+		const year = this.date.getFullYear();
+		return `${day}/${month}/${year}`;
 	}
 
-	formatarHora(): string {
-		const horas = this.date.getHours().toString().padStart(2, "0");
-		const minutos = this.date.getMinutes().toString().padStart(2, "0");
-		const segundos = this.date.getSeconds().toString().padStart(2, "0");
-		return `${horas}:${minutos}:${segundos}`;
+	formatTime(): string {
+		const hours = this.date.getHours().toString().padStart(2, "0");
+		const minutes = this.date.getMinutes().toString().padStart(2, "0");
+		const seconds = this.date.getSeconds().toString().padStart(2, "0");
+		return `${hours}:${minutes}:${seconds}`;
 	}
 
-	formatarCompleto(): string {
-		return `${this.formatarData()} ${this.formatarHora()}`;
+	formatFull(): string {
+		return `${this.formatDate()} ${this.formatTime()}`;
 	}
 
-	horaPorExtenso(locale: string = "en"): string {
-		const unidade = (valor: number, unit: "hour" | "minute" | "second"): string =>
-			new Intl.NumberFormat(locale, { style: "unit", unit, unitDisplay: "long" }).format(valor);
+	timeInWords(locale: string = "en"): string {
+		const formatUnit = (value: number, unit: "hour" | "minute" | "second"): string =>
+			new Intl.NumberFormat(locale, { style: "unit", unit, unitDisplay: "long" }).format(value);
 
-		const partes = [unidade(this.date.getHours(), "hour")];
-		if (this.date.getMinutes() > 0) partes.push(unidade(this.date.getMinutes(), "minute"));
-		if (this.date.getSeconds() > 0) partes.push(unidade(this.date.getSeconds(), "second"));
+		const parts = [formatUnit(this.date.getHours(), "hour")];
+		if (this.date.getMinutes() > 0) parts.push(formatUnit(this.date.getMinutes(), "minute"));
+		if (this.date.getSeconds() > 0) parts.push(formatUnit(this.date.getSeconds(), "second"));
 
-		return new Intl.ListFormat(locale, { style: "long", type: "conjunction" }).format(partes);
+		return new Intl.ListFormat(locale, { style: "long", type: "conjunction" }).format(parts);
 	}
 
-	dataPorExtenso(locale: string = "en"): string {
+	formatLongDate(locale: string = "en"): string {
 		return new Intl.DateTimeFormat(locale, { dateStyle: "full" }).format(this.date);
 	}
 
@@ -81,223 +81,223 @@ export class DateTime {
 		return Math.floor(this.date.getTime() / 1000);
 	}
 
-	get dia(): number {
+	get day(): number {
 		return this.date.getDate();
 	}
 
-	get mes(): number {
+	get month(): number {
 		return this.date.getMonth() + 1;
 	}
 
-	get ano(): number {
+	get year(): number {
 		return this.date.getFullYear();
 	}
 
-	get horas(): number {
+	get hours(): number {
 		return this.date.getHours();
 	}
 
-	get minutos(): number {
+	get minutes(): number {
 		return this.date.getMinutes();
 	}
 
-	get segundos(): number {
+	get seconds(): number {
 		return this.date.getSeconds();
 	}
 
-	diaSemana(locale: string = "en"): string {
+	weekdayName(locale: string = "en"): string {
 		return new Intl.DateTimeFormat(locale, { weekday: "long" }).format(this.date);
 	}
 
-	nomeMes(locale: string = "en"): string {
+	monthName(locale: string = "en"): string {
 		return new Intl.DateTimeFormat(locale, { month: "long" }).format(this.date);
 	}
 
-	adicionarDias(dias: number): DateTime {
-		const novaData = new Date(this.date);
-		novaData.setDate(novaData.getDate() + dias);
-		return new DateTime(novaData);
+	addDays(days: number): DateTime {
+		const newDate = new Date(this.date);
+		newDate.setDate(newDate.getDate() + days);
+		return new DateTime(newDate);
 	}
 
-	adicionarMeses(meses: number): DateTime {
-		const novaData = new Date(this.date);
-		novaData.setMonth(novaData.getMonth() + meses);
-		return new DateTime(novaData);
+	addMonths(months: number): DateTime {
+		const newDate = new Date(this.date);
+		newDate.setMonth(newDate.getMonth() + months);
+		return new DateTime(newDate);
 	}
 
-	adicionarAnos(anos: number): DateTime {
-		const novaData = new Date(this.date);
-		novaData.setFullYear(novaData.getFullYear() + anos);
-		return new DateTime(novaData);
+	addYears(years: number): DateTime {
+		const newDate = new Date(this.date);
+		newDate.setFullYear(newDate.getFullYear() + years);
+		return new DateTime(newDate);
 	}
 
-	adicionarHoras(horas: number): DateTime {
-		const novaData = new Date(this.date);
-		novaData.setHours(novaData.getHours() + horas);
-		return new DateTime(novaData);
+	addHours(hours: number): DateTime {
+		const newDate = new Date(this.date);
+		newDate.setHours(newDate.getHours() + hours);
+		return new DateTime(newDate);
 	}
 
-	adicionarMinutos(minutos: number): DateTime {
-		const novaData = new Date(this.date);
-		novaData.setMinutes(novaData.getMinutes() + minutos);
-		return new DateTime(novaData);
+	addMinutes(minutes: number): DateTime {
+		const newDate = new Date(this.date);
+		newDate.setMinutes(newDate.getMinutes() + minutes);
+		return new DateTime(newDate);
 	}
 
-	adicionarSegundos(segundos: number): DateTime {
-		const novaData = new Date(this.date);
-		novaData.setSeconds(novaData.getSeconds() + segundos);
-		return new DateTime(novaData);
+	addSeconds(seconds: number): DateTime {
+		const newDate = new Date(this.date);
+		newDate.setSeconds(newDate.getSeconds() + seconds);
+		return new DateTime(newDate);
 	}
 
-	diferencaEmDias(outraData: DateTime): number {
-		const data1 = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate());
-		const data2 = new Date(outraData.ano, outraData.mes - 1, outraData.dia);
-		const diferenca = Math.abs(data2.getTime() - data1.getTime());
-		return Math.ceil(diferenca / (1000 * 60 * 60 * 24));
+	diffInDays(other: DateTime): number {
+		const date1 = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate());
+		const date2 = new Date(other.year, other.month - 1, other.day);
+		const diff = Math.abs(date2.getTime() - date1.getTime());
+		return Math.ceil(diff / (1000 * 60 * 60 * 24));
 	}
 
-	diferencaEmHoras(outraData: DateTime): number {
-		const diferenca = Math.abs(outraData.timestamp() - this.timestamp());
-		return Math.floor(diferenca / (1000 * 60 * 60));
+	diffInHours(other: DateTime): number {
+		const diff = Math.abs(other.timestamp() - this.timestamp());
+		return Math.floor(diff / (1000 * 60 * 60));
 	}
 
-	diferencaEmMinutos(outraData: DateTime): number {
-		const diferenca = Math.abs(outraData.timestamp() - this.timestamp());
-		return Math.floor(diferenca / (1000 * 60));
+	diffInMinutes(other: DateTime): number {
+		const diff = Math.abs(other.timestamp() - this.timestamp());
+		return Math.floor(diff / (1000 * 60));
 	}
 
-	ehAnterior(outraData: DateTime): boolean {
-		return this.timestamp() < outraData.timestamp();
+	isBefore(other: DateTime): boolean {
+		return this.timestamp() < other.timestamp();
 	}
 
-	ehPosterior(outraData: DateTime): boolean {
-		return this.timestamp() > outraData.timestamp();
+	isAfter(other: DateTime): boolean {
+		return this.timestamp() > other.timestamp();
 	}
 
-	ehIgual(outraData: DateTime): boolean {
-		return this.formatarCompleto() === outraData.formatarCompleto();
+	isEqual(other: DateTime): boolean {
+		return this.formatFull() === other.formatFull();
 	}
 
-	ehMesmoDia(outraData: DateTime): boolean {
-		return this.formatarData() === outraData.formatarData();
+	isSameDay(other: DateTime): boolean {
+		return this.formatDate() === other.formatDate();
 	}
 
-	ehHoje(): boolean {
-		const hoje = new DateTime();
-		return this.ehMesmoDia(hoje);
+	isToday(): boolean {
+		const today = new DateTime();
+		return this.isSameDay(today);
 	}
 
-	ehOntem(): boolean {
-		const ontem = new DateTime().adicionarDias(-1);
-		return this.ehMesmoDia(ontem);
+	isYesterday(): boolean {
+		const yesterday = new DateTime().addDays(-1);
+		return this.isSameDay(yesterday);
 	}
 
-	ehAmanha(): boolean {
-		const amanha = new DateTime().adicionarDias(1);
-		return this.ehMesmoDia(amanha);
+	isTomorrow(): boolean {
+		const tomorrow = new DateTime().addDays(1);
+		return this.isSameDay(tomorrow);
 	}
 
-	ehFimDeSemana(): boolean {
-		const dia = this.date.getDay();
-		return dia === 0 || dia === 6;
+	isWeekend(): boolean {
+		const day = this.date.getDay();
+		return day === 0 || day === 6;
 	}
 
-	ehAnoBissexto(): boolean {
-		const ano = this.ano;
-		return (ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0;
+	isLeapYear(): boolean {
+		const year = this.year;
+		return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 	}
 
-	inicioDoMes(): DateTime {
-		const novaData = new Date(this.date);
-		novaData.setDate(1);
-		novaData.setHours(0, 0, 0, 0);
-		return new DateTime(novaData);
+	startOfMonth(): DateTime {
+		const newDate = new Date(this.date);
+		newDate.setDate(1);
+		newDate.setHours(0, 0, 0, 0);
+		return new DateTime(newDate);
 	}
 
-	fimDoMes(): DateTime {
-		const novaData = new Date(this.date);
-		novaData.setMonth(novaData.getMonth() + 1, 0);
-		novaData.setHours(23, 59, 59, 999);
-		return new DateTime(novaData);
+	endOfMonth(): DateTime {
+		const newDate = new Date(this.date);
+		newDate.setMonth(newDate.getMonth() + 1, 0);
+		newDate.setHours(23, 59, 59, 999);
+		return new DateTime(newDate);
 	}
 
-	inicioDoDia(): DateTime {
-		const novaData = new Date(this.date);
-		novaData.setHours(0, 0, 0, 0);
-		return new DateTime(novaData);
+	startOfDay(): DateTime {
+		const newDate = new Date(this.date);
+		newDate.setHours(0, 0, 0, 0);
+		return new DateTime(newDate);
 	}
 
-	fimDoDia(): DateTime {
-		const novaData = new Date(this.date);
-		novaData.setHours(23, 59, 59, 999);
-		return new DateTime(novaData);
+	endOfDay(): DateTime {
+		const newDate = new Date(this.date);
+		newDate.setHours(23, 59, 59, 999);
+		return new DateTime(newDate);
 	}
 
-	formatarParaSQL(): string {
+	formatForSQL(): string {
 		return this.date.toISOString().slice(0, 19).replace("T", " ");
 	}
 
-	formatarParaInput(): string {
-		const ano = this.date.getFullYear();
-		const mes = (this.date.getMonth() + 1).toString().padStart(2, "0");
-		const dia = this.date.getDate().toString().padStart(2, "0");
-		return `${ano}-${mes}-${dia}`;
+	formatForInput(): string {
+		const year = this.date.getFullYear();
+		const month = (this.date.getMonth() + 1).toString().padStart(2, "0");
+		const day = this.date.getDate().toString().padStart(2, "0");
+		return `${year}-${month}-${day}`;
 	}
 
-	formatarTempo12h(): string {
-		let horas = this.date.getHours();
-		const minutos = this.date.getMinutes().toString().padStart(2, "0");
-		const periodo = horas >= 12 ? "PM" : "AM";
-		horas = horas % 12 || 12;
-		return `${horas}:${minutos} ${periodo}`;
+	formatTime12h(): string {
+		let hours = this.date.getHours();
+		const minutes = this.date.getMinutes().toString().padStart(2, "0");
+		const period = hours >= 12 ? "PM" : "AM";
+		hours = hours % 12 || 12;
+		return `${hours}:${minutes} ${period}`;
 	}
 
-	formatarRelativo(locale: string = "en"): string {
-		const agora = new DateTime();
-		const diferenca = agora.timestamp() - this.timestamp();
-		const segundos = Math.floor(diferenca / 1000);
-		const minutos = Math.floor(segundos / 60);
-		const horas = Math.floor(minutos / 60);
-		const dias = Math.floor(horas / 24);
-		const meses = Math.floor(dias / 30);
-		const anos = Math.floor(dias / 365);
+	formatRelative(locale: string = "en"): string {
+		const now = new DateTime();
+		const diff = now.timestamp() - this.timestamp();
+		const seconds = Math.floor(diff / 1000);
+		const minutes = Math.floor(seconds / 60);
+		const hours = Math.floor(minutes / 60);
+		const days = Math.floor(hours / 24);
+		const months = Math.floor(days / 30);
+		const years = Math.floor(days / 365);
 
-		const relativo = new Intl.RelativeTimeFormat(locale);
+		const relative = new Intl.RelativeTimeFormat(locale);
 
-		if (anos > 0) return relativo.format(-anos, "year");
-		if (meses > 0) return relativo.format(-meses, "month");
-		if (dias > 0) return relativo.format(-dias, "day");
-		if (horas > 0) return relativo.format(-horas, "hour");
-		if (minutos > 0) return relativo.format(-minutos, "minute");
-		// `numeric: "auto"` só no zero ("now" / "agora"): nos demais viraria "yesterday" / "ontem" em vez de "1 day ago".
+		if (years > 0) return relative.format(-years, "year");
+		if (months > 0) return relative.format(-months, "month");
+		if (days > 0) return relative.format(-days, "day");
+		if (hours > 0) return relative.format(-hours, "hour");
+		if (minutes > 0) return relative.format(-minutes, "minute");
+		// `numeric: "auto"` only at zero ("now"): for the rest it would become "yesterday" instead of "1 day ago".
 		return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(0, "second");
 	}
 
-	static agora(): DateTime {
+	static now(): DateTime {
 		return new DateTime();
 	}
 
-	static hoje(): DateTime {
-		return new DateTime().inicioDoDia();
+	static today(): DateTime {
+		return new DateTime().startOfDay();
 	}
 
-	static ontem(): DateTime {
-		return new DateTime().adicionarDias(-1).inicioDoDia();
+	static yesterday(): DateTime {
+		return new DateTime().addDays(-1).startOfDay();
 	}
 
-	static amanha(): DateTime {
-		return new DateTime().adicionarDias(1).inicioDoDia();
+	static tomorrow(): DateTime {
+		return new DateTime().addDays(1).startOfDay();
 	}
 
-	static criarData(
-		dia: number,
-		mes: number,
-		ano: number,
-		hora: number = 0,
-		minuto: number = 0,
-		segundo: number = 0,
+	static create(
+		day: number,
+		month: number,
+		year: number,
+		hour: number = 0,
+		minute: number = 0,
+		second: number = 0,
 	): DateTime {
-		return new DateTime(new Date(ano, mes - 1, dia, hora, minuto, segundo));
+		return new DateTime(new Date(year, month - 1, day, hour, minute, second));
 	}
 
 	static fromTimestamp(timestamp: number): DateTime {
@@ -313,20 +313,20 @@ export class DateTime {
 	}
 
 	toString(): string {
-		return this.formatarCompleto();
+		return this.formatFull();
 	}
 
 	toJSON(): object {
 		return {
 			timestamp: this.timestamp(),
-			data: this.formatarData(),
-			hora: this.formatarHora(),
-			completo: this.formatarCompleto(),
-			porExtenso: this.dataPorExtenso(),
+			date: this.formatDate(),
+			time: this.formatTime(),
+			full: this.formatFull(),
+			longDate: this.formatLongDate(),
 		};
 	}
 
-	static logAgora(): string {
-		return new DateTime().formatarCompleto();
+	static logNow(): string {
+		return new DateTime().formatFull();
 	}
 }

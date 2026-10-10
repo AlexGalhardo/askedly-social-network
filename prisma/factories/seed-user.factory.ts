@@ -15,7 +15,6 @@ function isValidLatinName(name: string): boolean {
 }
 
 const usedNicknames = new Set<string>();
-const usedAvatars = new Set<string>();
 
 export class SeedUserFactory {
 	private toggleGender = false;
@@ -103,12 +102,12 @@ export class SeedUserFactory {
 			this.toggleGender = !this.toggleGender;
 
 			try {
-				console.log(`🔄 Buscando usuário ${gender} na API...`);
+				console.log(`🔄 Fetching ${gender} user from the API...`);
 				const res = await fetch(`https://randomuser.me/api/?nat=BR&gender=${gender}`);
 				const data = await res.json();
 
 				if (!data?.results || !Array.isArray(data.results) || data.results.length === 0) {
-					console.warn("⚠️ Dados inválidos recebidos da API, tentando novamente...");
+					console.warn("⚠️ Invalid data received from the API, trying again...");
 					continue;
 				}
 
@@ -116,7 +115,7 @@ export class SeedUserFactory {
 				const name = `${user.name.first} ${user.name.last}`;
 
 				if (!isValidLatinName(name)) {
-					console.log(`❌ Nome inválido detectado: "${name}". Ignorando...`);
+					console.log(`❌ Invalid name detected: "${name}". Skipping...`);
 					continue;
 				}
 
@@ -131,15 +130,12 @@ export class SeedUserFactory {
 				const email = `${nickname}@gmail.com`;
 				const avatar_url = user.picture.large;
 
-				if (
-					!this.uniqueTracker.isEmailUsed(email) &&
-					!usedNicknames.has(nickname) &&
-					!usedAvatars.has(avatar_url)
-				) {
+				// Avatars repeat on purpose: randomuser.me has about 100 pictures per gender, so requiring a unique one
+				// capped the seed at roughly 200 users and made larger seeds retry forever.
+				if (!this.uniqueTracker.isEmailUsed(email) && !usedNicknames.has(nickname)) {
 					this.uniqueTracker.addNickname(nickname);
 					this.uniqueTracker.addEmail(email);
 					usedNicknames.add(nickname);
-					usedAvatars.add(avatar_url);
 
 					uniqueUser = {
 						is_seed: true,
@@ -176,13 +172,13 @@ export class SeedUserFactory {
 						deleted_at: SeedHelpers.shouldDelete() ? faker.date.recent() : null,
 						banned_until: SeedHelpers.shouldBan() ? faker.date.future() : null,
 					};
-					console.log(`✅ Usuário único gerado: ${name} (@${nickname})`);
+					console.log(`✅ Unique user generated: ${name} (@${nickname})`);
 				} else {
-					console.log(`🔄 Usuário duplicado encontrado: nickname = ${nickname}, tentando novamente...`);
+					console.log(`🔄 Duplicate user found: nickname = ${nickname}, trying again...`);
 				}
 			} catch (err: any) {
 				TelegramLog.error(`Catch error seed-user.factory createRandomUser: ${err?.message}`);
-				console.error("❌ Erro ao buscar ou processar dados da API:", err?.message);
+				console.error("❌ Error fetching or processing API data:", err?.message);
 			}
 		}
 

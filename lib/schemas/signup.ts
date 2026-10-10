@@ -1,11 +1,11 @@
 import type { Messages } from "@/messages/en";
 import { z } from "./zod";
 
-/** Chave de mensagem do namespace `auth.errors`. */
+/** Message key of the `auth.errors` namespace. */
 export type AuthErrorKey = keyof Messages["auth"]["errors"];
 
-// O perfil público mora em `/<nickname>`: um nickname igual a uma rota (atual ou antiga, que redireciona) ficaria
-// inacessível. Rotas com hífen não entram: o nickname não aceita hífen.
+// The public profile lives at `/<nickname>`: a nickname equal to a route (current or old, which redirects) would be
+// unreachable. Routes with a hyphen are not included: the nickname does not accept hyphens.
 const RESERVED_NICKNAMES = new Set([
 	"admin",
 	"login",
@@ -46,7 +46,7 @@ export const createSignupSchema = (t: (key: AuthErrorKey) => string) =>
 		acceptTerms: z.boolean().refine((val) => val === true, t("acceptTerms")),
 	});
 
-// Para os services, que não traduzem: a mensagem de cada issue é a própria chave de `auth.errors`.
+// For the services, which do not translate: each issue's message is the `auth.errors` key itself.
 export const signupSchema = createSignupSchema((key) => key);
 
 export type SignupInput = z.infer<typeof signupSchema>;

@@ -12,9 +12,9 @@ export async function getSessionVersion(userId: string): Promise<number | null> 
 }
 
 /**
- * Chamado pelo callback `jwt` em toda leitura de sessão. Lançar aqui faz o NextAuth devolver sessão vazia e apagar
- * o cookie: é assim que uma troca de senha derruba os tokens já emitidos, em todos os aparelhos.
- * Tokens emitidos antes deste mecanismo não têm versão e contam como 0 (o default da coluna).
+ * Called by the `jwt` callback on every session read. Throwing here makes NextAuth return an empty session and delete
+ * the cookie: that is how a password change invalidates already issued tokens, on every device.
+ * Tokens issued before this mechanism have no version and count as 0 (the column default).
  */
 export async function assertSessionIsCurrent(token: { id?: unknown; session_version?: unknown }): Promise<void> {
 	if (typeof token.id !== "string") throw new SessionRevokedError();

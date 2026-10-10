@@ -25,7 +25,7 @@ class TelegramLogger {
 	}
 
 	private async log(logType: string, message: string) {
-		const messageToSend = `${logType} \n\nCriado em: ${DateTime.logAgora()}\n\n${message}`;
+		const messageToSend = `${logType} \n\nCreated at: ${DateTime.logNow()}\n\n${message}`;
 		await this.sendRequest(messageToSend);
 	}
 

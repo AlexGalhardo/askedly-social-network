@@ -69,7 +69,7 @@ export function ProfilePaymentModal({
 	const [canClose, setCanClose] = useState(false);
 	const [countdownSeconds, setCountdownSeconds] = useState<number>(10);
 
-	// Lidos dentro dos timers abaixo: sempre a versão mais recente, sem reiniciar os intervalos a cada render.
+	// Read inside the timers below: always the latest version, without restarting the intervals on every render.
 	const onPaymentSuccess = useEffectEvent(() => handlePaymentSuccess());
 	const onCloseModal = useEffectEvent(() => closeModal());
 
@@ -121,7 +121,7 @@ export function ProfilePaymentModal({
 					setTimeRemaining(newRemaining);
 				}
 			} catch (error: any) {
-				await TelegramLog.error(`Erro ao verificar status do pagamento: ${error?.message}`);
+				await TelegramLog.error(`Error checking payment status: ${error?.message}`);
 			}
 		};
 
@@ -136,9 +136,9 @@ export function ProfilePaymentModal({
 					body: JSON.stringify({ pixId: pixData.id }),
 				})
 					.then((res) => {
-						if (!res.ok) throw new Error("Falha na simulação de pagamento");
+						if (!res.ok) throw new Error("Payment simulation failed");
 					})
-					.catch((err) => console.error("Erro na simulação de pagamento:", err));
+					.catch((err) => console.error("Payment simulation error:", err));
 			}, 5000);
 		}
 
@@ -257,7 +257,7 @@ export function ProfilePaymentModal({
 			setPaymentStatus("PENDING");
 			onStepChange("pix");
 		} catch (error: any) {
-			await TelegramLog.error(`Erro ao gerar PIX: ${error?.message}`);
+			await TelegramLog.error(`Error generating PIX: ${error?.message}`);
 			toast({
 				title: t("pixErrorTitle"),
 				description: error?.message ?? t("pixErrorFallback"),
@@ -304,7 +304,7 @@ export function ProfilePaymentModal({
 			onStepChange("closed");
 			await update();
 		} catch (error: any) {
-			TelegramLog.error(`Erro ao enviar pergunta com créditos: ${error?.message}`);
+			TelegramLog.error(`Error sending question with credits: ${error?.message}`);
 			toast({
 				title: t("questionErrorTitle"),
 				description: t("questionErrorDescription"),
@@ -353,7 +353,7 @@ export function ProfilePaymentModal({
 
 			onStepChange("closed");
 		} catch (error: any) {
-			TelegramLog.error(`Erro ao enviar pergunta: ${error?.message}`);
+			TelegramLog.error(`Error sending question: ${error?.message}`);
 			toast({
 				title: t("questionErrorTitle"),
 				description: error?.message ?? t("questionErrorDescription"),
@@ -586,7 +586,7 @@ export function ProfilePaymentModal({
 											alt={t("qrCodeAlt")}
 											width={240}
 											height={240}
-											// data URI: não há o que otimizar
+											// data URI: nothing to optimize
 											unoptimized
 										/>
 									) : (
