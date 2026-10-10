@@ -1,12 +1,15 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
+import { type ReactNode, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUpdatePixKey } from "@/hooks/use-account-mutations";
+
+const hint = (chunks: ReactNode) => <small className="text-gray-400">{chunks}</small>;
 
 interface PixFormProps {
 	initialPixKey?: string;
@@ -14,6 +17,7 @@ interface PixFormProps {
 
 export function PixForm({ initialPixKey }: PixFormProps) {
 	const [isPending, startTransition] = useTransition();
+	const t = useTranslations("account");
 	const updatePixKeyMutation = useUpdatePixKey();
 	const [pixKey, setPixKey] = useState(initialPixKey || "");
 
@@ -28,17 +32,13 @@ export function PixForm({ initialPixKey }: PixFormProps) {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Dados de Pagamento</CardTitle>
+				<CardTitle>{t("pix.title")}</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<form action={handleSubmit} className="space-y-4">
 					<div className="space-y-2">
-						<Label htmlFor="pix-key">
-							Chave PIX <small className="text-gray-400">(necessário para receber pagamentos)</small>
-						</Label>
-						<p className="text-sm text-orange-600 font-medium">
-							⚠️ Importante: É necessário inserir sua chave PIX para receber os pagamentos.
-						</p>
+						<Label htmlFor="pix-key">{t.rich("pix.label", { hint })}</Label>
+						<p className="text-sm text-orange-600 font-medium">{t("pix.warning")}</p>
 						<Input
 							id="pix-key"
 							name="pixKey"
@@ -46,7 +46,7 @@ export function PixForm({ initialPixKey }: PixFormProps) {
 							minLength={11}
 							maxLength={128}
 							onChange={(e) => setPixKey(e.target.value)}
-							placeholder="Digite sua chave PIX (CPF, email, telefone ou chave aleatória)"
+							placeholder={t("pix.placeholder")}
 							required
 						/>
 					</div>
@@ -59,10 +59,10 @@ export function PixForm({ initialPixKey }: PixFormProps) {
 						{isLoading ? (
 							<>
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								Atualizando...
+								{t("common.updating")}
 							</>
 						) : (
-							"Atualizar Chave PIX"
+							t("pix.submit")
 						)}
 					</Button>
 				</form>

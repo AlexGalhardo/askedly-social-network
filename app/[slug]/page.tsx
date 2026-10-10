@@ -1,12 +1,15 @@
 import { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 import ProfileClient from "./profile";
 
 export async function generateMetadata({ params }: any): Promise<Metadata> {
 	const resolvedParams = await params;
 	const nickname = resolvedParams.slug;
+	const t = await getTranslations("profile");
+	const locale = await getLocale();
 
 	const title = `@${nickname} - Askedly Social Network`;
-	const description = `Veja o perfil público de ${nickname} no Askedly Social Network.`;
+	const description = t("meta.description", { nickname });
 
 	return {
 		title,
@@ -24,7 +27,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 					alt: "Askedly Social Network",
 				},
 			],
-			locale: "pt_BR",
+			locale: { en: "en_US", pt: "pt_BR", es: "es_ES" }[locale],
 			type: "website",
 		},
 		twitter: {

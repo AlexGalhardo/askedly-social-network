@@ -2,6 +2,7 @@
 
 import { Check, Loader2, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,8 @@ const CriteriaItem = ({ met, text }: { met: boolean; text: string }) => (
 
 export function PasswordForm() {
 	const [isPending, startTransition] = useTransition();
+	const t = useTranslations("account");
+	const tc = useTranslations("auth.passwordCriteria");
 	const updatePasswordMutation = useUpdatePassword();
 	const { data: session } = useSession();
 	const hasPassword = session?.user?.has_password ?? true;
@@ -80,13 +83,13 @@ export function PasswordForm() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Alterar Senha</CardTitle>
+				<CardTitle>{t("password.title")}</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<form onSubmit={handleSubmit} className="space-y-4">
 					{hasPassword ? (
 						<div className="space-y-2">
-							<Label htmlFor="current-password">Senha Atual</Label>
+							<Label htmlFor="current-password">{t("password.current")}</Label>
 							<Input
 								id="current-password"
 								name="currentPassword"
@@ -98,14 +101,11 @@ export function PasswordForm() {
 							/>
 						</div>
 					) : (
-						<p className="text-sm text-gray-600">
-							Sua conta foi criada com o Google e ainda não tem senha. Defina uma para também entrar com
-							email e senha.
-						</p>
+						<p className="text-sm text-gray-600">{t("password.googleNotice")}</p>
 					)}
 
 					<div className="space-y-2">
-						<Label htmlFor="new-password">Nova Senha</Label>
+						<Label htmlFor="new-password">{t("password.new")}</Label>
 						<Input
 							id="new-password"
 							name="newPassword"
@@ -116,42 +116,33 @@ export function PasswordForm() {
 								setNewPassword(value);
 								setShowPasswordCriteria(value.length > 0);
 							}}
-							placeholder="Mínimo 8 caracteres"
+							placeholder={t("password.newPlaceholder")}
 							required
 						/>
 					</div>
 
 					{showPasswordCriteria && (
 						<div className="rounded-md px-3">
-							<p className="text-sm text-gray-600 mb-2">Sua senha deve conter:</p>
+							<p className="text-sm text-gray-600 mb-2">{tc("title")}</p>
 							<div className="space-y-1">
-								<CriteriaItem met={passwordCriteria.length} text="Pelo menos 8 caracteres" />
-								<CriteriaItem
-									met={passwordCriteria.uppercase}
-									text="Pelo menos 1 letra maiúscula (A-Z)"
-								/>
-								<CriteriaItem
-									met={passwordCriteria.lowercase}
-									text="Pelo menos 1 letra minúscula (a-z)"
-								/>
-								<CriteriaItem met={passwordCriteria.number} text="Pelo menos 1 número (0-9)" />
-								<CriteriaItem
-									met={passwordCriteria.special}
-									text="Pelo menos 1 caractere especial (!@#$...)"
-								/>
+								<CriteriaItem met={passwordCriteria.length} text={tc("length")} />
+								<CriteriaItem met={passwordCriteria.uppercase} text={tc("uppercase")} />
+								<CriteriaItem met={passwordCriteria.lowercase} text={tc("lowercase")} />
+								<CriteriaItem met={passwordCriteria.number} text={tc("number")} />
+								<CriteriaItem met={passwordCriteria.special} text={tc("special")} />
 							</div>
 						</div>
 					)}
 
 					<div className="space-y-2">
-						<Label htmlFor="confirm-password">Confirmar Nova Senha</Label>
+						<Label htmlFor="confirm-password">{t("password.confirm")}</Label>
 						<Input
 							id="confirm-password"
 							name="confirmPassword"
 							type="password"
 							value={confirmPassword}
 							onChange={(e) => setConfirmPassword(e.target.value)}
-							placeholder="Repita a nova senha"
+							placeholder={t("password.confirmPlaceholder")}
 							required
 						/>
 					</div>
@@ -164,10 +155,10 @@ export function PasswordForm() {
 						{isLoading ? (
 							<>
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								Atualizando...
+								{t("common.updating")}
 							</>
 						) : (
-							"Atualizar Senha"
+							t("password.submit")
 						)}
 					</Button>
 				</form>

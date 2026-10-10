@@ -1,25 +1,24 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { publicErrorMessage } from "@/lib/errors";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
-const deleteAccountSchema = z.object({
-	userId: z.string().uuid().min(1, "UUID do usuário é obrigatório para deletar conta"),
-});
-
 export async function POST(req: NextRequest) {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account");
 	try {
 		const session = await getServerSession(authOptions);
 
 		if (!session?.user?.id) {
-			return NextResponse.json({ error: "Usuário não autenticado" }, { status: 401 });
+			return NextResponse.json({ error: te("unauthorized") }, { status: 401 });
 		}
 
 		const body = await req.json();
-		const parseResult = deleteAccountSchema.safeParse(body);
+		const parseResult = z.object({ userId: z.string().uuid().min(1, t("errors.userIdRequired")) }).safeParse(body);
 
 		if (!parseResult.success) {
 			return NextResponse.json(
@@ -36,10 +35,7 @@ export async function POST(req: NextRequest) {
 		const { userId } = parseResult.data;
 
 		if (userId !== session.user.id) {
-			return NextResponse.json(
-				{ error: "ID do usuário não corresponde ao usuário autenticado" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: t("errors.userIdMismatch") }, { status: 403 });
 		}
 
 		await prisma.user.update({
@@ -51,10 +47,10 @@ export async function POST(req: NextRequest) {
 
 		return NextResponse.json({
 			success: true,
-			message: "Conta marcada para exclusão",
+			message: t("api.accountMarkedForDeletion"),
 		});
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file user-actions.ts delete account: ${error?.message}`);
-		return NextResponse.json({ error: publicErrorMessage(error, "Erro interno do servidor") }, { status: 500 });
+		return NextResponse.json({ error: publicErrorMessage(error, te("internal")) }, { status: 500 });
 	}
 }

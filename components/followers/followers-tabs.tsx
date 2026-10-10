@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FollowerUserInterface, FollowRequestInterface } from "@/types/FollowerUserInterface";
 import { FollowRequestsList } from "./follow-requests-list";
@@ -22,6 +23,8 @@ export function FollowersTabs({
 	onAcceptRequest,
 	onRejectRequest,
 }: FollowersTabsProps) {
+	const t = useTranslations("common.followers");
+
 	return (
 		<Tabs defaultValue="followers" className="w-full">
 			<TabsList className="flex flex-wrap justify-between gap-2 w-full bg-gray-100 dark:bg-neutral-800 rounded-lg p-1">
@@ -33,7 +36,7 @@ export function FollowersTabs({
           dark:data-[state=active]:bg-white dark:data-[state=active]:text-black
           dark:data-[state=inactive]:bg-neutral-700 dark:data-[state=inactive]:text-neutral-300"
 				>
-					Seus Seguidores ({followers.length})
+					{t("tabFollowers", { count: followers.length })}
 				</TabsTrigger>
 				<TabsTrigger
 					value="requests"
@@ -43,7 +46,7 @@ export function FollowersTabs({
           dark:data-[state=active]:bg-white dark:data-[state=active]:text-black
           dark:data-[state=inactive]:bg-neutral-700 dark:data-[state=inactive]:text-neutral-300"
 				>
-					Solicitações Para Te Seguir ({followRequests.length})
+					{t("tabRequests", { count: followRequests.length })}
 				</TabsTrigger>
 			</TabsList>
 

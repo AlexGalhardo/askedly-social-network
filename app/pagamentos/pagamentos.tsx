@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
 import { PaymentTabs } from "@/components/payments/payment-tabs";
@@ -12,6 +13,7 @@ import { canWithdraw } from "@/lib/utils/payment-utils";
 import { PaymentTab } from "@/types/PaymentInterface";
 
 export default function PagamentosPage() {
+	const t = useTranslations("payments");
 	const router = useRouter();
 	const { data: session, status } = useSession();
 
@@ -64,7 +66,7 @@ export default function PagamentosPage() {
 		return (
 			<div className="p-4 lg:p-6">
 				<div className="text-center py-12">
-					<p className="text-muted-foreground">Erro ao carregar dados de pagamento. Tente novamente.</p>
+					<p className="text-muted-foreground">{t("loadErrorRetry")}</p>
 				</div>
 			</div>
 		);

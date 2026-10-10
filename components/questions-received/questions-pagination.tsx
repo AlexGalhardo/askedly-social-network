@@ -1,6 +1,8 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
+
 import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
@@ -10,6 +12,8 @@ interface PaginationProps {
 }
 
 export function QuestionsPagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+	const t = useTranslations("questions");
+
 	if (totalPages <= 1) return null;
 
 	return (
@@ -23,9 +27,7 @@ export function QuestionsPagination({ currentPage, totalPages, onPageChange }: P
 				<ChevronLeft className="h-4 w-4" />
 			</Button>
 
-			<span className="text-sm text-gray-600">
-				Página {currentPage} de {totalPages}
-			</span>
+			<span className="text-sm text-gray-600">{t("card.page", { current: currentPage, total: totalPages })}</span>
 
 			<Button
 				variant="outline"

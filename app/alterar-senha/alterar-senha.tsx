@@ -3,6 +3,7 @@
 import { AlertCircle, CheckCircle2, Eye, EyeOff, XCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -14,6 +15,7 @@ import TelegramLog from "@/lib/telegram-logger";
 
 export default function ResetarSenhaComponent() {
 	const router = useRouter();
+	const t = useTranslations("auth");
 	const searchParams = useSearchParams();
 	const token = searchParams.get("token");
 	const { data: session } = useSession();
@@ -82,12 +84,12 @@ export default function ResetarSenhaComponent() {
 		setError("");
 
 		if (!passwordValid) {
-			setError("Por favor, corrija os requisitos de senha antes de continuar.");
+			setError(t("resetPassword.fixRequirements"));
 			return;
 		}
 
 		if (password !== confirmPassword) {
-			setError("A nova senha e confirmar nova senha não são iguais.");
+			setError(t("resetPassword.mismatch"));
 			return;
 		}
 
@@ -104,7 +106,7 @@ export default function ResetarSenhaComponent() {
 
 			if (!response.ok) {
 				const data = await response.json();
-				throw new Error(data.error ?? "Falha ao redefinir senha");
+				throw new Error(data.error ?? t("errors.resetFailed"));
 			}
 
 			setSuccess(true);
@@ -114,7 +116,7 @@ export default function ResetarSenhaComponent() {
 			}, 3000);
 		} catch (error: any) {
 			await TelegramLog.error(`Error resetting password: ${error?.message}`);
-			setError("Ocorreu um erro ao redefinir sua senha. Try again.");
+			setError(t("resetPassword.genericError"));
 		} finally {
 			setLoading(false);
 		}
@@ -123,7 +125,7 @@ export default function ResetarSenhaComponent() {
 	if (tokenChecking) {
 		return (
 			<div className="min-h-screen flex items-center justify-center text-black">
-				<p>Verificando Link para Redefinição de Senha...</p>
+				<p>{t("resetPassword.verifying")}</p>
 			</div>
 		);
 	}
@@ -136,7 +138,7 @@ export default function ResetarSenhaComponent() {
 			<div className="w-full max-w-md">
 				<Card className="border-0 text-black">
 					<CardHeader className="space-y-1">
-						<CardTitle className="text-2xl font-bold text-center">Crie Sua Nova Senha</CardTitle>
+						<CardTitle className="text-2xl font-bold text-center">{t("resetPassword.title")}</CardTitle>
 					</CardHeader>
 					<CardContent className="space-y-4">
 						{error && (
@@ -148,15 +150,13 @@ export default function ResetarSenhaComponent() {
 
 						{success ? (
 							<div className="text-center p-4 bg-green-600 rounded-md">
-								<p className="text-white font-bold mb-2">Senha atualizada com sucesso!</p>
-								<p className="text-white font-bold">
-									Você será redirecionado para a página de login em breve...
-								</p>
+								<p className="text-white font-bold mb-2">{t("resetPassword.successTitle")}</p>
+								<p className="text-white font-bold">{t("resetPassword.successRedirect")}</p>
 							</div>
 						) : (
 							<form onSubmit={handleSubmit} className="space-y-4">
 								<div className="space-y-2">
-									<Label htmlFor="password">Nova Senha</Label>
+									<Label htmlFor="password">{t("resetPassword.newPassword")}</Label>
 									<div className="relative">
 										<Input
 											id="password"
@@ -181,7 +181,7 @@ export default function ResetarSenhaComponent() {
 
 									{password && (
 										<div className="mt-2 text-sm space-y-1">
-											<p className="font-medium">A senha deve conter:</p>
+											<p className="font-medium">{t("resetPassword.criteriaTitle")}</p>
 											<div className="flex items-center">
 												{passwordValidation.length ? (
 													<CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
@@ -193,7 +193,7 @@ export default function ResetarSenhaComponent() {
 														passwordValidation.length ? "text-green-500" : "text-red-500"
 													}
 												>
-													Pelo menos 8 caracteres
+													{t("passwordCriteria.length")}
 												</span>
 											</div>
 											<div className="flex items-center">
@@ -207,7 +207,7 @@ export default function ResetarSenhaComponent() {
 														passwordValidation.uppercase ? "text-green-500" : "text-red-500"
 													}
 												>
-													Pelo menos 1 letra maiúscula
+													{t("resetPassword.criteriaUppercase")}
 												</span>
 											</div>
 											<div className="flex items-center">
@@ -221,7 +221,7 @@ export default function ResetarSenhaComponent() {
 														passwordValidation.number ? "text-green-500" : "text-red-500"
 													}
 												>
-													Pelo menos 1 número
+													{t("resetPassword.criteriaNumber")}
 												</span>
 											</div>
 											<div className="flex items-center">
@@ -235,7 +235,7 @@ export default function ResetarSenhaComponent() {
 														passwordValidation.special ? "text-green-500" : "text-red-500"
 													}
 												>
-													Pelo menos 1 caractere especial
+													{t("resetPassword.criteriaSpecial")}
 												</span>
 											</div>
 										</div>
@@ -243,7 +243,7 @@ export default function ResetarSenhaComponent() {
 								</div>
 
 								<div className="space-y-2">
-									<Label htmlFor="confirm-password">Confirmar Nova Senha</Label>
+									<Label htmlFor="confirm-password">{t("resetPassword.confirmPassword")}</Label>
 									<div className="relative">
 										<Input
 											id="confirm-password"
@@ -272,7 +272,7 @@ export default function ResetarSenhaComponent() {
 									className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold"
 									disabled={loading}
 								>
-									{loading ? "Mudando senha..." : "Criar Nova Senha"}
+									{loading ? t("resetPassword.submitting") : t("resetPassword.submit")}
 								</Button>
 							</form>
 						)}

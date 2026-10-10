@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 export type FeedType = "community" | "following";
@@ -12,6 +13,8 @@ interface FeedTabsProps {
 }
 
 export const FeedTabs = ({ activeTab, onTabChange, isLoggedIn, className }: FeedTabsProps) => {
+	const t = useTranslations("feed");
+
 	if (!isLoggedIn) return null;
 
 	return (
@@ -26,7 +29,7 @@ export const FeedTabs = ({ activeTab, onTabChange, isLoggedIn, className }: Feed
 						: "text-gray-600 hover:text-gray-900 hover:bg-gray-50",
 				)}
 			>
-				Comunidade
+				{t("tabs.community")}
 			</button>
 
 			<button
@@ -39,7 +42,7 @@ export const FeedTabs = ({ activeTab, onTabChange, isLoggedIn, className }: Feed
 						: "text-gray-600 hover:text-gray-900 hover:bg-gray-50",
 				)}
 			>
-				Seguindo
+				{t("tabs.following")}
 			</button>
 		</div>
 	);

@@ -58,56 +58,19 @@ export class DateTime {
 		return `${this.formatarData()} ${this.formatarHora()}`;
 	}
 
-	horaPorExtenso(): string {
-		const horas = this.date.getHours();
-		const minutos = this.date.getMinutes();
-		const segundos = this.date.getSeconds();
+	horaPorExtenso(locale: string = "en"): string {
+		const unidade = (valor: number, unit: "hour" | "minute" | "second"): string =>
+			new Intl.NumberFormat(locale, { style: "unit", unit, unitDisplay: "long" }).format(valor);
 
-		let resultado = `${horas} ${horas === 1 ? "hora" : "horas"}`;
+		const partes = [unidade(this.date.getHours(), "hour")];
+		if (this.date.getMinutes() > 0) partes.push(unidade(this.date.getMinutes(), "minute"));
+		if (this.date.getSeconds() > 0) partes.push(unidade(this.date.getSeconds(), "second"));
 
-		if (minutos > 0) {
-			resultado += `, ${minutos} ${minutos === 1 ? "minuto" : "minutos"}`;
-		}
-
-		if (segundos > 0) {
-			resultado += ` e ${segundos} ${segundos === 1 ? "segundo" : "segundos"}`;
-		}
-
-		return resultado;
+		return new Intl.ListFormat(locale, { style: "long", type: "conjunction" }).format(partes);
 	}
 
-	dataPorExtenso(): string {
-		const meses = [
-			"janeiro",
-			"fevereiro",
-			"março",
-			"abril",
-			"maio",
-			"junho",
-			"julho",
-			"agosto",
-			"setembro",
-			"outubro",
-			"novembro",
-			"dezembro",
-		];
-
-		const diasSemana = [
-			"domingo",
-			"segunda-feira",
-			"terça-feira",
-			"quarta-feira",
-			"quinta-feira",
-			"sexta-feira",
-			"sábado",
-		];
-
-		const dia = this.date.getDate();
-		const mes = meses[this.date.getMonth()];
-		const ano = this.date.getFullYear();
-		const diaSemana = diasSemana[this.date.getDay()];
-
-		return `${diaSemana}, ${dia} de ${mes} de ${ano}`;
+	dataPorExtenso(locale: string = "en"): string {
+		return new Intl.DateTimeFormat(locale, { dateStyle: "full" }).format(this.date);
 	}
 
 	timestamp(): number {
@@ -142,27 +105,12 @@ export class DateTime {
 		return this.date.getSeconds();
 	}
 
-	get diaSemana(): string {
-		const dias = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
-		return dias[this.date.getDay()];
+	diaSemana(locale: string = "en"): string {
+		return new Intl.DateTimeFormat(locale, { weekday: "long" }).format(this.date);
 	}
 
-	get nomeMes(): string {
-		const meses = [
-			"janeiro",
-			"fevereiro",
-			"março",
-			"abril",
-			"maio",
-			"junho",
-			"julho",
-			"agosto",
-			"setembro",
-			"outubro",
-			"novembro",
-			"dezembro",
-		];
-		return meses[this.date.getMonth()];
+	nomeMes(locale: string = "en"): string {
+		return new Intl.DateTimeFormat(locale, { month: "long" }).format(this.date);
 	}
 
 	adicionarDias(dias: number): DateTime {
@@ -304,7 +252,7 @@ export class DateTime {
 		return `${horas}:${minutos} ${periodo}`;
 	}
 
-	formatarRelativo(): string {
+	formatarRelativo(locale: string = "en"): string {
 		const agora = new DateTime();
 		const diferenca = agora.timestamp() - this.timestamp();
 		const segundos = Math.floor(diferenca / 1000);
@@ -314,12 +262,15 @@ export class DateTime {
 		const meses = Math.floor(dias / 30);
 		const anos = Math.floor(dias / 365);
 
-		if (anos > 0) return `há ${anos} ${anos === 1 ? "ano" : "anos"}`;
-		if (meses > 0) return `há ${meses} ${meses === 1 ? "mês" : "meses"}`;
-		if (dias > 0) return `há ${dias} ${dias === 1 ? "dia" : "dias"}`;
-		if (horas > 0) return `há ${horas} ${horas === 1 ? "hora" : "horas"}`;
-		if (minutos > 0) return `há ${minutos} ${minutos === 1 ? "minuto" : "minutos"}`;
-		return "agora mesmo";
+		const relativo = new Intl.RelativeTimeFormat(locale);
+
+		if (anos > 0) return relativo.format(-anos, "year");
+		if (meses > 0) return relativo.format(-meses, "month");
+		if (dias > 0) return relativo.format(-dias, "day");
+		if (horas > 0) return relativo.format(-horas, "hour");
+		if (minutos > 0) return relativo.format(-minutos, "minute");
+		// `numeric: "auto"` só no zero ("now" / "agora"): nos demais viraria "yesterday" / "ontem" em vez de "1 day ago".
+		return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(0, "second");
 	}
 
 	static agora(): DateTime {

@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 import {
 	getTopLikedAnswersAllTime,
 	getTopLikedAnswersThisMonth,
@@ -7,39 +9,43 @@ import {
 } from "@/lib/repositories/questions.repository";
 import TopCurtidasClient from "./top-curtidas";
 
-export const metadata = {
-	title: "Top 10 Perguntas & Respostas Curtidas - Askedly Social Network",
-	description:
-		"Veja o TOP 10 perguntas e respostas curtidas da platforma Askedly Social Network por dia, semana, mês, ano e geral.",
-	openGraph: {
-		title: "Top 10 Perguntas & Respostas Curtidas - Askedly Social Network",
-		description:
-			"Veja o TOP 10 perguntas e respostas curtidas da platforma Askedly Social Network por dia, semana, mês, ano e geral.",
-		url: "https://respondeae.com.br/top-curtidas",
-		siteName: "Askedly Social Network",
-		images: [
-			{
-				url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
-				width: 1200,
-				height: 630,
-				alt: "Askedly Social Network",
-			},
-		],
-		locale: "pt_BR",
-		type: "website",
-	},
-	twitter: {
-		card: "summary_large_image",
-		title: "Top 10 Perguntas & Respostas Curtidas - Askedly Social Network",
-		description:
-			"Veja o TOP 10 perguntas e respostas curtidas da platforma Askedly Social Network por dia, semana, mês, ano e geral.",
-		images: ["https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"],
-	},
-	metadataBase: new URL("https://respondeae.com.br"),
-	alternates: {
-		canonical: "/top-curtidas",
-	},
-};
+export async function generateMetadata(): Promise<Metadata> {
+	const t = await getTranslations("feed");
+	const locale = await getLocale();
+	const title = t("top.metaTitle");
+	const description = t("top.metaDescription");
+
+	return {
+		title,
+		description,
+		openGraph: {
+			title,
+			description,
+			url: "https://respondeae.com.br/top-curtidas",
+			siteName: "Askedly Social Network",
+			images: [
+				{
+					url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
+					width: 1200,
+					height: 630,
+					alt: "Askedly Social Network",
+				},
+			],
+			locale: { en: "en_US", pt: "pt_BR", es: "es_ES" }[locale],
+			type: "website",
+		},
+		twitter: {
+			card: "summary_large_image",
+			title,
+			description,
+			images: ["https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"],
+		},
+		metadataBase: new URL("https://respondeae.com.br"),
+		alternates: {
+			canonical: "/top-curtidas",
+		},
+	};
+}
 
 export default async function TopCurtidasPage() {
 	const topLikedAnswersToday = await getTopLikedAnswersToday();

@@ -1,6 +1,15 @@
 import { prisma } from "@/prisma/prisma-client";
 
-export class WithdrawError extends Error {}
+export type WithdrawErrorKey = "noQuestions" | "userNotFound" | "noPixKey" | "invalidQuestions";
+
+/** `message` é uma chave de `payments.withdrawErrors`; quem captura traduz. */
+export class WithdrawError extends Error {
+	declare message: WithdrawErrorKey;
+
+	constructor(key: WithdrawErrorKey) {
+		super(key);
+	}
+}
 
 /** Valor repassado ao usuário, em centavos, por uma pergunta paga (resposta ou reembolso). */
 export function calculatePayout(amountPaidInCents: number): number {
@@ -16,11 +25,11 @@ export async function withdrawBalance(
 	questionIds: string[],
 ): Promise<{ withdrawId: string; amount: number }> {
 	const ids = [...new Set(questionIds)];
-	if (ids.length === 0) throw new WithdrawError("Nenhuma pergunta selecionada para saque.");
+	if (ids.length === 0) throw new WithdrawError("noQuestions");
 
 	const user = await prisma.user.findUnique({ where: { id: userId }, select: { nickname: true, pix_key: true } });
-	if (!user) throw new WithdrawError("Usuário não encontrado.");
-	if (!user.pix_key) throw new WithdrawError("Cadastre uma chave PIX antes de sacar.");
+	if (!user) throw new WithdrawError("userNotFound");
+	if (!user.pix_key) throw new WithdrawError("noPixKey");
 
 	return prisma.$transaction(async (tx) => {
 		const questions = await tx.question.findMany({
@@ -51,7 +60,7 @@ export async function withdrawBalance(
 		});
 
 		if (questions.length !== ids.length) {
-			throw new WithdrawError("Algumas perguntas são inválidas ou já foram sacadas.");
+			throw new WithdrawError("invalidQuestions");
 		}
 
 		// O filtro em amount_already_withdraw faz o UPDATE esperar o lock da linha: um saque concorrente das
@@ -61,7 +70,7 @@ export async function withdrawBalance(
 			data: { amount_already_withdraw: true },
 		});
 		if (claimed.count !== ids.length) {
-			throw new WithdrawError("Algumas perguntas são inválidas ou já foram sacadas.");
+			throw new WithdrawError("invalidQuestions");
 		}
 
 		const amount = questions.reduce((total, question) => total + calculatePayout(question.amount_paid), 0);

@@ -1,16 +1,20 @@
 "use client";
 
+import { useFormatter, useNow, useTranslations } from "next-intl";
 import { memo } from "react";
 import { AskerAvatar, AskerName } from "@/components/question-asker";
 import { Badge } from "@/components/ui/badge";
 import type { PublicQuestion } from "@/lib/repositories/questions.repository";
-import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface FeedQuestionHeaderProps {
 	question: PublicQuestion;
 }
 
 export const FeedQuestionHeader = memo(({ question }: FeedQuestionHeaderProps) => {
+	const t = useTranslations("questions");
+	const format = useFormatter();
+	const now = useNow();
+
 	return (
 		<div className="flex items-start gap-3 mb-4">
 			<AskerAvatar asker={question.asked_by} />
@@ -24,18 +28,17 @@ export const FeedQuestionHeader = memo(({ question }: FeedQuestionHeaderProps) =
 								variant="secondary"
 								className="text-xs w-fit bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
 							>
-								Pagou {formatCurrency(question.amount_paid, question.currency)}
+								{t("card.paid", {
+									amount: format.number(question.amount_paid / 100, {
+										style: "currency",
+										currency: question.currency || "BRL",
+									}),
+								})}
 							</Badge>
 							<span className="hidden sm:inline">•</span>
 						</>
 					)}
-					<span className="text-xs">
-						{formatDate(
-							typeof question.created_at === "string"
-								? question.created_at
-								: question.created_at.toISOString(),
-						)}
-					</span>
+					<span className="text-xs">{format.relativeTime(new Date(question.created_at), now)}</span>
 				</div>
 			</div>
 		</div>

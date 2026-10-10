@@ -8,6 +8,7 @@ import {
 	FileText,
 	Home,
 	Info,
+	Languages,
 	LogIn,
 	LogOut,
 	Mail,
@@ -27,6 +28,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useMemo, useState } from "react";
 import { getMyPendingQuestionsCount } from "@/actions/my-account-actions";
@@ -34,6 +36,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useSessionVerification } from "@/hooks/use-session-verification";
+import { LocaleSwitcher } from "./locale-switcher";
 import { MySidebarSkeleton } from "./my-sidebar-skeleton";
 
 type SidebarItem = {
@@ -46,6 +49,8 @@ type SidebarItem = {
 };
 
 export function MySidebar() {
+	const t = useTranslations("nav");
+	const tCommon = useTranslations("common");
 	const { session, isAuthenticated, isLoading, error, refetch } = useSessionVerification();
 	const { data: pendingQuestions = 0 } = useQuery({
 		queryKey: ["my-pending-questions", session?.user?.id],
@@ -63,14 +68,14 @@ export function MySidebar() {
 		const items: SidebarItem[] = [
 			{
 				icon: Home,
-				label: "Feed",
+				label: t("feed"),
 				href: "/",
 				active: pathname === "/",
 				requiresAuth: false,
 			},
 			{
 				icon: Trophy,
-				label: "TOP 10 Curtidas",
+				label: t("topLikes"),
 				href: "/top-curtidas",
 				active: pathname === "/top-curtidas",
 				requiresAuth: true,
@@ -81,21 +86,21 @@ export function MySidebar() {
 			items.push(
 				{
 					icon: User,
-					label: "Meu Perfil",
+					label: t("myProfile"),
 					href: `/${session.user.nickname}`,
 					active: pathname === `/${session.user.nickname}`,
 					requiresAuth: true,
 				},
 				{
 					icon: Settings,
-					label: "Minha Conta",
+					label: t("myAccount"),
 					href: "/minha-conta",
 					active: pathname === "/minha-conta",
 					requiresAuth: true,
 				},
 				{
 					icon: Bell,
-					label: "Perguntas Recebidas",
+					label: t("receivedQuestions"),
 					href: "/perguntas-recebidas",
 					active: pathname === "/perguntas-recebidas",
 					badge: pendingQuestions > 0 ? pendingQuestions.toString() : undefined,
@@ -103,28 +108,28 @@ export function MySidebar() {
 				},
 				{
 					icon: Send,
-					label: "Perguntas Enviadas",
+					label: t("sentQuestions"),
 					href: "/perguntas-enviadas",
 					active: pathname === "/perguntas-enviadas",
 					requiresAuth: true,
 				},
 				{
 					icon: CreditCard,
-					label: "Pagamentos",
+					label: t("payments"),
 					href: "/pagamentos",
 					active: pathname === "/pagamentos",
 					requiresAuth: true,
 				},
 				{
 					icon: UserPlus,
-					label: "Seguidores",
+					label: t("followers"),
 					href: "/seguidores",
 					active: pathname === "/seguidores",
 					requiresAuth: true,
 				},
 				{
 					icon: Users,
-					label: "Seguindo",
+					label: t("following"),
 					href: "/seguindo",
 					active: pathname === "/seguindo",
 					requiresAuth: true,
@@ -133,21 +138,21 @@ export function MySidebar() {
 		}
 
 		return items;
-	}, [isAuthenticated, session, pathname, pendingQuestions]);
+	}, [isAuthenticated, session, pathname, pendingQuestions, t]);
 
 	const legalItems: SidebarItem[] = [
-		{ icon: Info, label: "Sobre", href: "/sobre", active: pathname === "/sobre", requiresAuth: false },
-		{ icon: Mail, label: "Contato", href: "/contato", active: pathname === "/contato", requiresAuth: false },
+		{ icon: Info, label: t("about"), href: "/sobre", active: pathname === "/sobre", requiresAuth: false },
+		{ icon: Mail, label: t("contact"), href: "/contato", active: pathname === "/contato", requiresAuth: false },
 		{
 			icon: Shield,
-			label: "Política de Privacidade",
+			label: t("privacyPolicy"),
 			href: "/politica-de-privacidade",
 			active: pathname === "/politica-de-privacidade",
 			requiresAuth: false,
 		},
 		{
 			icon: FileText,
-			label: "Termos de Uso",
+			label: t("termsOfUse"),
 			href: "/termos-de-uso",
 			active: pathname === "/termos-de-uso",
 			requiresAuth: false,
@@ -192,11 +197,19 @@ export function MySidebar() {
 
 	const renderAuthSection = (isMobile = false) => (
 		<div className="p-4 border-t space-y-2 flex-shrink-0">
+			<div className="flex items-center justify-between h-11 px-4 text-sm font-medium">
+				<span className="flex items-center">
+					<Languages className="mr-3 h-5 w-5" />
+					{tCommon("language")}
+				</span>
+				<LocaleSwitcher />
+			</div>
+
 			<Button variant="ghost" className="w-full justify-start h-11" onClick={toggleTheme}>
 				<Moon className="mr-3 h-5 w-5 dark:hidden" />
 				<Sun className="mr-3 h-5 w-5 hidden dark:block" />
-				<span className="flex-1 text-left dark:hidden">Modo Escuro</span>
-				<span className="flex-1 text-left hidden dark:inline">Modo Claro</span>
+				<span className="flex-1 text-left dark:hidden">{t("darkMode")}</span>
+				<span className="flex-1 text-left hidden dark:inline">{t("lightMode")}</span>
 			</Button>
 
 			{isAuthenticated ? (
@@ -206,7 +219,7 @@ export function MySidebar() {
 					className="w-full justify-start h-11 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950"
 				>
 					<LogOut className="mr-3 h-5 w-5" />
-					<span className="flex-1 text-left">Sair</span>
+					<span className="flex-1 text-left">{t("signOut")}</span>
 				</Button>
 			) : (
 				<Link href="/entrar">
@@ -216,7 +229,7 @@ export function MySidebar() {
 						onClick={() => isMobile && setSidebarOpen(false)}
 					>
 						<LogIn className="mr-3 h-5 w-5" />
-						<span className="flex-1 text-left">Entrar Na Minha Conta</span>
+						<span className="flex-1 text-left">{t("signIn")}</span>
 					</Button>
 				</Link>
 			)}
@@ -233,13 +246,13 @@ export function MySidebar() {
 						<Alert variant="destructive">
 							<AlertCircle className="h-4 w-4" />
 							<AlertDescription>
-								Erro ao carregar dados da sessão.{" "}
+								{t("sessionError")}{" "}
 								<Button
 									variant="link"
 									className="p-0 h-auto text-destructive underline"
 									onClick={() => refetch()}
 								>
-									Tentar novamente
+									{t("retry")}
 								</Button>
 							</AlertDescription>
 						</Alert>
@@ -317,7 +330,7 @@ export function MySidebar() {
 				<div className="lg:hidden fixed inset-0 z-50 flex">
 					<button
 						type="button"
-						aria-label="Fechar menu"
+						aria-label={t("closeMenu")}
 						className="fixed inset-0 bg-black/20 cursor-default"
 						onClick={() => setSidebarOpen(false)}
 					/>

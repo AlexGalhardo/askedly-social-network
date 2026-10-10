@@ -1,1 +1,35 @@
-{}
+{
+	"tabs": {
+		"community": "Comunidade",
+		"following": "Seguindo"
+	},
+	"loading": "Carregando...",
+	"loadingMore": "Carregando mais respostas...",
+	"loadError": "Erro ao carregar perguntas: {message}",
+	"unknownError": "Erro desconhecido",
+	"emptyFollowing": "Você ainda não segue ninguém ou as pessoas que você segue não têm perguntas respondidas.",
+	"empty": "Nenhuma pergunta encontrada no momento.",
+	"end": "Você chegou ao final do feed! 🎉",
+	"top": {
+		"metaTitle": "Top 10 Perguntas & Respostas Curtidas - Askedly Social Network",
+		"metaDescription": "Veja o TOP 10 perguntas e respostas curtidas da plataforma Askedly Social Network por dia, semana, mês, ano e geral.",
+		"title": "TOP 10 Respostas Mais Curtidas",
+		"subtitle": "Veja as 10 perguntas e respostas mais curtidas da comunidade",
+		"tabs": {
+			"today": "Hoje",
+			"week": "Semana",
+			"month": "Mês",
+			"year": "Ano {year}",
+			"allTime": "Geral"
+		},
+		"empty": {
+			"today": "Nenhuma pergunta curtida hoje ainda.",
+			"week": "Nenhuma pergunta curtida esta semana ainda.",
+			"month": "Nenhuma pergunta curtida este mês ainda.",
+			"year": "Nenhuma pergunta curtida este ano ainda.",
+			"allTime": "Nenhuma pergunta curtida de todos os tempos ainda."
+		},
+		"emptyHint": "Seja o primeiro a curtir uma resposta!",
+		"end": "Você chegou ao final da lista! 🎉"
+	}
+}

@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { SentQuestionInterface } from "@/types/SentQuestion";
 import { SentQuestionCard } from "./sent-question-card";
 
@@ -12,8 +14,10 @@ interface SentQuestionsListProps {
 }
 
 export function SentQuestionsList({ questions, onReport, loadingStates = {} }: SentQuestionsListProps) {
+	const t = useTranslations("questions");
+
 	if (questions.length === 0) {
-		return <div className="text-center py-12 text-gray-500">Nenhuma pergunta encontrada.</div>;
+		return <div className="text-center py-12 text-gray-500">{t("card.empty")}</div>;
 	}
 
 	return (

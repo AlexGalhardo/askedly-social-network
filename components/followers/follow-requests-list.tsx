@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FollowRequestInterface } from "@/types/FollowerUserInterface";
 import { FollowRequestCard } from "./follow-request-card";
@@ -37,12 +38,14 @@ function FollowRequestsSkeleton() {
 }
 
 export function FollowRequestsList({ requests, isLoading, onAccept, onReject }: FollowRequestsListProps) {
+	const t = useTranslations("common.followers");
+
 	if (isLoading) {
 		return <FollowRequestsSkeleton />;
 	}
 
 	if (requests.length === 0) {
-		return <div className="text-center py-12 text-gray-500">Nenhum pedido para seguir.</div>;
+		return <div className="text-center py-12 text-gray-500">{t("noRequests")}</div>;
 	}
 
 	return (

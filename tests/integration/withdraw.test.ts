@@ -72,7 +72,9 @@ describe("withdrawBalance (integration)", () => {
 	});
 
 	test("rejects withdrawing a question that belongs to someone else", async () => {
-		expect(withdrawBalance(askerId, [questionId])).rejects.toBeInstanceOf(WithdrawError);
+		const rejection = expect(withdrawBalance(askerId, [questionId])).rejects;
+		await rejection.toBeInstanceOf(WithdrawError);
+		await rejection.toHaveProperty("message", "invalidQuestions");
 	});
 
 	test("pays the owner the server-computed amount to the owner's own PIX key", async () => {

@@ -1,4 +1,8 @@
+import type { getTranslations } from "next-intl/server";
 import { Resend } from "resend";
+
+/** Tradutor do namespace `emails`, resolvido por quem envia: `await getTranslations("emails")`. */
+export type EmailTranslator = Awaited<ReturnType<typeof getTranslations<"emails">>>;
 
 // `onboarding@resend.dev` é o remetente de teste da Resend e só entrega para o dono da conta. Em produção,
 // RESEND_FROM_EMAIL precisa ser um endereço de domínio verificado na Resend, senão os emails de reset não chegam.

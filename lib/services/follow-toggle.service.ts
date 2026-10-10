@@ -3,7 +3,8 @@ import { prisma } from "@/prisma/prisma-client";
 export interface FollowToggleResult {
 	isFollowing: boolean;
 	hasPendingRequest: boolean;
-	message: string;
+	/** Chave de mensagem do namespace `account.follow`; quem chama traduz. */
+	message: "stoppedFollowing" | "requestCancelled" | "requestSent" | "nowFollowing";
 }
 
 /**
@@ -24,7 +25,7 @@ export async function toggleFollow(followerId: string, followingId: string): Pro
 
 	if (await prisma.follower.findUnique({ where: { followerId_followingId: pair } })) {
 		await prisma.follower.delete({ where: { followerId_followingId: pair } });
-		return { isFollowing: false, hasPendingRequest: false, message: "Você parou de seguir este usuário" };
+		return { isFollowing: false, hasPendingRequest: false, message: "stoppedFollowing" };
 	}
 
 	const pendingRequest = await prisma.followRequest.findUnique({ where: { senderId_receiverId: requestPair } });
@@ -32,13 +33,13 @@ export async function toggleFollow(followerId: string, followingId: string): Pro
 	if (target.privacy_is_private_profile) {
 		if (pendingRequest) {
 			await prisma.followRequest.delete({ where: { senderId_receiverId: requestPair } });
-			return { isFollowing: false, hasPendingRequest: false, message: "Solicitação cancelada" };
+			return { isFollowing: false, hasPendingRequest: false, message: "requestCancelled" };
 		}
 		await prisma.followRequest.create({ data: requestPair });
-		return { isFollowing: false, hasPendingRequest: true, message: "Solicitação enviada" };
+		return { isFollowing: false, hasPendingRequest: true, message: "requestSent" };
 	}
 
 	await prisma.follower.create({ data: pair });
 	if (pendingRequest) await prisma.followRequest.delete({ where: { senderId_receiverId: requestPair } });
-	return { isFollowing: true, hasPendingRequest: false, message: "Agora você está seguindo este usuário" };
+	return { isFollowing: true, hasPendingRequest: false, message: "nowFollowing" };
 }

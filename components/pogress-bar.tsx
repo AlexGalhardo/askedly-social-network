@@ -1,9 +1,11 @@
 "use client";
 
 import * as Progress from "@radix-ui/react-progress";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 export default function ProgressBar() {
+	const t = useTranslations("common");
 	const [progress, setProgress] = useState(13);
 
 	useEffect(() => {
@@ -22,7 +24,7 @@ export default function ProgressBar() {
 					style={{ width: `${progress}%` }}
 				/>
 			</Progress.Root>
-			<p className="mt-2 text-sm text-center text-gray-600">{progress}% Carregando...</p>
+			<p className="mt-2 text-sm text-center text-gray-600">{t("loadingProgress", { progress })}</p>
 		</div>
 	);
 }

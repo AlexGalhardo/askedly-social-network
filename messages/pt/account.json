@@ -1,1 +1,224 @@
-{}
+{
+	"meta": {
+		"title": "Minha Conta - Askedly Social Network",
+		"description": "Configurações da sua conta da plataforma Askedly Social Network"
+	},
+	"common": {
+		"updating": "Atualizando...",
+		"processing": "Processando...",
+		"optional": "(opcional)",
+		"cancel": "Cancelar"
+	},
+	"personalInfo": {
+		"title": "Informações Pessoais",
+		"avatar": "Avatar",
+		"avatarUpdated": "Avatar atualizado com sucesso!",
+		"avatarUploadError": "Ocorreu um erro ao fazer o upload da imagem. Por favor, tente novamente.",
+		"nameLabel": "Nome <hint>(obrigatório)</hint>",
+		"namePlaceholder": "Seu Nome Completo",
+		"nameHelp": "Entre 4 e 24 caracteres",
+		"nickname": "Nickname",
+		"nicknameHelp": "O nickname não pode ser alterado",
+		"email": "Email",
+		"emailHelp": "O email não pode ser alterado",
+		"websiteLabel": "Website <hint>(opcional)</hint>",
+		"websitePlaceholder": "https://seusite.com",
+		"websiteHelp": "Deve começar com https://",
+		"descriptionLabel": "Descrição do Meu Perfil <hint>(opcional)</hint>",
+		"descriptionPlaceholder": "Conte um pouco sobre você...",
+		"descriptionHelp": "Mínimo: 32 caracteres | Máximo: 256 caracteres",
+		"submit": "Atualizar Informações Pessoais"
+	},
+	"pix": {
+		"title": "Dados de Pagamento",
+		"label": "Chave PIX <hint>(necessário para receber pagamentos)</hint>",
+		"warning": "⚠️ Importante: É necessário inserir sua chave PIX para receber os pagamentos.",
+		"placeholder": "Digite sua chave PIX (CPF, email, telefone ou chave aleatória)",
+		"submit": "Atualizar Chave PIX"
+	},
+	"stripe": {
+		"title": "Créditos e recebimentos (Stripe)",
+		"balance": "Saldo de créditos: <strong>{amount}</strong>",
+		"payoutActive": "Conta de recebimento ativa: perguntas pagas com créditos são transferidas ao responder.",
+		"payoutSetup": "Para receber por perguntas pagas com créditos, conclua o cadastro na Stripe.",
+		"countryLabel": "País (código de 2 letras, ex.: US, BR)",
+		"continueOnboarding": "Continuar cadastro na Stripe",
+		"startOnboarding": "Cadastrar na Stripe",
+		"errorTitle": "Erro",
+		"openError": "Não foi possível abrir a Stripe. Tente novamente."
+	},
+	"social": {
+		"title": "Redes Sociais",
+		"usernamePlaceholder": "seuusuario",
+		"channelPlaceholder": "seucanal",
+		"submit": "Atualizar Redes Sociais"
+	},
+	"password": {
+		"title": "Alterar Senha",
+		"current": "Senha Atual",
+		"googleNotice": "Sua conta foi criada com o Google e ainda não tem senha. Defina uma para também entrar com email e senha.",
+		"new": "Nova Senha",
+		"newPlaceholder": "Mínimo 8 caracteres",
+		"confirm": "Confirmar Nova Senha",
+		"confirmPlaceholder": "Repita a nova senha",
+		"submit": "Atualizar Senha"
+	},
+	"privacy": {
+		"title": "Configurações de Privacidade",
+		"privateProfile": {
+			"label": "Meu Perfil Será Privado",
+			"description": "Pessoas não poderão seguir você livremente, elas vão pedir uma solicitação para te seguir primeiro. <br></br>Apenas seguidores conseguem ver suas respostas públicas."
+		},
+		"acceptAnonymous": {
+			"label": "Aceitar perguntas anônimas",
+			"description": "Permitir que pessoas façam perguntas sem se identificar"
+		},
+		"showAnonymousPublic": {
+			"label": "Mostrar perguntas anônimas respondidas publicamente",
+			"description": "Exibir suas respostas a perguntas anônimas no seu perfil público"
+		},
+		"followersOnly": {
+			"label": "Mostrar perguntas respondidas apenas para seguidores",
+			"description": "Apenas seus seguidores poderão ver suas respostas"
+		},
+		"showPaymentAmount": {
+			"label": "Mostrar valor recebido para responder pergunta",
+			"description": "Exibir quanto você recebeu por cada resposta (se o usuário que enviou a pergunta não quis mostrar o valor que ele pagou, essas respostas não exibirão o valor pago)"
+		},
+		"showAnswerDate": {
+			"label": "Mostrar data que pergunta foi respondida",
+			"description": "Exibir quando você respondeu cada pergunta"
+		},
+		"showFollowersCount": {
+			"label": "Mostrar total de seguidores publicamente",
+			"description": "Exibir o número de seguidores no seu perfil"
+		},
+		"showQuestionsSent": {
+			"label": "Mostrar total de perguntas enviadas publicamente",
+			"description": "Exibir o número total de perguntas que você enviou"
+		},
+		"showIndividualLikes": {
+			"label": "Mostrar total de curtidas nas respostas individuais publicamente",
+			"description": "Exibir curtidas em cada resposta individual"
+		},
+		"showIndividualDislikes": {
+			"label": "Mostrar total de descurtidas nas respostas individuais publicamente",
+			"description": "Exibir descurtidas em cada resposta individual"
+		},
+		"showTotalLikes": {
+			"label": "Mostrar total de curtidas em todas suas respostas publicamente",
+			"description": "Exibir o número total de curtidas em todas as respostas que você já respondeu"
+		},
+		"showQuestionsReceived": {
+			"label": "Mostrar total de perguntas que você já recebeu publicamente",
+			"description": "Exibir o número total de perguntas que você recebeu"
+		},
+		"showQuestionsAnswered": {
+			"label": "Mostrar total de perguntas que você já respondeu publicamente",
+			"description": "Exibir o número total de perguntas que você respondeu"
+		},
+		"submit": "Atualizar Configurações de Privacidade"
+	},
+	"blocked": {
+		"title": "Usuários Bloqueados",
+		"empty": "Nenhum usuário bloqueado",
+		"avatarAlt": "Avatar de {name}",
+		"unblocking": "Desbloqueando...",
+		"unblock": "Desbloquear",
+		"unblocked": "Usuário Desbloqueado",
+		"unblockError": "Erro ao desbloquear usuário"
+	},
+	"delete": {
+		"title": "Excluir Conta",
+		"description": "Sua conta será desativada por 30 dias corridos antes de ser excluída permanentemente. Você pode reativar sua conta durante esse período se desejar, entrando na sua conta novamente. Após esse período, todos os dados relacionados à sua conta serão deletados. Não se preocupe, será aberto um modal para você confirmar exclusão clicando nesse botão.",
+		"warning": "Sua conta será desativada por 30 dias corridos antes de ser excluída permanentemente. Você pode reativar sua conta durante esse período se desejar, entrando na sua conta novamente. Após esse período, todos os dados relacionados à sua conta serão deletados.",
+		"deactivated": "Sua conta foi desativada. Se durante 30 dias, ela não for reativada novamente, todos os dados serão deletados. Você será redirecionado em 10 segundos.",
+		"confirm": "Confirmar Exclusão"
+	},
+	"toasts": {
+		"unexpected": "Erro inesperado",
+		"personalInfoError": "Erro ao atualizar informações pessoais",
+		"personalInfoSuccess": "Informações pessoais atualizadas com sucesso!",
+		"socialError": "Erro ao atualizar redes sociais",
+		"socialSuccess": "Redes sociais atualizadas com sucesso!",
+		"pixError": "Erro ao atualizar chave PIX",
+		"pixSuccess": "Chave PIX atualizada com sucesso!",
+		"passwordError": "Erro ao atualizar senha",
+		"passwordSuccess": "Sua senha foi atualizada com sucesso!",
+		"privacyError": "Erro ao atualizar configurações de privacidade",
+		"privacySuccess": "Configurações de privacidade atualizadas com sucesso!",
+		"deleteError": "Erro ao deletar conta",
+		"deleteStarted": "Conta foi posta em processo de exclusão."
+	},
+	"follow": {
+		"removeError": "Erro ao remover seguidor",
+		"removed": "{name} foi removido dos seus seguidores",
+		"acceptError": "Erro ao aceitar seguidor",
+		"accepted": "Seguidor aceito",
+		"rejectError": "Erro ao rejeitar seguidor",
+		"rejected": "Seguidor rejeitado",
+		"unfollowError": "Erro ao deixar de seguir",
+		"unfollowed": "Você deixou de seguir {name}",
+		"stoppedFollowing": "Você parou de seguir este usuário",
+		"requestCancelled": "Solicitação cancelada",
+		"requestSent": "Solicitação enviada",
+		"nowFollowing": "Agora você está seguindo este usuário"
+	},
+	"api": {
+		"followerAccepted": "Seguidor aceito com sucesso",
+		"requestRejected": "Pedido rejeitado com sucesso",
+		"followerRemoved": "Seguidor removido com sucesso",
+		"unfollowed": "Deixou de seguir com sucesso",
+		"userBlocked": "Usuário bloqueado com sucesso",
+		"userUnblocked": "Usuário desbloqueado com sucesso",
+		"accountMarkedForDeletion": "Conta marcada para exclusão",
+		"socialUpdated": "Redes sociais atualizadas com sucesso",
+		"pixUpdated": "Chave PIX atualizada com sucesso",
+		"profileUpdated": "Meu Perfil atualizado com sucesso",
+		"privacyUpdated": "Configurações de privacidade atualizadas com sucesso"
+	},
+	"errors": {
+		"nameMin": "O nome deve ter pelo menos 4 caracteres",
+		"nameMax": "O nome deve ter no máximo 24 caracteres",
+		"websiteHttps": "O website deve começar com https://",
+		"descriptionLength": "A descrição deve ter entre 32 e 256 caracteres",
+		"pixKeyMin": "A chave PIX deve ter pelo menos 11 caracteres",
+		"pixKeyMax": "A chave PIX deve ter no máximo 128 caracteres",
+		"pixKeyTooLong": "Chave PIX inválida: máximo de 77 caracteres",
+		"pixKeyEmpty": "Chave PIX não pode estar vazia",
+		"pixKeyInvalidFormat": "Formato de chave PIX inválido. Use CPF, CNPJ, email, telefone ou chave aleatória.",
+		"pixUpdateFailed": "Erro ao atualizar chave pix",
+		"passwordMin": "A senha deve ter pelo menos 8 caracteres",
+		"passwordUppercase": "A senha deve conter pelo menos uma letra maiúscula",
+		"passwordLowercase": "A senha deve conter pelo menos uma letra minúscula",
+		"passwordNumber": "A senha deve conter pelo menos um número",
+		"passwordSpecial": "A senha deve conter pelo menos um caractere especial",
+		"passwordsMismatch": "As senhas não coincidem",
+		"currentPasswordIncorrect": "Senha atual incorreta",
+		"userNotFound": "Usuário não encontrado",
+		"questionNotFound": "Pergunta não encontrada",
+		"followFailed": "Erro ao seguir usuário",
+		"likeFailed": "Erro ao curtir pergunta",
+		"dislikeFailed": "Erro ao descurtir pergunta",
+		"blockFailed": "Erro ao bloquear usuário",
+		"unblockFailed": "Erro ao desbloquear usuário",
+		"alreadyBlocked": "Usuário já está bloqueado",
+		"notBlocked": "Usuário não está bloqueado",
+		"cannotBlockSelf": "Você não pode bloquear a si mesmo",
+		"cannotFollowSelf": "Você não pode seguir a si mesmo",
+		"nicknameRequired": "Nickname do usuário é obrigatório",
+		"requestIdRequired": "ID do pedido é obrigatório",
+		"followRequestNotFound": "Solicitação não encontrada",
+		"alreadyFollower": "Usuário já é seguidor",
+		"followerIdRequired": "ID do seguidor é obrigatório",
+		"followingIdRequired": "ID da pessoa a deixar de seguir é obrigatório",
+		"followIdsRequired": "IDs do seguidor e seguido são obrigatórios",
+		"followerRelationNotFound": "Relação de seguidor não encontrada",
+		"userIdRequired": "UUID do usuário é obrigatório para deletar conta",
+		"userIdMismatch": "ID do usuário não corresponde ao usuário autenticado",
+		"socialUrlTooLong": "URL do {platform} é muito longa (máximo 255 caracteres)",
+		"socialUrlPrefix": "URL do {platform} deve começar com {prefix}",
+		"fieldMustBeBoolean": "Campo {field} deve ser verdadeiro ou falso",
+		"anonymousPublicConflict": "Não é possível mostrar perguntas anônimas publicamente se não aceita perguntas anônimas"
+	}
+}

@@ -13,12 +13,20 @@ export function formatCurrency(value: number, currency: string = "BRL"): string 
 	);
 }
 
-export function formatDate(dateString: string): string {
+const INVALID_DATE: Record<string, string> = { en: "Invalid date", pt: "Data inválida", es: "Fecha inválida" };
+
+export function formatDate(dateString: string, locale: string = "en"): string {
 	try {
 		const date = new DateTime(dateString);
-		return date.formatarRelativo();
+		return date.formatarRelativo(locale);
 	} catch (error: any) {
 		TelegramLog.error(`Catch Error utils.ts formatDate: ${error?.message}`);
-		return "Data inválida";
+		return INVALID_DATE[locale] ?? INVALID_DATE.en;
 	}
+}
+
+const OPEN_GRAPH_LOCALES: Record<string, string> = { en: "en_US", pt: "pt_BR", es: "es_ES" };
+
+export function openGraphLocale(locale: string): string {
+	return OPEN_GRAPH_LOCALES[locale] ?? OPEN_GRAPH_LOCALES.en;
 }

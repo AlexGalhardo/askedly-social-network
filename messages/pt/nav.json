@@ -1,1 +1,23 @@
-{}
+{
+	"feed": "Feed",
+	"topLikes": "TOP 10 Curtidas",
+	"myProfile": "Meu Perfil",
+	"myAccount": "Minha Conta",
+	"receivedQuestions": "Perguntas Recebidas",
+	"sentQuestions": "Perguntas Enviadas",
+	"payments": "Pagamentos",
+	"followers": "Seguidores",
+	"following": "Seguindo",
+	"about": "Sobre",
+	"contact": "Contato",
+	"privacyPolicy": "Política de Privacidade",
+	"termsOfUse": "Termos de Uso",
+	"darkMode": "Modo Escuro",
+	"lightMode": "Modo Claro",
+	"signOut": "Sair",
+	"signIn": "Entrar Na Minha Conta",
+	"signInShort": "Entrar",
+	"sessionError": "Erro ao carregar dados da sessão.",
+	"retry": "Tentar novamente",
+	"closeMenu": "Fechar menu"
+}

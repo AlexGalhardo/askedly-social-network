@@ -6,50 +6,54 @@ import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { MySidebar } from "@/components/my-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { openGraphLocale } from "@/lib/utils";
 import { ReactQueryProvider } from "../providers/react-query-provider";
 import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-	title: "Askedly Social Network - Receba Perguntas, Monetize Suas Respostas.",
-	description:
-		"Compartilhe conhecimento e suas experiências com pessoas interessadas em saber o que você tem a dizer.",
-	keywords: ["respondeae.com.br", "perguntas", "monetização", "respostas", "plataforma social", "ganhar dinheiro"],
-	icons: {
-		icon: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
-	},
-	openGraph: {
-		title: "Askedly Social Network - Receba Perguntas. Monetize Suas Respostas.",
-		description:
-			"Compartilhe conhecimento e suas experiências com pessoas interessadas em saber o que você tem a dizer.",
-		url: "https://respondeae.com.br",
-		siteName: "Askedly Social Network",
-		images: [
-			{
-				url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
-				width: 1200,
-				height: 630,
-				alt: "Askedly Social Network",
-			},
-		],
-		locale: "pt_BR",
-		type: "website",
-	},
-	twitter: {
-		card: "summary_large_image",
-		title: "Askedly Social Network - Receba Perguntas. Monetize Suas Respostas.",
-		description:
-			"Askedly Social Network é uma plataforma onde você pode receber e enviar perguntas para outros perfis, e monetizar suas respostas.",
-		images: ["https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"],
-	},
-	metadataBase: new URL("https://respondeae.com.br"),
-};
+export async function generateMetadata(): Promise<Metadata> {
+	const t = await getTranslations("common.meta");
+	const title = t("title");
+	const description = t("description");
+
+	return {
+		title,
+		description,
+		keywords: t("keywords"),
+		icons: {
+			icon: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
+		},
+		openGraph: {
+			title,
+			description,
+			url: "https://respondeae.com.br",
+			siteName: "Askedly Social Network",
+			images: [
+				{
+					url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
+					width: 1200,
+					height: 630,
+					alt: "Askedly Social Network",
+				},
+			],
+			locale: openGraphLocale(await getLocale()),
+			type: "website",
+		},
+		twitter: {
+			card: "summary_large_image",
+			title,
+			description: t("twitterDescription"),
+			images: ["https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"],
+		},
+		metadataBase: new URL("https://respondeae.com.br"),
+	};
+}
 
 export default async function RootLayout({
 	children,

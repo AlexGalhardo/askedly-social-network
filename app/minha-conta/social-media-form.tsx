@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +11,9 @@ import { useUpdateSocialMedia } from "@/hooks/use-account-mutations";
 
 export function SocialMediaForm({ user }: any) {
 	const [isPending, startTransition] = useTransition();
+	const t = useTranslations("account");
+	const username = t("social.usernamePlaceholder");
+	const channel = t("social.channelPlaceholder");
 	const updateSocialMediaMutation = useUpdateSocialMedia();
 
 	const [instagram, setInstagram] = useState(user.instagram || "");
@@ -31,20 +35,20 @@ export function SocialMediaForm({ user }: any) {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Redes Sociais</CardTitle>
+				<CardTitle>{t("social.title")}</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<form action={handleSubmit} className="space-y-4">
 					<div className="space-y-2">
 						<Label htmlFor="instagram">
-							Instagram <small className="text-gray-400">(opcional)</small>
+							Instagram <small className="text-gray-400">{t("common.optional")}</small>
 						</Label>
 						<Input
 							id="instagram"
 							name="instagram"
 							minLength={1}
 							maxLength={30}
-							placeholder="seuusuario"
+							placeholder={username}
 							value={instagram.replace("https://instagram.com/", "")}
 							onChange={(e) => {
 								const raw = e.target.value;
@@ -55,19 +59,19 @@ export function SocialMediaForm({ user }: any) {
 								setInstagram(`https://instagram.com/${sanitized}`);
 							}}
 						/>
-						<p className="text-sm text-gray-500">{instagram || "https://instagram.com/seuusuario"}</p>
+						<p className="text-sm text-gray-500">{instagram || `https://instagram.com/${username}`}</p>
 					</div>
 
 					<div className="space-y-2">
 						<Label htmlFor="facebook">
-							Facebook <small className="text-gray-400">(opcional)</small>
+							Facebook <small className="text-gray-400">{t("common.optional")}</small>
 						</Label>
 						<Input
 							id="facebook"
 							name="facebook"
 							minLength={5}
 							maxLength={50}
-							placeholder="seuusuario"
+							placeholder={username}
 							value={facebook.replace("https://facebook.com/", "")}
 							onChange={(e) => {
 								const raw = e.target.value;
@@ -75,19 +79,19 @@ export function SocialMediaForm({ user }: any) {
 								setFacebook(`https://facebook.com/${sanitized}`);
 							}}
 						/>
-						<p className="text-sm text-gray-500">{facebook || "https://facebook.com/seuusuario"}</p>
+						<p className="text-sm text-gray-500">{facebook || `https://facebook.com/${username}`}</p>
 					</div>
 
 					<div className="space-y-2">
 						<Label htmlFor="youtube">
-							YouTube <small className="text-gray-400">(opcional)</small>
+							YouTube <small className="text-gray-400">{t("common.optional")}</small>
 						</Label>
 						<Input
 							id="youtube"
 							name="youtube"
 							minLength={3}
 							maxLength={30}
-							placeholder="@seucanal"
+							placeholder={`@${channel}`}
 							value={youtube.replace("https://youtube.com/@", "")}
 							onChange={(e) => {
 								const raw = e.target.value;
@@ -95,19 +99,19 @@ export function SocialMediaForm({ user }: any) {
 								setYoutube(`https://youtube.com/@${sanitized}`);
 							}}
 						/>
-						<p className="text-sm text-gray-500">{youtube || "https://youtube.com/@seucanal"}</p>
+						<p className="text-sm text-gray-500">{youtube || `https://youtube.com/@${channel}`}</p>
 					</div>
 
 					<div className="space-y-2">
 						<Label htmlFor="twitter">
-							Twitter <small className="text-gray-400">(opcional)</small>
+							Twitter <small className="text-gray-400">{t("common.optional")}</small>
 						</Label>
 						<Input
 							id="twitter"
 							name="twitter"
 							minLength={4}
 							maxLength={15}
-							placeholder="seuusuario"
+							placeholder={username}
 							value={twitter.replace("https://twitter.com/", "")}
 							onChange={(e) => {
 								const raw = e.target.value;
@@ -115,19 +119,19 @@ export function SocialMediaForm({ user }: any) {
 								setTwitter(`https://twitter.com/${sanitized}`);
 							}}
 						/>
-						<p className="text-sm text-gray-500">{twitter || "https://twitter.com/seuusuario"}</p>
+						<p className="text-sm text-gray-500">{twitter || `https://twitter.com/${username}`}</p>
 					</div>
 
 					<div className="space-y-2">
 						<Label htmlFor="tiktok">
-							TikTok <small className="text-gray-400">(opcional)</small>
+							TikTok <small className="text-gray-400">{t("common.optional")}</small>
 						</Label>
 						<Input
 							id="tiktok"
 							name="tiktok"
 							minLength={2}
 							maxLength={24}
-							placeholder="@seuusuario"
+							placeholder={`@${username}`}
 							value={tiktok.replace("https://tiktok.com/@", "")}
 							onChange={(e) => {
 								const raw = e.target.value;
@@ -138,19 +142,19 @@ export function SocialMediaForm({ user }: any) {
 								setTiktok(`https://tiktok.com/@${sanitized}`);
 							}}
 						/>
-						<p className="text-sm text-gray-500">{tiktok || "https://tiktok.com/@seuusuario"}</p>
+						<p className="text-sm text-gray-500">{tiktok || `https://tiktok.com/@${username}`}</p>
 					</div>
 
 					<div className="space-y-2">
 						<Label htmlFor="linkedin">
-							LinkedIn <small className="text-gray-400">(opcional)</small>
+							LinkedIn <small className="text-gray-400">{t("common.optional")}</small>
 						</Label>
 						<Input
 							id="linkedin"
 							name="linkedin"
 							minLength={5}
 							maxLength={30}
-							placeholder="seuusuario"
+							placeholder={username}
 							value={linkedin.replace("https://linkedin.com/in/", "")}
 							onChange={(e) => {
 								const raw = e.target.value;
@@ -159,19 +163,19 @@ export function SocialMediaForm({ user }: any) {
 								setLinkedin(`https://linkedin.com/in/${sanitized}`);
 							}}
 						/>
-						<p className="text-sm text-gray-500">{linkedin || "https://linkedin.com/in/seuusuario"}</p>
+						<p className="text-sm text-gray-500">{linkedin || `https://linkedin.com/in/${username}`}</p>
 					</div>
 
 					<div className="space-y-2">
 						<Label htmlFor="twitch">
-							Twitch <small className="text-gray-400">(opcional)</small>
+							Twitch <small className="text-gray-400">{t("common.optional")}</small>
 						</Label>
 						<Input
 							id="twitch"
 							name="twitch"
 							minLength={4}
 							maxLength={25}
-							placeholder="seuusuario"
+							placeholder={username}
 							value={twitch.replace("https://twitch.tv/", "")}
 							onChange={(e) => {
 								const raw = e.target.value;
@@ -182,7 +186,7 @@ export function SocialMediaForm({ user }: any) {
 								setTwitch(`https://twitch.tv/${sanitized}`);
 							}}
 						/>
-						<p className="text-sm text-gray-500">{twitch || "https://twitch.tv/seuusuario"}</p>
+						<p className="text-sm text-gray-500">{twitch || `https://twitch.tv/${username}`}</p>
 					</div>
 
 					<Button
@@ -193,10 +197,10 @@ export function SocialMediaForm({ user }: any) {
 						{isLoading ? (
 							<>
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								Atualizando...
+								{t("common.updating")}
 							</>
 						) : (
-							"Atualizar Redes Sociais"
+							t("social.submit")
 						)}
 					</Button>
 				</form>

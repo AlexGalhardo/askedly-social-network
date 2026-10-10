@@ -1,1 +1,224 @@
-{}
+{
+	"meta": {
+		"title": "My account - Askedly Social Network",
+		"description": "Your Askedly Social Network account settings"
+	},
+	"common": {
+		"updating": "Updating...",
+		"processing": "Processing...",
+		"optional": "(optional)",
+		"cancel": "Cancel"
+	},
+	"personalInfo": {
+		"title": "Personal information",
+		"avatar": "Avatar",
+		"avatarUpdated": "Avatar updated!",
+		"avatarUploadError": "Something went wrong while uploading the image. Please try again.",
+		"nameLabel": "Name <hint>(required)</hint>",
+		"namePlaceholder": "Your full name",
+		"nameHelp": "Between 4 and 24 characters",
+		"nickname": "Username",
+		"nicknameHelp": "Your username can't be changed",
+		"email": "Email",
+		"emailHelp": "Your email can't be changed",
+		"websiteLabel": "Website <hint>(optional)</hint>",
+		"websitePlaceholder": "https://yoursite.com",
+		"websiteHelp": "Must start with https://",
+		"descriptionLabel": "Profile bio <hint>(optional)</hint>",
+		"descriptionPlaceholder": "Tell people a little about yourself...",
+		"descriptionHelp": "Minimum: 32 characters | Maximum: 256 characters",
+		"submit": "Update personal information"
+	},
+	"pix": {
+		"title": "Payment details",
+		"label": "PIX key <hint>(required to receive payments)</hint>",
+		"warning": "⚠️ Important: you need to add your PIX key to receive payments.",
+		"placeholder": "Enter your PIX key (CPF, email, phone or random key)",
+		"submit": "Update PIX key"
+	},
+	"stripe": {
+		"title": "Credits and payouts (Stripe)",
+		"balance": "Credit balance: <strong>{amount}</strong>",
+		"payoutActive": "Payout account active: questions paid with credits are transferred to you when you answer.",
+		"payoutSetup": "To get paid for questions bought with credits, finish setting up your Stripe account.",
+		"countryLabel": "Country (2-letter code, e.g. US, BR)",
+		"continueOnboarding": "Continue Stripe setup",
+		"startOnboarding": "Set up Stripe",
+		"errorTitle": "Error",
+		"openError": "We couldn't open Stripe. Please try again."
+	},
+	"social": {
+		"title": "Social media",
+		"usernamePlaceholder": "yourusername",
+		"channelPlaceholder": "yourchannel",
+		"submit": "Update social media"
+	},
+	"password": {
+		"title": "Change password",
+		"current": "Current password",
+		"googleNotice": "Your account was created with Google and doesn't have a password yet. Set one to also sign in with your email and password.",
+		"new": "New password",
+		"newPlaceholder": "At least 8 characters",
+		"confirm": "Confirm new password",
+		"confirmPlaceholder": "Repeat your new password",
+		"submit": "Update password"
+	},
+	"privacy": {
+		"title": "Privacy settings",
+		"privateProfile": {
+			"label": "Make my profile private",
+			"description": "People won't be able to follow you freely; they'll have to send a follow request first. <br></br>Only your followers can see your public answers."
+		},
+		"acceptAnonymous": {
+			"label": "Accept anonymous questions",
+			"description": "Let people ask you questions without revealing who they are"
+		},
+		"showAnonymousPublic": {
+			"label": "Show answered anonymous questions publicly",
+			"description": "Display your answers to anonymous questions on your public profile"
+		},
+		"followersOnly": {
+			"label": "Show answered questions to followers only",
+			"description": "Only your followers will be able to see your answers"
+		},
+		"showPaymentAmount": {
+			"label": "Show the amount received for answering a question",
+			"description": "Display how much you earned for each answer (if the person who asked chose to hide what they paid, those answers won't show the amount)"
+		},
+		"showAnswerDate": {
+			"label": "Show the date each question was answered",
+			"description": "Display when you answered each question"
+		},
+		"showFollowersCount": {
+			"label": "Show follower count publicly",
+			"description": "Display your number of followers on your profile"
+		},
+		"showQuestionsSent": {
+			"label": "Show total questions sent publicly",
+			"description": "Display the total number of questions you've asked"
+		},
+		"showIndividualLikes": {
+			"label": "Show likes on each answer publicly",
+			"description": "Display the likes on each individual answer"
+		},
+		"showIndividualDislikes": {
+			"label": "Show dislikes on each answer publicly",
+			"description": "Display the dislikes on each individual answer"
+		},
+		"showTotalLikes": {
+			"label": "Show total likes across all your answers publicly",
+			"description": "Display the total number of likes on every answer you've given"
+		},
+		"showQuestionsReceived": {
+			"label": "Show total questions received publicly",
+			"description": "Display the total number of questions you've received"
+		},
+		"showQuestionsAnswered": {
+			"label": "Show total questions answered publicly",
+			"description": "Display the total number of questions you've answered"
+		},
+		"submit": "Update privacy settings"
+	},
+	"blocked": {
+		"title": "Blocked users",
+		"empty": "No blocked users",
+		"avatarAlt": "{name}'s avatar",
+		"unblocking": "Unblocking...",
+		"unblock": "Unblock",
+		"unblocked": "User unblocked",
+		"unblockError": "We couldn't unblock this user"
+	},
+	"delete": {
+		"title": "Delete account",
+		"description": "Your account will be deactivated for 30 calendar days before it is permanently deleted. You can reactivate it during that period by signing in again. After that, all data related to your account will be deleted. Don't worry: clicking this button opens a dialog where you confirm the deletion.",
+		"warning": "Your account will be deactivated for 30 calendar days before it is permanently deleted. You can reactivate it during that period by signing in again. After that, all data related to your account will be deleted.",
+		"deactivated": "Your account has been deactivated. If it isn't reactivated within 30 days, all your data will be deleted. You'll be redirected in 10 seconds.",
+		"confirm": "Confirm deletion"
+	},
+	"toasts": {
+		"unexpected": "Unexpected error",
+		"personalInfoError": "We couldn't update your personal information",
+		"personalInfoSuccess": "Personal information updated!",
+		"socialError": "We couldn't update your social media",
+		"socialSuccess": "Social media updated!",
+		"pixError": "We couldn't update your PIX key",
+		"pixSuccess": "PIX key updated!",
+		"passwordError": "We couldn't update your password",
+		"passwordSuccess": "Your password has been updated!",
+		"privacyError": "We couldn't update your privacy settings",
+		"privacySuccess": "Privacy settings updated!",
+		"deleteError": "We couldn't delete your account",
+		"deleteStarted": "Your account is scheduled for deletion."
+	},
+	"follow": {
+		"removeError": "We couldn't remove this follower",
+		"removed": "{name} was removed from your followers",
+		"acceptError": "We couldn't accept this follower",
+		"accepted": "Follower accepted",
+		"rejectError": "We couldn't decline this follower",
+		"rejected": "Follower declined",
+		"unfollowError": "We couldn't unfollow this user",
+		"unfollowed": "You unfollowed {name}",
+		"stoppedFollowing": "You stopped following this user",
+		"requestCancelled": "Follow request cancelled",
+		"requestSent": "Follow request sent",
+		"nowFollowing": "You're now following this user"
+	},
+	"api": {
+		"followerAccepted": "Follower accepted",
+		"requestRejected": "Follow request declined",
+		"followerRemoved": "Follower removed",
+		"unfollowed": "Unfollowed",
+		"userBlocked": "User blocked",
+		"userUnblocked": "User unblocked",
+		"accountMarkedForDeletion": "Account scheduled for deletion",
+		"socialUpdated": "Social media updated",
+		"pixUpdated": "PIX key updated",
+		"profileUpdated": "Profile updated",
+		"privacyUpdated": "Privacy settings updated"
+	},
+	"errors": {
+		"nameMin": "Name must be at least 4 characters",
+		"nameMax": "Name must be at most 24 characters",
+		"websiteHttps": "Website must start with https://",
+		"descriptionLength": "Bio must be between 32 and 256 characters",
+		"pixKeyMin": "PIX key must be at least 11 characters",
+		"pixKeyMax": "PIX key must be at most 128 characters",
+		"pixKeyTooLong": "Invalid PIX key: 77 characters max",
+		"pixKeyEmpty": "PIX key can't be empty",
+		"pixKeyInvalidFormat": "Invalid PIX key format. Use a CPF, CNPJ, email, phone number or random key.",
+		"pixUpdateFailed": "We couldn't update your PIX key",
+		"passwordMin": "Password must be at least 8 characters",
+		"passwordUppercase": "Password must contain at least one uppercase letter",
+		"passwordLowercase": "Password must contain at least one lowercase letter",
+		"passwordNumber": "Password must contain at least one number",
+		"passwordSpecial": "Password must contain at least one special character",
+		"passwordsMismatch": "Passwords don't match",
+		"currentPasswordIncorrect": "Current password is incorrect",
+		"userNotFound": "User not found",
+		"questionNotFound": "Question not found",
+		"followFailed": "We couldn't follow this user",
+		"likeFailed": "We couldn't like this question",
+		"dislikeFailed": "We couldn't dislike this question",
+		"blockFailed": "We couldn't block this user",
+		"unblockFailed": "We couldn't unblock this user",
+		"alreadyBlocked": "This user is already blocked",
+		"notBlocked": "This user isn't blocked",
+		"cannotBlockSelf": "You can't block yourself",
+		"cannotFollowSelf": "You can't follow yourself",
+		"nicknameRequired": "Username is required",
+		"requestIdRequired": "Request ID is required",
+		"followRequestNotFound": "Follow request not found",
+		"alreadyFollower": "This user already follows you",
+		"followerIdRequired": "Follower ID is required",
+		"followingIdRequired": "The ID of the user to unfollow is required",
+		"followIdsRequired": "Follower and followed user IDs are required",
+		"followerRelationNotFound": "Follower relationship not found",
+		"userIdRequired": "A user UUID is required to delete an account",
+		"userIdMismatch": "The user ID doesn't match the signed-in user",
+		"socialUrlTooLong": "The {platform} URL is too long (255 characters max)",
+		"socialUrlPrefix": "The {platform} URL must start with {prefix}",
+		"fieldMustBeBoolean": "Field {field} must be true or false",
+		"anonymousPublicConflict": "You can't show anonymous questions publicly if you don't accept anonymous questions"
+	}
+}

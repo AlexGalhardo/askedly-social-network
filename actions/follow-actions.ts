@@ -2,6 +2,7 @@
 
 import { updateTag } from "next/cache";
 import { getServerSession } from "next-auth";
+import { getTranslations } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
@@ -12,7 +13,7 @@ export async function unfollowUser(followingId: string) {
 
 		if (!session?.user?.id) {
 			await TelegramLog.error(`Error follow-actions.ts usuário não autenticado`);
-			throw new Error("Usuário não autenticado");
+			throw new Error((await getTranslations("errors"))("unauthorized"));
 		}
 
 		await prisma.follower.deleteMany({

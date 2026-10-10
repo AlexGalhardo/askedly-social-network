@@ -2,7 +2,16 @@ import bcrypt from "bcryptjs";
 import { updateUserPassword } from "@/lib/repositories/users.repository";
 import { prisma } from "@/prisma/prisma-client";
 
-export class PasswordChangeError extends Error {}
+/** Chave de mensagem do namespace `account.errors`; quem captura o erro traduz. */
+export type PasswordChangeErrorKey = "userNotFound" | "currentPasswordIncorrect";
+
+export class PasswordChangeError extends Error {
+	declare message: PasswordChangeErrorKey;
+
+	constructor(key: PasswordChangeErrorKey) {
+		super(key);
+	}
+}
 
 /**
  * Troca a senha exigindo a senha atual, para que uma sessão roubada não baste para tomar a conta.
@@ -10,11 +19,11 @@ export class PasswordChangeError extends Error {}
  */
 export async function changePassword(userId: string, currentPassword: string | undefined, newPassword: string) {
 	const user = await prisma.user.findUnique({ where: { id: userId }, select: { password: true } });
-	if (!user) throw new PasswordChangeError("Usuário não encontrado");
+	if (!user) throw new PasswordChangeError("userNotFound");
 
 	if (user.password) {
 		if (!currentPassword || !(await bcrypt.compare(currentPassword, user.password))) {
-			throw new PasswordChangeError("Senha atual incorreta");
+			throw new PasswordChangeError("currentPasswordIncorrect");
 		}
 	}
 

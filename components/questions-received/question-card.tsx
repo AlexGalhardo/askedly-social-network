@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle, Clock, DollarSign, Flag, HelpCircle, Lock, Trash2, UserX, XCircle } from "lucide-react";
+import { useFormatter, useNow, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { FaMoneyBillWave } from "react-icons/fa6";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { formatCurrency, formatDate } from "@/lib/utils";
+
 import { getQuestionStatus, getTimeRemaining } from "@/lib/utils/question-utils";
 import { QuestionInterface } from "@/types/QuestionInterface";
 
@@ -40,6 +41,10 @@ export function QuestionCard({
 	const [answerText, setAnswerText] = useState("");
 	const [timeRemaining, setTimeRemaining] = useState("");
 	const [hasExpired, setHasExpired] = useState(false);
+	const t = useTranslations("questions");
+	const format = useFormatter();
+	const now = useNow();
+
 	const status = getQuestionStatus(question);
 
 	useEffect(() => {
@@ -49,13 +54,13 @@ export function QuestionCard({
 
 				if (typeof timeData === "object" && timeData.isExpired) {
 					setHasExpired(true);
-					setTimeRemaining("Expirado");
+					setTimeRemaining(t("received.expired"));
 					onExpire?.(question.id);
 
 					clearInterval(interval);
 				} else if (typeof timeData === "object") {
 					const { hours, minutes, seconds } = timeData;
-					setTimeRemaining(`${hours}h ${minutes}m ${seconds}s restantes`);
+					setTimeRemaining(t("received.timeRemaining", { hours, minutes, seconds }));
 				} else {
 					setTimeRemaining(timeData);
 				}
@@ -64,13 +69,13 @@ export function QuestionCard({
 			const initialTimeData = getTimeRemaining(question.created_at.toString());
 			if (typeof initialTimeData === "object" && initialTimeData.isExpired) {
 				setHasExpired(true);
-				setTimeRemaining("Expirado");
+				setTimeRemaining(t("received.expired"));
 				onExpire?.(question.id);
 			}
 
 			return () => clearInterval(interval);
 		}
-	}, [question.created_at, status, hasExpired, onExpire, question.id]);
+	}, [question.created_at, status, hasExpired, onExpire, question.id, t]);
 
 	const handleAnswer = () => {
 		if (!answerText.trim() || answerText.length < 32 || answerText.length > 512) return;
@@ -91,7 +96,7 @@ export function QuestionCard({
 						{question.asker_sent_anonymous_question ? (
 							<div className="flex items-center gap-2">
 								<UserX className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-								<span className="text-sm text-gray-500 dark:text-gray-400">Pergunta Anônima</span>
+								<span className="text-sm text-gray-500 dark:text-gray-400">{t("card.anonymous")}</span>
 							</div>
 						) : (
 							<div className="flex items-center gap-3">
@@ -120,14 +125,15 @@ export function QuestionCard({
 					</div>
 					<div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
 						<Badge className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs sm:text-sm hover:bg-green-100 dark:hover:bg-green-800 border-green-200 dark:border-green-700">
-							Pagou {formatCurrency(question.amount_paid, question.currency)}
+							{t("card.paid", {
+								amount: format.number(question.amount_paid / 100, {
+									style: "currency",
+									currency: question.currency || "BRL",
+								}),
+							})}
 						</Badge>
 						<span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-							{formatDate(
-								typeof question.created_at === "string"
-									? question.created_at
-									: question.created_at.toISOString(),
-							)}
+							{format.relativeTime(new Date(question.created_at), now)}
 						</span>
 					</div>
 				</div>
@@ -138,7 +144,7 @@ export function QuestionCard({
 					<div className="flex items-start gap-2 text-gray-800 dark:text-gray-200">
 						<HelpCircle className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-1" />
 						<p className="text-base leading-snug">
-							<strong className="text-blue-600 dark:text-blue-400">Perguntou</strong>:{" "}
+							<strong className="text-blue-600 dark:text-blue-400">{t("card.asked")}</strong>:{" "}
 							{question.question_text}
 						</p>
 					</div>
@@ -148,7 +154,7 @@ export function QuestionCard({
 							<Lock className="w-5 h-5 text-yellow-500 dark:text-yellow-400 mt-1" />
 							<p className="text-base leading-snug">
 								<strong className="text-yellow-600 dark:text-yellow-400">
-									Essa Resposta É Privada
+									{t("card.privateAnswer")}
 								</strong>
 							</p>
 						</div>
@@ -159,7 +165,7 @@ export function QuestionCard({
 							<FaMoneyBillWave className="w-5 h-5 text-green-600 dark:text-green-400 mt-1" />
 							<p className="text-base leading-snug">
 								<strong className="text-green-600 dark:text-green-400">
-									O valor pago por essa pergunta será privado
+									{t("card.privateAmount")}
 								</strong>
 							</p>
 						</div>
@@ -169,7 +175,7 @@ export function QuestionCard({
 				{status === "pending" && !hasExpired && (
 					<div className="flex items-center gap-2 text-orange-600 dark:text-orange-400">
 						<Clock className="h-4 w-4" />
-						<span className="text-sm font-medium">{timeRemaining || "Calculando..."}</span>
+						<span className="text-sm font-medium">{timeRemaining || t("received.calculating")}</span>
 					</div>
 				)}
 
@@ -178,12 +184,9 @@ export function QuestionCard({
 						<p className="text-gray-700 dark:text-gray-200">{question.answer_text}</p>
 						{question.answered_at && (
 							<p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-								Você respondeu{" "}
-								{formatDate(
-									typeof question.answered_at === "string"
-										? question.answered_at
-										: question.answered_at?.toISOString() || "",
-								)}
+								{t("received.youAnswered", {
+									date: format.relativeTime(new Date(question.answered_at), now),
+								})}
 							</p>
 						)}
 					</div>
@@ -192,20 +195,20 @@ export function QuestionCard({
 				{status === "answered" && question.amount_already_withdraw && (
 					<div className="flex items-center gap-2 text-green-600 dark:text-green-400">
 						<DollarSign className="h-4 w-4" />
-						<span className="text-sm font-medium">Já Sacou</span>
+						<span className="text-sm font-medium">{t("received.withdrawn")}</span>
 					</div>
 				)}
 
 				{showAnswerForm && status === "pending" && !hasExpired && (
 					<div className="space-y-3">
 						<Textarea
-							placeholder="Digite sua resposta aqui..."
+							placeholder={t("received.answerPlaceholder")}
 							value={answerText}
 							onChange={(e) => setAnswerText(e.target.value)}
 							className="min-h-[100px] bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-blue-400"
 						/>
 						<div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-2">
-							<small>Mínimo: 32 caracteres | Máximo: 512 caracteres</small>
+							<small>{t("received.answerLimits")}</small>
 							<small className={answerText.length > 512 ? "text-red-500 dark:text-red-400" : ""}>
 								{answerText.length}/512
 							</small>
@@ -217,7 +220,7 @@ export function QuestionCard({
 								disabled={!isAnswerValid || isAnswering}
 							>
 								<CheckCircle className="h-4 w-4" />
-								{isAnswering ? "Respondendo..." : "Responder"}
+								{isAnswering ? t("received.answering") : t("received.answer")}
 							</Button>
 
 							<div className="flex flex-col sm:flex-row gap-2">
@@ -228,7 +231,7 @@ export function QuestionCard({
 									disabled={isDeclining}
 								>
 									<XCircle className="h-4 w-4" />
-									{isDeclining ? "Recusando..." : "Não Quero Responder"}
+									{isDeclining ? t("received.declining") : t("received.decline")}
 								</Button>
 
 								<Button
@@ -237,7 +240,7 @@ export function QuestionCard({
 									className="border border-orange-600 dark:border-orange-500 bg-white dark:bg-gray-800 text-black dark:text-gray-200 hover:bg-orange-600 dark:hover:bg-orange-600 hover:text-white transition-colors"
 								>
 									<Flag className="h-4 w-4 mr-1" />
-									Reportar Pergunta
+									{t("received.report")}
 								</Button>
 							</div>
 						</div>
@@ -252,7 +255,7 @@ export function QuestionCard({
 								variant="secondary"
 								className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 mb-4"
 							>
-								Pergunta Expirada
+								{t("received.expiredBadge")}
 							</Badge>
 						)}
 						{status === "reported" && (
@@ -260,7 +263,7 @@ export function QuestionCard({
 								variant="secondary"
 								className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 mb-4"
 							>
-								Pergunta Reportada
+								{t("received.reportedBadge")}
 							</Badge>
 						)}
 						<div className="flex gap-2">
@@ -272,7 +275,7 @@ export function QuestionCard({
 								disabled={isDeleting}
 							>
 								<Trash2 className="h-4 w-4 mr-1" />
-								{isDeleting ? "Deletando..." : "Deletar"}
+								{isDeleting ? t("received.deleting") : t("received.delete")}
 							</Button>
 						</div>
 					</div>

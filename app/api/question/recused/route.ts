@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
+
 import { settleCreditQuestion } from "@/lib/services/stripe-connect.service";
 import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(request: NextRequest) {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("questions.api");
+
 	try {
 		const user = await getSessionUser();
-		if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+		if (!user) return NextResponse.json({ error: te("unauthorized") }, { status: 401 });
 
 		const body = await request.json();
 		const { nickname } = user;
@@ -15,7 +20,7 @@ export async function POST(request: NextRequest) {
 
 		if (!questionId) {
 			await TelegramLog.error("Question Recused: ❌ ID da pergunta é obrigatório.");
-			return NextResponse.json({ error: "ID da pergunta é obrigatório" }, { status: 400 });
+			return NextResponse.json({ error: t("questionIdRequired") }, { status: 400 });
 		}
 
 		const recusingUser = await prisma.user.findUnique({
@@ -25,7 +30,7 @@ export async function POST(request: NextRequest) {
 
 		if (!recusingUser) {
 			await TelegramLog.error(`Question Recused: ❌ Usuário com nickname '${nickname}' não encontrado.`);
-			return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
+			return NextResponse.json({ error: t("userNotFound") }, { status: 404 });
 		}
 
 		const questionToRecuse = await prisma.question.findUnique({
@@ -42,34 +47,31 @@ export async function POST(request: NextRequest) {
 
 		if (!questionToRecuse) {
 			await TelegramLog.error(`Question Recused: ❌ Pergunta com ID ${questionId} não encontrada.`);
-			return NextResponse.json({ error: "Pergunta não encontrada" }, { status: 404 });
+			return NextResponse.json({ error: t("questionNotFound") }, { status: 404 });
 		}
 
 		if (questionToRecuse.owner.nickname !== nickname) {
 			await TelegramLog.warning(
 				`Question Recused: ❌ Usuário @${nickname} não autorizado a recusar a pergunta ${questionId}.`,
 			);
-			return NextResponse.json({ error: "Você não tem permissão para recusar esta pergunta" }, { status: 403 });
+			return NextResponse.json({ error: t("declineForbidden") }, { status: 403 });
 		}
 
 		if (questionToRecuse.answered_at) {
 			await TelegramLog.warning(
 				`Question Recused: ❌ Pergunta ${questionId} já foi respondida. Não pode ser recusada.`,
 			);
-			return NextResponse.json(
-				{ error: "Essa pergunta já foi respondida e não pode ser recusada." },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: t("answeredCannotDecline") }, { status: 400 });
 		}
 
 		if (questionToRecuse.question_answer_was_expired) {
 			await TelegramLog.warning(`Question Recused: ❌ Pergunta ${questionId} já expirou. Não pode ser recusada.`);
-			return NextResponse.json({ error: "Essa pergunta já expirou e não pode ser recusada." }, { status: 400 });
+			return NextResponse.json({ error: t("expiredCannotDecline") }, { status: 400 });
 		}
 
 		if (questionToRecuse.question_answer_was_recused) {
 			await TelegramLog.warning(`Question Recused: ❌ Pergunta ${questionId} já foi recusada.`);
-			return NextResponse.json({ error: "Essa pergunta já foi recusada." }, { status: 400 });
+			return NextResponse.json({ error: t("alreadyDeclined") }, { status: 400 });
 		}
 
 		const updatedQuestion = await prisma.question.update({
@@ -92,13 +94,13 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json(
 			{
-				message: "Pergunta recusada com sucesso",
+				message: t("declined"),
 				question: updatedQuestion,
 			},
 			{ status: 200 },
 		);
 	} catch (error: any) {
 		await TelegramLog.error(`Question Recused catch error: ${error?.message}`);
-		return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+		return NextResponse.json({ error: te("internal") }, { status: 500 });
 	}
 }

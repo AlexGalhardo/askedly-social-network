@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { unfollowUser } from "@/actions/follow-actions";
 import { getMyFollowing } from "@/actions/my-account-actions";
@@ -15,16 +16,18 @@ export function useFollowing() {
 }
 
 export function useUnfollowUser() {
+	const t = useTranslations("account.follow");
+
 	return useMutation({
 		mutationFn: async ({ followingId, userName }: { followingId: string; userName: string }) => {
 			await unfollowUser(followingId);
 			return { followingId, userName };
 		},
 		onError: (error) => {
-			toast.error(error instanceof Error ? error.message : "Erro ao deixar de seguir");
+			toast.error(error instanceof Error ? error.message : t("unfollowError"));
 		},
 		onSuccess: (data) => {
-			toast.success(`Você deixou de seguir ${data.userName}`);
+			toast.success(t("unfollowed", { name: data.userName }));
 		},
 	});
 }

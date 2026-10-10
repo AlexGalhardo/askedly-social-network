@@ -1,1 +1,35 @@
-{}
+{
+	"tabs": {
+		"community": "Comunidad",
+		"following": "Siguiendo"
+	},
+	"loading": "Cargando...",
+	"loadingMore": "Cargando más respuestas...",
+	"loadError": "Error al cargar las preguntas: {message}",
+	"unknownError": "Error desconocido",
+	"emptyFollowing": "Todavía no sigues a nadie o las personas que sigues no tienen preguntas respondidas.",
+	"empty": "No hay preguntas por el momento.",
+	"end": "¡Llegaste al final del feed! 🎉",
+	"top": {
+		"metaTitle": "Top 10 Preguntas y Respuestas con Más Me Gusta - Askedly Social Network",
+		"metaDescription": "Mira el top 10 de preguntas y respuestas con más me gusta en Askedly Social Network por día, semana, mes, año y de todos los tiempos.",
+		"title": "Top 10 Respuestas con Más Me Gusta",
+		"subtitle": "Mira las 10 preguntas y respuestas con más me gusta de la comunidad",
+		"tabs": {
+			"today": "Hoy",
+			"week": "Semana",
+			"month": "Mes",
+			"year": "Año {year}",
+			"allTime": "General"
+		},
+		"empty": {
+			"today": "Todavía no hay preguntas con me gusta hoy.",
+			"week": "Todavía no hay preguntas con me gusta esta semana.",
+			"month": "Todavía no hay preguntas con me gusta este mes.",
+			"year": "Todavía no hay preguntas con me gusta este año.",
+			"allTime": "Todavía no hay preguntas con me gusta."
+		},
+		"emptyHint": "¡Sé el primero en darle me gusta a una respuesta!",
+		"end": "¡Llegaste al final de la lista! 🎉"
+	}
+}

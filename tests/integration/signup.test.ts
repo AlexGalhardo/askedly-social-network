@@ -31,11 +31,11 @@ describe("signUp (integration)", () => {
 	test("rejects a nickname or email that is already taken", async () => {
 		expect(await signUp({ ...valid, email: `other-${email}` })).toEqual({
 			ok: false,
-			fieldErrors: { nickname: `Esse @${nickname} está indisponível` },
+			fieldErrors: { nickname: "nicknameTaken" },
 		});
 		expect(await signUp({ ...valid, nickname: `other${run}`.slice(0, 16) })).toEqual({
 			ok: false,
-			fieldErrors: { email: "Esse Email está indisponível" },
+			fieldErrors: { email: "emailTaken" },
 		});
 	});
 

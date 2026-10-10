@@ -1,1 +1,19 @@
-{}
+{
+	"contact": {
+		"heading": "Formulario de Contacto de Askedly Social Network",
+		"name": "Nombre:",
+		"email": "Correo:",
+		"subject": "Asunto:",
+		"message": "Mensaje:"
+	},
+	"resetPassword": {
+		"heading": "Recuperación de Contraseña",
+		"greeting": "Hola {name},",
+		"intro": "Recibimos una solicitud para restablecer la contraseña de tu cuenta en Askedly Social Network.",
+		"ignore": "Si no solicitaste restablecer tu contraseña, ignora este correo.",
+		"instruction": "Para restablecer tu contraseña, haz clic en el botón de abajo:",
+		"button": "Restablecer Contraseña",
+		"copyLink": "O copia y pega el siguiente enlace en tu navegador:",
+		"expiry": "Este enlace es válido por 1 hora. Después de ese tiempo, tendrás que solicitar un nuevo restablecimiento de contraseña."
+	}
+}

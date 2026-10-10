@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useToast } from "@/hooks/use-toast";
 import {
 	deleteAccount,
@@ -13,6 +14,7 @@ import {
 
 export function useUpdatePersonalInfo() {
 	const { toast } = useToast();
+	const t = useTranslations("account");
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -20,7 +22,7 @@ export function useUpdatePersonalInfo() {
 		onSuccess: (data) => {
 			if (data.error) {
 				toast({
-					title: "Erro ao atualizar informações pessoais",
+					title: t("toasts.personalInfoError"),
 					description: data.error,
 					variant: "error",
 				});
@@ -28,7 +30,7 @@ export function useUpdatePersonalInfo() {
 			}
 
 			toast({
-				title: "Informações pessoais atualizadas com sucesso!",
+				title: t("toasts.personalInfoSuccess"),
 				variant: "success",
 			});
 
@@ -36,8 +38,8 @@ export function useUpdatePersonalInfo() {
 		},
 		onError: (error: any) => {
 			toast({
-				title: "Erro ao atualizar informações pessoais",
-				description: error.message || "Erro inesperado",
+				title: t("toasts.personalInfoError"),
+				description: error.message || t("toasts.unexpected"),
 				variant: "error",
 			});
 		},
@@ -46,6 +48,7 @@ export function useUpdatePersonalInfo() {
 
 export function useUpdateSocialMedia() {
 	const { toast } = useToast();
+	const t = useTranslations("account");
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -53,7 +56,7 @@ export function useUpdateSocialMedia() {
 		onSuccess: (data) => {
 			if (data.error) {
 				toast({
-					title: "Erro ao atualizar redes sociais",
+					title: t("toasts.socialError"),
 					description: data.error,
 					variant: "error",
 				});
@@ -61,7 +64,7 @@ export function useUpdateSocialMedia() {
 			}
 
 			toast({
-				title: "Redes sociais atualizadas com sucesso!",
+				title: t("toasts.socialSuccess"),
 				variant: "success",
 			});
 
@@ -69,8 +72,8 @@ export function useUpdateSocialMedia() {
 		},
 		onError: (error: any) => {
 			toast({
-				title: "Erro ao atualizar redes sociais",
-				description: error.message || "Erro inesperado",
+				title: t("toasts.socialError"),
+				description: error.message || t("toasts.unexpected"),
 				variant: "error",
 			});
 		},
@@ -79,6 +82,7 @@ export function useUpdateSocialMedia() {
 
 export function useUpdatePixKey() {
 	const { toast } = useToast();
+	const t = useTranslations("account");
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -86,7 +90,7 @@ export function useUpdatePixKey() {
 		onSuccess: (data) => {
 			if (data.error) {
 				toast({
-					title: "Erro ao atualizar chave PIX",
+					title: t("toasts.pixError"),
 					description: data.error,
 					variant: "error",
 				});
@@ -94,7 +98,7 @@ export function useUpdatePixKey() {
 			}
 
 			toast({
-				title: "Chave PIX atualizada com sucesso!",
+				title: t("toasts.pixSuccess"),
 				variant: "success",
 			});
 
@@ -102,8 +106,8 @@ export function useUpdatePixKey() {
 		},
 		onError: (error: any) => {
 			toast({
-				title: "Erro ao atualizar chave PIX",
-				description: error.message || "Erro inesperado",
+				title: t("toasts.pixError"),
+				description: error.message || t("toasts.unexpected"),
 				variant: "error",
 			});
 		},
@@ -112,13 +116,14 @@ export function useUpdatePixKey() {
 
 export function useUpdatePassword() {
 	const { toast } = useToast();
+	const t = useTranslations("account");
 
 	return useMutation({
 		mutationFn: updatePassword,
 		onSuccess: (data) => {
 			if (data.error) {
 				toast({
-					title: "Erro ao atualizar senha",
+					title: t("toasts.passwordError"),
 					description: data.error,
 					variant: "error",
 				});
@@ -126,14 +131,14 @@ export function useUpdatePassword() {
 			}
 
 			toast({
-				title: "Sua senha foi atualizada com sucesso!",
+				title: t("toasts.passwordSuccess"),
 				variant: "success",
 			});
 		},
 		onError: (error: any) => {
 			toast({
-				title: "Erro ao atualizar senha",
-				description: error.message || "Erro inesperado",
+				title: t("toasts.passwordError"),
+				description: error.message || t("toasts.unexpected"),
 				variant: "error",
 			});
 		},
@@ -142,6 +147,7 @@ export function useUpdatePassword() {
 
 export function useUpdatePrivacySettings() {
 	const { toast } = useToast();
+	const t = useTranslations("account");
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -149,7 +155,7 @@ export function useUpdatePrivacySettings() {
 		onSuccess: (data) => {
 			if (data.error) {
 				toast({
-					title: "Erro ao atualizar configurações de privacidade",
+					title: t("toasts.privacyError"),
 					description: data.error,
 					variant: "error",
 				});
@@ -157,7 +163,7 @@ export function useUpdatePrivacySettings() {
 			}
 
 			toast({
-				title: "Configurações de privacidade atualizadas com sucesso!",
+				title: t("toasts.privacySuccess"),
 				variant: "success",
 			});
 
@@ -165,8 +171,8 @@ export function useUpdatePrivacySettings() {
 		},
 		onError: (error: any) => {
 			toast({
-				title: "Erro ao atualizar configurações de privacidade",
-				description: error.message || "Erro inesperado",
+				title: t("toasts.privacyError"),
+				description: error.message || t("toasts.unexpected"),
 				variant: "error",
 			});
 		},
@@ -175,13 +181,14 @@ export function useUpdatePrivacySettings() {
 
 export function useDeleteAccount() {
 	const { toast } = useToast();
+	const t = useTranslations("account");
 
 	return useMutation({
 		mutationFn: deleteAccount,
 		onSuccess: (data) => {
 			if (data.error) {
 				toast({
-					title: "Erro ao deletar conta",
+					title: t("toasts.deleteError"),
 					description: data.error,
 					variant: "error",
 				});
@@ -189,16 +196,15 @@ export function useDeleteAccount() {
 			}
 
 			toast({
-				title: "Conta foi posta em processo de exclusão.",
-				description:
-					"Sua conta foi desativada. Se durante 30 dias, ela não for reativada novamente, todos os dados serão deletados. Você será redirecionado em 10 segundos.",
+				title: t("toasts.deleteStarted"),
+				description: t("delete.deactivated"),
 				variant: "success",
 			});
 		},
 		onError: (error: any) => {
 			toast({
-				title: "Erro ao deletar conta",
-				description: error.message || "Erro inesperado",
+				title: t("toasts.deleteError"),
+				description: error.message || t("toasts.unexpected"),
 				variant: "error",
 			});
 		},

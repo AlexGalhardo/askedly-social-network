@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMySocialGraph } from "@/hooks/use-my-social-graph";
 import { type FeedType, useDislikeQuestion, useLikeQuestion, useQuestions } from "@/hooks/use-questions";
@@ -24,6 +25,7 @@ interface FeedOptimisticState {
 }
 
 export const FeedQuestionsFeed = ({ userNickname, userId }: FeedQuestionsFeedProps) => {
+	const t = useTranslations("feed");
 	const [activeTab, setActiveTab] = useState<FeedType>("community");
 	const [optimisticStates, setOptimisticStates] = useState<FeedOptimisticState>({});
 
@@ -214,7 +216,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId }: FeedQuestionsFeedPro
 				</div>
 				<div className="flex justify-center items-center py-12">
 					<Loader2 className="h-8 w-8 animate-spin text-gray-500" />
-					<span className="ml-2 text-gray-500">Carregando...</span>
+					<span className="ml-2 text-gray-500">{t("loading")}</span>
 				</div>
 			</div>
 		);
@@ -228,7 +230,7 @@ export const FeedQuestionsFeed = ({ userNickname, userId }: FeedQuestionsFeedPro
 				</div>
 				<div className="text-center py-12">
 					<p className="text-red-500 text-lg">
-						Erro ao carregar perguntas: {error?.message || "Erro desconhecido"}
+						{t("loadError", { message: error?.message || t("unknownError") })}
 					</p>
 				</div>
 			</div>
@@ -243,11 +245,9 @@ export const FeedQuestionsFeed = ({ userNickname, userId }: FeedQuestionsFeedPro
 				</div>
 				<div className="text-center py-12">
 					{activeTab === "following" ? (
-						<p className="text-gray-500 text-lg">
-							Você ainda não segue ninguém ou as pessoas que você segue não têm perguntas respondidas.
-						</p>
+						<p className="text-gray-500 text-lg">{t("emptyFollowing")}</p>
 					) : (
-						<p className="text-gray-500 text-lg">Nenhuma pergunta encontrada no momento.</p>
+						<p className="text-gray-500 text-lg">{t("empty")}</p>
 					)}
 				</div>
 			</div>
@@ -287,13 +287,13 @@ export const FeedQuestionsFeed = ({ userNickname, userId }: FeedQuestionsFeedPro
 			{isFetchingNextPage && (
 				<div className="flex justify-center items-center py-8">
 					<Loader2 className="h-8 w-8 animate-spin text-gray-500" />
-					<span className="ml-2 text-gray-500">Carregando mais respostas...</span>
+					<span className="ml-2 text-gray-500">{t("loadingMore")}</span>
 				</div>
 			)}
 
 			{!hasNextPage && questions.length > 0 && (
 				<div className="text-center py-8">
-					<p className="text-gray-500 text-sm">Você chegou ao final do feed! 🎉</p>
+					<p className="text-gray-500 text-sm">{t("end")}</p>
 				</div>
 			)}
 		</div>

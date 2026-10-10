@@ -2,6 +2,8 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
+
 import { useEffect, useMemo, useState } from "react";
 import LoadingScreen from "@/components/loading-screen";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,6 +23,7 @@ export default function ProfileClient() {
 	const [currentStep, setCurrentStep] = useState<"closed" | "payment" | "pix">("closed");
 	const [newQuestion, setNewQuestion] = useState("");
 	const [isBlocked, setIsBlocked] = useState(false);
+	const t = useTranslations("profile");
 
 	const router = useRouter();
 	const params = useParams();
@@ -134,7 +137,7 @@ export default function ProfileClient() {
 		if (questions.length === 0) {
 			return (
 				<div className="text-center py-12 text-gray-500">
-					<p className="text-base">Nenhuma resposta ainda.</p>
+					<p className="text-base">{t("list.noAnswers")}</p>
 				</div>
 			);
 		}
@@ -179,15 +182,13 @@ export default function ProfileClient() {
 
 					{session?.user?.id === profileFound.id && (
 						<div className="text-center py-4 rounded-lg border-2 border-blue-500 bg-blue-500 text-white shadow mb-6">
-							<p className="text-sm md:text-base font-medium">Esse é seu perfil público</p>
+							<p className="text-sm md:text-base font-medium">{t("list.ownProfile")}</p>
 						</div>
 					)}
 
 					{!session?.user?.id && (
 						<div className="text-center py-4 rounded-lg dark:text-white mb-6 font-bold text-gray-700">
-							<p className="md:text-base font-bold">
-								Entre na sua conta para poder fazer perguntas a esse usuário.
-							</p>
+							<p className="md:text-base font-bold">{t("list.loginToAsk")}</p>
 						</div>
 					)}
 
@@ -198,19 +199,19 @@ export default function ProfileClient() {
 									value="answered"
 									className="text-xs sm:text-sm py-2.5 px-1 rounded-md text-center font-medium whitespace-nowrap data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-700 transition-all"
 								>
-									Últimas
+									{t("list.tabs.latest")}
 								</TabsTrigger>
 								<TabsTrigger
 									value="liked"
 									className="text-xs sm:text-sm py-2.5 px-1 rounded-md text-center font-medium whitespace-nowrap data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-700 transition-all"
 								>
-									Top Curtidas
+									{t("list.tabs.topLiked")}
 								</TabsTrigger>
 								<TabsTrigger
 									value="top"
 									className="text-xs sm:text-sm py-2.5 px-1 rounded-md text-center font-medium whitespace-nowrap data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-700 transition-all"
 								>
-									Top Pagas
+									{t("list.tabs.topPaid")}
 								</TabsTrigger>
 							</TabsList>
 
@@ -229,9 +230,7 @@ export default function ProfileClient() {
 					) : (
 						<div className="text-center py-4 px-4  text-gray-700 mb-6 dark:text-white">
 							<p className="text-sm md:text-base font-bold">
-								{hasPendingRequest
-									? "Solicitação para seguir esse perfil enviada. Aguardando aprovação."
-									: "Esse perfil é privado. Você precisa ser seguidor para ver as respostas desse perfil."}
+								{hasPendingRequest ? t("list.requestPending") : t("list.private")}
 							</p>
 						</div>
 					)}

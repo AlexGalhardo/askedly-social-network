@@ -1,6 +1,7 @@
 "use client";
 
 import { UserCheck, UserX } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -36,6 +37,7 @@ export function ProfileBlockUserButton({
 	onBlockSuccess,
 	onUnblockSuccess,
 }: BlockUserButtonProps) {
+	const t = useTranslations("profile");
 	const [isLoading, setIsLoading] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);
 	const [isBlocked, setIsBlocked] = useState(false);
@@ -70,7 +72,7 @@ export function ProfileBlockUserButton({
 
 	const handleBlockAction = async () => {
 		if (!sessionUser) {
-			toast.error("Você precisa estar logado para bloquear usuários");
+			toast.error(t("block.loginRequired"));
 			return;
 		}
 
@@ -90,11 +92,10 @@ export function ProfileBlockUserButton({
 
 			if (!response.ok) {
 				const errorData = await response.json();
-				throw new Error(errorData.message || `Erro ao ${isBlocked ? "desbloquear" : "bloquear"} usuário`);
+				throw new Error(errorData.message || t(isBlocked ? "block.unblockFailed" : "block.blockFailed"));
 			}
 
-			const action = isBlocked ? "desbloqueado" : "bloqueado";
-			toast.success(`@${profileFound.nickname} foi ${action} com sucesso`);
+			toast.success(t(isBlocked ? "block.unblocked" : "block.blocked", { nickname: profileFound.nickname }));
 			setIsBlocked(!isBlocked);
 			setIsOpen(false);
 
@@ -106,7 +107,7 @@ export function ProfileBlockUserButton({
 		} catch (error: any) {
 			await TelegramLog.error(`Catch Error profile-block-user-button.ts handleBlockAction: ${error?.message}`);
 			toast.error(
-				error instanceof Error ? error.message : `Erro ao ${isBlocked ? "desbloquear" : "bloquear"} usuário`,
+				error instanceof Error ? error.message : t(isBlocked ? "block.unblockFailed" : "block.blockFailed"),
 			);
 		} finally {
 			setIsLoading(false);
@@ -119,10 +120,10 @@ export function ProfileBlockUserButton({
 				variant="outline"
 				disabled
 				className="flex-1 min-w-[130px] opacity-50 text-red-600 border-red-200 dark:text-white dark:border-white"
-				title="Faça login para bloquear usuários"
+				title={t("block.loginTitle")}
 			>
 				<UserX className="h-4 w-4 mr-2" />
-				Bloquear
+				{t("block.block")}
 			</Button>
 		);
 	}
@@ -130,7 +131,7 @@ export function ProfileBlockUserButton({
 	if (checkingBlockStatus) {
 		return (
 			<Button variant="outline" disabled className="flex-1 min-w-[130px] opacity-50">
-				Verificando...
+				{t("block.checking")}
 			</Button>
 		);
 	}
@@ -149,57 +150,61 @@ export function ProfileBlockUserButton({
 					{isBlocked ? (
 						<>
 							<UserCheck className="h-4 w-4 mr-2" />
-							Desbloquear
+							{t("block.unblock")}
 						</>
 					) : (
 						<>
 							<UserX className="h-4 w-4 mr-2" />
-							Bloquear
+							{t("block.block")}
 						</>
 					)}
 				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>{isBlocked ? "Desbloquear usuário" : "Bloquear usuário"}</AlertDialogTitle>
+					<AlertDialogTitle>{isBlocked ? t("block.unblockTitle") : t("block.blockTitle")}</AlertDialogTitle>
 					<AlertDialogDescription>
 						{isBlocked ? (
 							<>
-								Tem certeza que deseja desbloquear <strong>@{profileFound.nickname}</strong>?
+								{t.rich("block.unblockConfirm", {
+									nickname: profileFound.nickname,
+									strong: (chunks) => <strong>{chunks}</strong>,
+								})}
 								<br />
 								<br />
-								Quando você desbloqueia alguém:
+								{t("block.unblockIntro")}
 								<br />
-								<br />• Essa pessoa poderá ver seu perfil, enviar perguntas e seguir você novamente
-								<br />• Você verá o conteúdo dela novamente no feed
+								<br />• {t("block.unblockEffect1")}
+								<br />• {t("block.unblockEffect2")}
 								<br />
 							</>
 						) : (
 							<>
-								Tem certeza que deseja bloquear <strong>@{profileFound.nickname}</strong>?
+								{t.rich("block.blockConfirm", {
+									nickname: profileFound.nickname,
+									strong: (chunks) => <strong>{chunks}</strong>,
+								})}
 								<br />
 								<br />
-								Quando você bloqueia alguém:
+								{t("block.blockIntro")}
 								<br />
-								<br />• Essa pessoa não poderá mais ver seu perfil, te enviar perguntas ou seguir você
-								<br />• Você não verá mais o conteúdo dela no seu feed
+								<br />• {t("block.blockEffect1")}
+								<br />• {t("block.blockEffect2")}
 								<br />
 							</>
 						)}
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel disabled={isLoading}>Cancelar</AlertDialogCancel>
+					<AlertDialogCancel disabled={isLoading}>{t("block.cancel")}</AlertDialogCancel>
 					<AlertDialogAction
 						onClick={handleBlockAction}
 						disabled={isLoading}
 						className="bg-red-600 hover:bg-red-700 focus:ring-red-600 text-white"
 					>
 						{isLoading
-							? `${isBlocked ? "Desbloqueando" : "Bloqueando"}...`
-							: isBlocked
-								? "Desbloquear"
-								: "Bloquear"}
+							? t(isBlocked ? "block.unblocking" : "block.blocking")
+							: t(isBlocked ? "block.unblock" : "block.block")}
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

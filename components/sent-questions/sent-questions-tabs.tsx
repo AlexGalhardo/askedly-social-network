@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { filterSentQuestionsByStatus, paginateSentQuestions } from "@/lib/utils/sent-question-utils";
 import { SentQuestionInterface } from "@/types/SentQuestion";
@@ -25,15 +27,13 @@ export function SentQuestionsTabs({
 	onReport,
 	loadingStates = {},
 }: SentQuestionsTabsProps) {
+	const t = useTranslations("questions");
 	const answeredQuestions = filterSentQuestionsByStatus(questions, "answered");
 	const declinedQuestions = filterSentQuestionsByStatus(questions, "declined");
 	const expiredQuestions = filterSentQuestionsByStatus(questions, "expired");
 	const pendingQuestions = filterSentQuestionsByStatus(questions, "pending");
 
-	const renderTabContent = (
-		questionsList: SentQuestionInterface[],
-		emptyMessage: string = "Nenhuma pergunta encontrada.",
-	) => {
+	const renderTabContent = (questionsList: SentQuestionInterface[], emptyMessage: string = t("card.empty")) => {
 		if (questionsList.length === 0) {
 			return <div className="text-center py-12 text-gray-500">{emptyMessage}</div>;
 		}
@@ -59,26 +59,30 @@ export function SentQuestionsTabs({
 	return (
 		<Tabs defaultValue="answered" className="w-full" onValueChange={() => onPageChange(1)}>
 			<TabsList className="grid w-full grid-cols-4">
-				<TabsTrigger value="answered">Respondidas ({answeredQuestions.length})</TabsTrigger>
-				<TabsTrigger value="declined">Recusadas ({declinedQuestions.length})</TabsTrigger>
-				<TabsTrigger value="expired">Expiradas ({expiredQuestions.length})</TabsTrigger>
-				<TabsTrigger value="pending">Aguardando ({pendingQuestions.length})</TabsTrigger>
+				<TabsTrigger value="answered">
+					{t("sent.tabs.answered", { count: answeredQuestions.length })}
+				</TabsTrigger>
+				<TabsTrigger value="declined">
+					{t("sent.tabs.declined", { count: declinedQuestions.length })}
+				</TabsTrigger>
+				<TabsTrigger value="expired">{t("sent.tabs.expired", { count: expiredQuestions.length })}</TabsTrigger>
+				<TabsTrigger value="pending">{t("sent.tabs.pending", { count: pendingQuestions.length })}</TabsTrigger>
 			</TabsList>
 
 			<TabsContent value="answered" className="space-y-6">
-				{renderTabContent(answeredQuestions, "Nenhuma pergunta respondida ainda.")}
+				{renderTabContent(answeredQuestions, t("sent.empty.answered"))}
 			</TabsContent>
 
 			<TabsContent value="declined" className="space-y-6">
-				{renderTabContent(declinedQuestions, "Nenhuma pergunta recusada.")}
+				{renderTabContent(declinedQuestions, t("sent.empty.declined"))}
 			</TabsContent>
 
 			<TabsContent value="expired" className="space-y-6">
-				{renderTabContent(expiredQuestions, "Nenhuma pergunta expirada.")}
+				{renderTabContent(expiredQuestions, t("sent.empty.expired"))}
 			</TabsContent>
 
 			<TabsContent value="pending" className="space-y-6">
-				{renderTabContent(pendingQuestions, "Nenhuma pergunta aguardando resposta.")}
+				{renderTabContent(pendingQuestions, t("sent.empty.pending"))}
 			</TabsContent>
 		</Tabs>
 	);

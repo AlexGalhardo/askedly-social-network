@@ -1,6 +1,7 @@
 "use client";
 
 import { UserMinus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,6 +18,7 @@ interface UserCardProps {
 }
 
 export function FollowingUserCard({ user, onUnfollow }: UserCardProps) {
+	const t = useTranslations("common");
 	const unfollowMutation = useUnfollowUser();
 	const isMobile = useIsMobile();
 
@@ -30,8 +32,8 @@ export function FollowingUserCard({ user, onUnfollow }: UserCardProps) {
 		} catch (error: any) {
 			await TelegramLog.error(`Catch Error file following-user-card.ts handle unfollow: ${error?.message}`);
 			toast({
-				title: "Erro ao deixar de seguir",
-				description: "Tente novamente mais tarde",
+				title: t("following.unfollowError"),
+				description: t("tryAgainLater"),
 				variant: "error",
 			});
 		}
@@ -72,7 +74,7 @@ export function FollowingUserCard({ user, onUnfollow }: UserCardProps) {
 						<UserMinus className="h-4 w-4" />
 						{!isMobile && (
 							<span className="ml-1">
-								{unfollowMutation.isPending ? "Deixando..." : "Deixar de Seguir"}
+								{unfollowMutation.isPending ? t("following.unfollowing") : t("following.unfollow")}
 							</span>
 						)}
 					</Button>

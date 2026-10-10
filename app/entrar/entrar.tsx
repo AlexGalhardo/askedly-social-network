@@ -4,6 +4,7 @@ import { ArrowRight, Check, Eye, EyeOff, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -18,6 +19,7 @@ import { getTurnstile } from "@/lib/turnstile";
 
 export default function EntrarClient() {
 	const router = useRouter();
+	const t = useTranslations("auth");
 	const [email, setEmail] = useState("");
 	const [error, setError] = useState("");
 	const [notice, setNotice] = useState("");
@@ -26,11 +28,11 @@ export default function EntrarClient() {
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
 		if (params.has("senha-alterada")) {
-			setNotice("Senha alterada. Por segurança, todas as sessões foram encerradas: entre com a nova senha.");
+			setNotice(t("login.passwordChanged"));
 		} else if (params.has("conta-criada")) {
-			setNotice("Conta criada! Entre com seu email e senha.");
+			setNotice(t("login.accountCreated"));
 		}
-	}, []);
+	}, [t]);
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [password, setPassword] = useState("");
@@ -73,7 +75,7 @@ export default function EntrarClient() {
 			token = getTurnstile()?.getResponse();
 
 			if (!token) {
-				setError("Por favor, verifique o CAPTCHA.");
+				setError(t("errors.captchaRequired"));
 				setLoading(false);
 				return;
 			}
@@ -89,20 +91,18 @@ export default function EntrarClient() {
 
 			if (result?.error) {
 				if (result.error === AUTH_ERROR.noPassword) {
-					setError(
-						"Esse usuário não possui senha cadastrada. Logue com sua conta Google e crie uma senha ou resete sua senha.",
-					);
+					setError(t("login.noPassword"));
 				} else if (result.error === AUTH_ERROR.rateLimited) {
-					setError("Muitas tentativas de login. Aguarde alguns minutos e tente de novo.");
+					setError(t("login.rateLimited"));
 				} else {
-					setError("Email e/ou senha incorretos");
+					setError(t("login.invalidCredentials"));
 				}
 				setLoading(false);
 				return;
 			}
 		} catch (error: any) {
 			await TelegramLog.error(`Error entrar.ts: ${error.message}`);
-			setError("Ocorreu um erro ao fazer login. Tente novamente.");
+			setError(t("login.genericError"));
 		} finally {
 			setLoading(false);
 			getTurnstile()?.reset();
@@ -124,8 +124,8 @@ export default function EntrarClient() {
 		<div className="min-h-screen flex items-center justify-center p-4">
 			<Card className="w-full max-w-md border-none">
 				<CardHeader className="text-center">
-					<CardTitle className="text-2xl font-bold dark:text-white">Bem-vindo de volta!</CardTitle>
-					<CardDescription className="dark:text-white">Entre na sua conta para continuar</CardDescription>
+					<CardTitle className="text-2xl font-bold dark:text-white">{t("login.title")}</CardTitle>
+					<CardDescription className="dark:text-white">{t("login.description")}</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-6">
 					<Button
@@ -152,7 +152,7 @@ export default function EntrarClient() {
 								d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
 							/>
 						</svg>
-						Continuar com Google
+						{t("login.google")}
 					</Button>
 
 					<div className="relative">
@@ -161,7 +161,7 @@ export default function EntrarClient() {
 						</div>
 						<div className="relative flex justify-center text-xs uppercase">
 							<span className="bg-white px-2 text-gray-500 dark:bg-gray-900 dark:text-white">
-								Ou continue com email
+								{t("login.orEmail")}
 							</span>
 						</div>
 					</div>
@@ -169,7 +169,7 @@ export default function EntrarClient() {
 					<form onSubmit={handleLogin} className="space-y-4">
 						<div className="space-y-2">
 							<Label htmlFor="email" className="dark:text-white">
-								Email
+								{t("fields.email")}
 							</Label>
 							<Input
 								id="email"
@@ -177,7 +177,7 @@ export default function EntrarClient() {
 								minLength={12}
 								maxLength={32}
 								type="email"
-								placeholder="seuemail@email.com"
+								placeholder={t("fields.emailPlaceholder")}
 								value={email}
 								onChange={(e) => setEmail(e.target.value.toLowerCase().replace(/\s/g, ""))}
 								className="dark:text-white"
@@ -188,13 +188,13 @@ export default function EntrarClient() {
 						<div className="space-y-2">
 							<div className="flex items-center justify-between">
 								<Label htmlFor="password" className="dark:text-white">
-									Senha
+									{t("fields.password")}
 								</Label>
 								<Link
 									href="/esqueci-senha"
 									className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
 								>
-									Esqueci minha senha
+									{t("login.forgotPassword")}
 								</Link>
 							</div>
 							<div className="relative">
@@ -226,21 +226,29 @@ export default function EntrarClient() {
 							</div>
 							{showPasswordCriteria && (
 								<div className="mt-2 p-3 rounded-md">
-									<p className="text-sm text-gray-600 mb-2 dark:text-white">Sua senha deve conter:</p>
+									<p className="text-sm text-gray-600 mb-2 dark:text-white">
+										{t("passwordCriteria.title")}
+									</p>
 									<div className="space-y-1">
-										<CriteriaItem met={passwordCriteria.length} text="Pelo menos 8 caracteres" />
+										<CriteriaItem
+											met={passwordCriteria.length}
+											text={t("passwordCriteria.length")}
+										/>
 										<CriteriaItem
 											met={passwordCriteria.uppercase}
-											text="Pelo menos 1 letra maiúscula (A-Z)"
+											text={t("passwordCriteria.uppercase")}
 										/>
 										<CriteriaItem
 											met={passwordCriteria.lowercase}
-											text="Pelo menos 1 letra minúscula (a-z)"
+											text={t("passwordCriteria.lowercase")}
 										/>
-										<CriteriaItem met={passwordCriteria.number} text="Pelo menos 1 número (0-9)" />
+										<CriteriaItem
+											met={passwordCriteria.number}
+											text={t("passwordCriteria.number")}
+										/>
 										<CriteriaItem
 											met={passwordCriteria.special}
-											text="Pelo menos 1 caractere especial (!@#$...)"
+											text={t("passwordCriteria.special")}
 										/>
 									</div>
 								</div>
@@ -272,11 +280,11 @@ export default function EntrarClient() {
 							{loading ? (
 								<>
 									<span className="ml-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin dark:border-black dark:border-t-transparent dark:text-white text-white"></span>
-									Processando...
+									{t("fields.processing")}
 								</>
 							) : (
 								<>
-									Entrar
+									{t("login.submit")}
 									<ArrowRight className="ml-2 h-5 w-5" />
 								</>
 							)}
@@ -284,13 +292,16 @@ export default function EntrarClient() {
 					</form>
 
 					<div className="text-center text-sm text-gray-600 dark:text-white">
-						Não tem uma conta?{" "}
-						<Link
-							href="/criar-conta"
-							className="text-blue-600 hover:text-blue-500 font-medium dark:text-blue-400 dark:hover:text-blue-300"
-						>
-							Cadastre-se Grátis
-						</Link>
+						{t.rich("login.noAccount", {
+							link: (chunks) => (
+								<Link
+									href="/criar-conta"
+									className="text-blue-600 hover:text-blue-500 font-medium dark:text-blue-400 dark:hover:text-blue-300"
+								>
+									{chunks}
+								</Link>
+							),
+						})}
 					</div>
 				</CardContent>
 			</Card>

@@ -1,9 +1,23 @@
 import { type CheckCharge, ensureChargePaid } from "@/lib/services/pix-charge.service";
 import { prisma } from "@/prisma/prisma-client";
 
+export type CreateQuestionErrorKey =
+	| "paymentNotConfirmed"
+	| "ownerNotFound"
+	| "payerNotFound"
+	| "paymentNotFound"
+	| "paymentAlreadyUsed"
+	| "dailyLimitReached"
+	| "invalidAmount"
+	| "insufficientCredits"
+	| "cannotAskYourself";
+
+/** `message` é uma chave de `questions.createErrors`: quem captura traduz. */
 export class CreateQuestionError extends Error {
+	declare message: CreateQuestionErrorKey;
+
 	constructor(
-		message: string,
+		message: CreateQuestionErrorKey,
 		readonly status: 400 | 404 | 409 | 429 = 400,
 	) {
 		super(message);
@@ -27,7 +41,7 @@ export interface CreatePaidQuestionInput {
  */
 export async function createPaidQuestion(input: CreatePaidQuestionInput, checkCharge?: CheckCharge) {
 	if (!(await ensureChargePaid(input.pixId, input.askerId, checkCharge))) {
-		throw new CreateQuestionError("Pagamento não encontrado ou ainda não confirmado", 404);
+		throw new CreateQuestionError("paymentNotConfirmed", 404);
 	}
 
 	return prisma.$transaction(async (tx) => {
@@ -35,15 +49,15 @@ export async function createPaidQuestion(input: CreatePaidQuestionInput, checkCh
 			tx.user.findUnique({ where: { id: input.ownerId }, select: { nickname: true } }),
 			tx.user.findUnique({ where: { id: input.askerId }, select: { nickname: true } }),
 		]);
-		if (!owner) throw new CreateQuestionError("Usuário proprietário não encontrado", 404);
-		if (!asker) throw new CreateQuestionError("Usuário que fez o pagamento não encontrado", 404);
+		if (!owner) throw new CreateQuestionError("ownerNotFound", 404);
+		if (!asker) throw new CreateQuestionError("payerNotFound", 404);
 
 		const webhook = await tx.webhookAbacatePay.findUnique({
 			where: { pix_id: input.pixId },
 			include: { question: true },
 		});
-		if (!webhook) throw new CreateQuestionError("Pagamento não encontrado", 404);
-		if (webhook.question) throw new CreateQuestionError("Já existe uma pergunta associada a este pagamento", 409);
+		if (!webhook) throw new CreateQuestionError("paymentNotFound", 404);
+		if (webhook.question) throw new CreateQuestionError("paymentAlreadyUsed", 409);
 
 		const limitField = input.isAnonymous
 			? "anonymous_questions_remaining_today"
@@ -52,7 +66,7 @@ export async function createPaidQuestion(input: CreatePaidQuestionInput, checkCh
 			where: { id: input.askerId, [limitField]: { gt: 0 } },
 			data: { [limitField]: { decrement: 1 } },
 		});
-		if (count === 0) throw new CreateQuestionError("Limite diário de perguntas atingido", 429);
+		if (count === 0) throw new CreateQuestionError("dailyLimitReached", 429);
 
 		return tx.question.create({
 			data: {
@@ -93,16 +107,19 @@ export async function createCreditQuestion(input: CreateCreditQuestionInput) {
 		input.amountCents < MIN_CREDIT_QUESTION_CENTS ||
 		input.amountCents > MAX_CREDIT_QUESTION_CENTS
 	) {
-		throw new CreateQuestionError("Valor inválido", 400);
+		throw new CreateQuestionError("invalidAmount", 400);
 	}
+
+	// Sem isto, créditos viram repasse para a própria conta Stripe de quem os comprou.
+	if (input.askerId === input.ownerId) throw new CreateQuestionError("cannotAskYourself", 400);
 
 	return prisma.$transaction(async (tx) => {
 		const [owner, asker] = await Promise.all([
 			tx.user.findUnique({ where: { id: input.ownerId }, select: { nickname: true } }),
 			tx.user.findUnique({ where: { id: input.askerId }, select: { nickname: true } }),
 		]);
-		if (!owner) throw new CreateQuestionError("Usuário proprietário não encontrado", 404);
-		if (!asker) throw new CreateQuestionError("Usuário que fez o pagamento não encontrado", 404);
+		if (!owner) throw new CreateQuestionError("ownerNotFound", 404);
+		if (!asker) throw new CreateQuestionError("payerNotFound", 404);
 
 		const limitField = input.isAnonymous
 			? "anonymous_questions_remaining_today"
@@ -111,13 +128,13 @@ export async function createCreditQuestion(input: CreateCreditQuestionInput) {
 			where: { id: input.askerId, [limitField]: { gt: 0 } },
 			data: { [limitField]: { decrement: 1 } },
 		});
-		if (limit.count === 0) throw new CreateQuestionError("Limite diário de perguntas atingido", 429);
+		if (limit.count === 0) throw new CreateQuestionError("dailyLimitReached", 429);
 
 		const debit = await tx.user.updateMany({
 			where: { id: input.askerId, credits_cents: { gte: input.amountCents } },
 			data: { credits_cents: { decrement: input.amountCents } },
 		});
-		if (debit.count === 0) throw new CreateQuestionError("Créditos insuficientes", 400);
+		if (debit.count === 0) throw new CreateQuestionError("insufficientCredits", 400);
 
 		return tx.question.create({
 			data: {

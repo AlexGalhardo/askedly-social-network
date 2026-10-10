@@ -2,6 +2,7 @@
 
 import { UserMinus } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,6 +19,7 @@ interface FollowerCardProps {
 }
 
 export function FollowerCard({ follower, onRemove }: FollowerCardProps) {
+	const t = useTranslations("common");
 	const removeFollowerMutation = useRemoveFollower();
 	const isMobile = useIsMobile();
 
@@ -31,8 +33,8 @@ export function FollowerCard({ follower, onRemove }: FollowerCardProps) {
 		} catch (error: any) {
 			await TelegramLog.error(`Error follower-actions.ts ${error?.message}`);
 			toast({
-				title: "Erro ao remover seguidor",
-				description: "Tente novamente mais tarde",
+				title: t("followers.removeError"),
+				description: t("tryAgainLater"),
 				variant: "error",
 			});
 		}
@@ -69,7 +71,7 @@ export function FollowerCard({ follower, onRemove }: FollowerCardProps) {
 						<UserMinus className="h-4 w-4" />
 						{!isMobile && (
 							<span className="ml-1">
-								{removeFollowerMutation.isPending ? "Removendo..." : "Remover Seguidor"}
+								{removeFollowerMutation.isPending ? t("followers.removing") : t("followers.remove")}
 							</span>
 						)}
 					</Button>

@@ -1,21 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { getTranslations } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(request: NextRequest) {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account");
 	try {
 		const session = await getServerSession(authOptions);
 
 		if (!session?.user?.id) {
-			return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
+			return NextResponse.json({ message: te("unauthorized") }, { status: 401 });
 		}
 
 		const { followerId } = await request.json();
 
 		if (!followerId) {
-			return NextResponse.json({ message: "ID do seguidor é obrigatório" }, { status: 400 });
+			return NextResponse.json({ message: t("errors.followerIdRequired") }, { status: 400 });
 		}
 
 		const followerRelation = await prisma.follower.findMany({
@@ -26,7 +29,7 @@ export async function POST(request: NextRequest) {
 		});
 
 		if (!followerRelation) {
-			return NextResponse.json({ message: "Relação de seguidor não encontrada" }, { status: 404 });
+			return NextResponse.json({ message: t("errors.followerRelationNotFound") }, { status: 404 });
 		}
 
 		await prisma.follower.delete({
@@ -36,10 +39,10 @@ export async function POST(request: NextRequest) {
 		});
 
 		return NextResponse.json({
-			message: "Seguidor removido com sucesso",
+			message: t("api.followerRemoved"),
 		});
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error file remove-follower.ts: ${error?.message}`);
-		return NextResponse.json({ message: "Erro interno do servidor" }, { status: 500 });
+		return NextResponse.json({ message: te("internal") }, { status: 500 });
 	}
 }

@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { getSessionUser } from "@/lib/session";
 import TelegramLog from "@/lib/telegram-logger";
 import { prisma } from "@/prisma/prisma-client";
 
 export async function POST(request: NextRequest) {
+	const te = await getTranslations("errors");
+	const t = await getTranslations("account");
 	try {
 		const user = await getSessionUser();
-		if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+		if (!user) return NextResponse.json({ error: te("unauthorized") }, { status: 401 });
 
 		const body = await request.json();
 		const { followingId } = body;
 		const followerId = user.id;
 
 		if (!followingId) {
-			return NextResponse.json({ error: "IDs do seguidor e seguido são obrigatórios" }, { status: 400 });
+			return NextResponse.json({ error: t("errors.followIdsRequired") }, { status: 400 });
 		}
 
 		const [followerUser, followingUser] = await Promise.all([
@@ -22,11 +25,11 @@ export async function POST(request: NextRequest) {
 		]);
 
 		if (!followerUser || !followingUser) {
-			return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
+			return NextResponse.json({ error: t("errors.userNotFound") }, { status: 404 });
 		}
 
 		if (followerId === followingId) {
-			return NextResponse.json({ error: "Você não pode seguir a si mesmo" }, { status: 400 });
+			return NextResponse.json({ error: t("errors.cannotFollowSelf") }, { status: 400 });
 		}
 
 		const existingFollow = await prisma.follower.findUnique({
@@ -58,7 +61,7 @@ export async function POST(request: NextRequest) {
 				},
 			});
 			isFollowing = false;
-			message = "Usuário desseguido com sucesso";
+			message = t("follow.stoppedFollowing");
 		} else if (existingRequest) {
 			await prisma.followRequest.delete({
 				where: {
@@ -66,7 +69,7 @@ export async function POST(request: NextRequest) {
 				},
 			});
 			hasPendingRequest = false;
-			message = "Solicitação de seguir cancelada";
+			message = t("follow.requestCancelled");
 		} else {
 			if (followingUser.privacy_is_private_profile) {
 				await prisma.followRequest.create({
@@ -76,7 +79,7 @@ export async function POST(request: NextRequest) {
 					},
 				});
 				hasPendingRequest = true;
-				message = "Solicitação para seguir enviada";
+				message = t("follow.requestSent");
 			} else {
 				await prisma.follower.create({
 					data: {
@@ -85,7 +88,7 @@ export async function POST(request: NextRequest) {
 					},
 				});
 				isFollowing = true;
-				message = "Usuário seguido com sucesso";
+				message = t("follow.nowFollowing");
 			}
 		}
 
@@ -101,6 +104,6 @@ export async function POST(request: NextRequest) {
 		);
 	} catch (error: any) {
 		await TelegramLog.error(`Catch Error user-follow.ts: ${error?.message}`);
-		return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+		return NextResponse.json({ error: te("internal") }, { status: 500 });
 	}
 }

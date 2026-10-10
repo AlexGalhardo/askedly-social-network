@@ -2,17 +2,19 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { useFormatter, useTranslations } from "next-intl";
 import { getAnsweredPaymentDetails, getSentPaymentDetails, processWithdraw } from "@/actions/payment-actions";
 import { toast } from "@/hooks/use-toast";
 
 export function useAnsweredPaymentDetails() {
+	const te = useTranslations("errors");
 	const { data: session } = useSession();
 
 	return useQuery({
 		queryKey: ["payment-data", "answered", session?.user?.nickname],
 		queryFn: async () => {
 			if (!session?.user?.nickname) {
-				throw new Error("Usuário não autenticado");
+				throw new Error(te("unauthorized"));
 			}
 			const result = await getAnsweredPaymentDetails();
 			return result.data;
@@ -26,13 +28,14 @@ export function useAnsweredPaymentDetails() {
 }
 
 export function useSentPaymentDetails() {
+	const te = useTranslations("errors");
 	const { data: session } = useSession();
 
 	return useQuery({
 		queryKey: ["payment-data", "sent", session?.user?.nickname],
 		queryFn: async () => {
 			if (!session?.user?.nickname) {
-				throw new Error("Usuário não autenticado");
+				throw new Error(te("unauthorized"));
 			}
 			const result = await getSentPaymentDetails();
 			return result.data;
@@ -46,6 +49,8 @@ export function useSentPaymentDetails() {
 }
 
 export function useProcessWithdraw() {
+	const t = useTranslations("payments");
+	const format = useFormatter();
 	const queryClient = useQueryClient();
 	const { data: session } = useSession();
 
@@ -53,8 +58,10 @@ export function useProcessWithdraw() {
 		mutationFn: processWithdraw,
 		onSuccess: (data) => {
 			toast({
-				title: "Saque realizado com sucesso",
-				description: `Valor de R$ ${(data.amount / 100).toFixed(2)} será enviado para a conta associada a essa chave PIX em breve.`,
+				title: t("withdraw.successTitle"),
+				description: t("withdraw.successDescription", {
+					amount: format.number(data.amount / 100, { style: "currency", currency: "BRL" }),
+				}),
 				variant: "success",
 			});
 
@@ -67,8 +74,8 @@ export function useProcessWithdraw() {
 		},
 		onError: (error) => {
 			toast({
-				title: "Erro ao realizar saque",
-				description: error instanceof Error ? error.message : "Por favor, tente novamente mais tarde.",
+				title: t("withdraw.errorTitle"),
+				description: error instanceof Error ? error.message : t("withdraw.errorFallback"),
 				variant: "error",
 			});
 		},

@@ -1,17 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { useFormatter, useNow, useTranslations } from "next-intl";
 import { memo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/functions";
 import type { PublicQuestion } from "@/lib/repositories/questions.repository";
-import { formatDate } from "@/lib/utils";
 
 interface FeedQuestionAnswerProps {
 	question: PublicQuestion;
 }
 
 export const FeedQuestionAnswer = memo(({ question }: FeedQuestionAnswerProps) => {
+	const t = useTranslations("questions");
+	const format = useFormatter();
+	const now = useNow();
+
 	if (!question.answer_text) return null;
 
 	return (
@@ -36,13 +40,9 @@ export const FeedQuestionAnswer = memo(({ question }: FeedQuestionAnswerProps) =
 						</Link>
 					</div>
 					<div className="flex flex-col sm:flex-row sm:items-center gap-1 text-xs text-green-600 dark:text-green-400">
-						<span>respondeu</span>
+						<span>{t("card.answered")}</span>
 						<span className="text-gray-500 dark:text-gray-400">
-							{formatDate(
-								typeof question.answered_at === "string"
-									? question.answered_at
-									: question.answered_at?.toISOString() || "",
-							)}
+							{question.answered_at ? format.relativeTime(new Date(question.answered_at), now) : ""}
 						</span>
 					</div>
 				</div>

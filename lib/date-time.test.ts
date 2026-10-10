@@ -66,12 +66,41 @@ describe("DateTime comparisons", () => {
 });
 
 describe("DateTime.formatarRelativo", () => {
-	test("returns 'agora mesmo' for the current instant", () => {
-		expect(new DateTime().formatarRelativo()).toBe("agora mesmo");
+	test("returns the 'now' phrase for the current instant", () => {
+		expect(new DateTime().formatarRelativo()).toBe("now");
+		expect(new DateTime().formatarRelativo("pt")).toBe("agora");
 	});
 
 	test("returns a days-ago phrase for a date a few days in the past", () => {
 		const threeDaysAgo = new DateTime().adicionarDias(-3);
-		expect(threeDaysAgo.formatarRelativo()).toBe("há 3 dias");
+		expect(threeDaysAgo.formatarRelativo()).toBe("3 days ago");
+		expect(threeDaysAgo.formatarRelativo("pt")).toBe("há 3 dias");
+	});
+
+	test("keeps the number for a single unit instead of 'yesterday'", () => {
+		const oneDayAgo = new DateTime().adicionarDias(-1);
+		expect(oneDayAgo.formatarRelativo("en")).toBe("1 day ago");
+		expect(oneDayAgo.formatarRelativo("pt")).toBe("há 1 dia");
+	});
+});
+
+describe("DateTime locale-aware names", () => {
+	const christmas = new DateTime("25/12/2024 14:30:05");
+
+	test("dataPorExtenso writes the full date in the given locale", () => {
+		expect(christmas.dataPorExtenso()).toBe("Wednesday, December 25, 2024");
+		expect(christmas.dataPorExtenso("pt")).toBe("quarta-feira, 25 de dezembro de 2024");
+	});
+
+	test("nomeMes and diaSemana follow the locale", () => {
+		expect(christmas.nomeMes()).toBe("December");
+		expect(christmas.nomeMes("pt")).toBe("dezembro");
+		expect(christmas.diaSemana()).toBe("Wednesday");
+		expect(christmas.diaSemana("pt")).toBe("quarta-feira");
+	});
+
+	test("horaPorExtenso spells out the time in the given locale", () => {
+		expect(christmas.horaPorExtenso()).toBe("14 hours, 30 minutes, and 5 seconds");
+		expect(christmas.horaPorExtenso("pt")).toBe("14 horas, 30 minutos e 5 segundos");
 	});
 });
