@@ -95,7 +95,7 @@ A pasta [`docs/`](docs) explica o projeto por área (também é o contexto que o
 
 ## Contribuindo
 
-Leia [`CONTRIBUTING.md`](CONTRIBUTING.md). Falhas de segurança: [`SECURITY.md`](SECURITY.md), nunca em issue pública.
+Leia [`CONTRIBUTE.md`](CONTRIBUTE.md). Falhas de segurança: [`SECURITY.md`](SECURITY.md), nunca em issue pública.
 
 Commits seguem [Conventional Commits](https://www.conventionalcommits.org/pt-br) (validado pelo commitlint) e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/). Antes de abrir um PR, `bun run lint:ci`, `bunx tsc --noEmit`, `bun run build` e os testes precisam passar: o CI bloqueia em todos. Mudanças relevantes entram no [`CHANGELOG.md`](CHANGELOG.md).
 

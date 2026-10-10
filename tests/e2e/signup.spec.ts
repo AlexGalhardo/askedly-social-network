@@ -1,13 +1,13 @@
 import { expect, test } from "@playwright/test";
 import { useUniqueClientIp, waitForCaptcha } from "./helpers";
 
-test("signing up with a new account logs in and redirects to /minha-conta", async ({ page }) => {
+test("signing up with a new account logs in and redirects to /my-account", async ({ page }) => {
 	const unique = Date.now();
 	const nickname = `e_${unique}`;
 	const email = `e2e-${unique}@example.com`;
 
 	await useUniqueClientIp(page);
-	await page.goto("/criar-conta");
+	await page.goto("/signup");
 
 	await page.locator("#name").fill("E2E Test User");
 	await page.locator("#nickname").fill(nickname);
@@ -18,6 +18,6 @@ test("signing up with a new account logs in and redirects to /minha-conta", asyn
 	await waitForCaptcha(page);
 	await page.getByRole("button", { name: /criar conta gratuitamente/i }).click();
 
-	await page.waitForURL(/\/minha-conta/, { timeout: 15_000 });
-	await expect(page).toHaveURL(/\/minha-conta/);
+	await page.waitForURL(/\/my-account/, { timeout: 15_000 });
+	await expect(page).toHaveURL(/\/my-account/);
 });

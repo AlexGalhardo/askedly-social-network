@@ -60,25 +60,31 @@ export async function GET(request: Request) {
 		return Response.json({ error: "Não autorizado" }, { status: 401 });
 	}
 
-	const now = new Date();
-	const formattedNow = now.toLocaleString("pt-BR");
+	try {
+		const now = new Date();
+		const formattedNow = now.toLocaleString("pt-BR");
 
-	const resetResult = await prisma.user.updateMany({
-		data: {
-			public_questions_remaining_today: 10,
-			anonymous_questions_remaining_today: 1,
-		},
-	});
+		const resetResult = await prisma.user.updateMany({
+			data: {
+				public_questions_remaining_today: 10,
+				anonymous_questions_remaining_today: 1,
+			},
+		});
 
-	const deletedCount = await deleteOldUsers();
-	const expiredRateLimits = await deleteExpiredRateLimits();
-	const creditQuestions = await settlePendingCreditQuestions();
+		const deletedCount = await deleteOldUsers();
+		const expiredRateLimits = await deleteExpiredRateLimits();
+		const creditQuestions = await settlePendingCreditQuestions();
 
-	await TelegramLog.info(
-		`🕒 Cronjob executado em ${formattedNow}\n🔁 Contadores resetados para ${resetResult.count} usuários.\n🗑️ Usuários deletados (30 dias marcados como deletados ou 2 anos sem login): ${deletedCount}
-🧹 Janelas de rate limit vencidas apagadas: ${expiredRateLimits}
-💸 Perguntas em créditos com liquidação pendente processadas: ${creditQuestions}`,
-	);
+		await TelegramLog.info(
+			`🕒 Cronjob executado em ${formattedNow}\n🔁 Contadores resetados para ${resetResult.count} usuários.\n🗑️ Usuários deletados (30 dias marcados como deletados ou 2 anos sem login): ${deletedCount}
+	🧹 Janelas de rate limit vencidas apagadas: ${expiredRateLimits}
+	💸 Perguntas em créditos com liquidação pendente processadas: ${creditQuestions}`,
+		);
 
-	return new Response("OK");
+		return new Response("OK");
+	} catch (error: unknown) {
+		// Uma etapa falhar não pode virar 500 sem rastro: a Vercel não avisa, o log no Telegram avisa.
+		await TelegramLog.error(`Cronjob failed: ${error instanceof Error ? error.message : error}`);
+		return Response.json({ error: "Cron failed" }, { status: 500 });
+	}
 }

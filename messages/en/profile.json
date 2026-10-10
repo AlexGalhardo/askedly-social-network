@@ -1,6 +1,6 @@
 {
 	"meta": {
-		"description": "See {nickname}'s public profile on Askedly Social Network."
+		"description": "See {nickname}'s public profile on Askedly."
 	},
 	"block": {
 		"loginRequired": "You need to be logged in to block users",

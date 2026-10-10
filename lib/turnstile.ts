@@ -1,7 +1,8 @@
-// Site key é pública por natureza. O env existe para o CI usar a chave de teste da Cloudflare, que sempre passa
-// (1x00000000000000000000AA, com o secret 1x0000000000000000000000000000000AA).
-export const TURNSTILE_SITE_KEY: string =
-	process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY ?? "0x4AAAAAABiCEoK5rM8dg1Xm";
+// A site key é pública por natureza. Sem ela o captcha fica desligado: o widget não aparece e os formulários não
+// exigem token (o servidor faz o mesmo quando falta CLOUDFLARE_TURNSTILE_SECRET, ver lib/captcha.ts).
+// Chaves de teste da Cloudflare, que sempre passam: 1x00000000000000000000AA / 1x0000000000000000000000000000000AA.
+export const TURNSTILE_SITE_KEY: string = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY ?? "";
+export const TURNSTILE_ENABLED: boolean = TURNSTILE_SITE_KEY !== "";
 
 interface TurnstileApi {
 	render(container: HTMLElement, options: { sitekey: string }): string;

@@ -199,7 +199,7 @@ Objetivo: aberto ao público e mantido como projeto open source. Quem chega pela
 
 ### Open source
 
-- [x] `LICENSE.md` (MIT), `CONTRIBUTING.md`, `SECURITY.md`
+- [x] `LICENSE.md` (MIT), `CONTRIBUTE.md`, `SECURITY.md`
 - [x] `README.md` com o que é, stack, como rodar e mapa da documentação
 - [ ] `CODE_OF_CONDUCT.md`
 - [ ] Modelos de issue e de pull request em `.github/`
@@ -216,7 +216,7 @@ Objetivo: aberto ao público e mantido como projeto open source. Quem chega pela
 ### Produto
 
 - [ ] Domínio próprio, com `metadataBase`, sitemap e emails apontando para ele (hoje `respondeae.com.br` e `respondeae.vercel.app`)
-- [ ] Nomes de rota em inglês com redirecionamento das atuais (`/entrar` para `/sign-in` etc.)
+- [ ] Nomes de rota em inglês com redirecionamento das atuais (`/login` para `/sign-in` etc.)
 - [ ] Decisão de produto: perfil público deve mostrar respostas a qualquer visitante? (a flag `privacy_show_questions_answered_only_to_followers` hoje não muda a tela)
 - [ ] Notificações (pergunta recebida, resposta recebida, repasse feito)
 - [ ] Acessibilidade revisada (WCAG AA) e Core Web Vitals medidos em produção

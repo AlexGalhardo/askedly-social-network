@@ -26,20 +26,17 @@ export async function generateMetadata(): Promise<Metadata> {
 		title,
 		description,
 		keywords: t("keywords"),
-		icons: {
-			icon: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
-		},
 		openGraph: {
 			title,
 			description,
 			url: "https://respondeae.com.br",
-			siteName: "Askedly Social Network",
+			siteName: "Askedly",
 			images: [
 				{
 					url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
 					width: 1200,
 					height: 630,
-					alt: "Askedly Social Network",
+					alt: "Askedly",
 				},
 			],
 			locale: openGraphLocale(await getLocale()),

@@ -17,7 +17,7 @@ export async function signUp(input: unknown, captchaToken?: string): Promise<Sig
 		return { ok: false, fieldErrors: {}, error: te("rateLimited", { minutes }) };
 	}
 
-	// Captcha só é exigido em produção, como no login (app/entrar).
+	// Captcha só é exigido em produção, como no login (app/login).
 	const captcha = process.env.NODE_ENV === "production" ? { captchaToken, verifyCaptcha: isCaptchaValid } : undefined;
 	const result = await signUpUser(input, captcha);
 	if (result.ok) return result;

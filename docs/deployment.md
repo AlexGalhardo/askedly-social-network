@@ -58,4 +58,4 @@ bun run build
 bun run start   # valida o build de produção localmente
 ```
 
-O build faz queries reais ao Prisma em páginas estáticas (ex: `/top-curtidas`) — `DATABASE_URL` precisa apontar para um Postgres acessível mesmo em build time, não só em runtime.
+O build faz queries reais ao Prisma em páginas estáticas (ex: `/top-liked`) — `DATABASE_URL` precisa apontar para um Postgres acessível mesmo em build time, não só em runtime.

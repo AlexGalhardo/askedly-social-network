@@ -24,7 +24,6 @@ import {
 	Users,
 	X,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -32,6 +31,7 @@ import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useMemo, useState } from "react";
 import { getMyPendingQuestionsCount } from "@/actions/my-account-actions";
+import { AskedlyLogo } from "@/components/askedly-logo";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -76,8 +76,8 @@ export function MySidebar() {
 			{
 				icon: Trophy,
 				label: t("topLikes"),
-				href: "/top-curtidas",
-				active: pathname === "/top-curtidas",
+				href: "/top-liked",
+				active: pathname === "/top-liked",
 				requiresAuth: true,
 			},
 		];
@@ -94,44 +94,44 @@ export function MySidebar() {
 				{
 					icon: Settings,
 					label: t("myAccount"),
-					href: "/minha-conta",
-					active: pathname === "/minha-conta",
+					href: "/my-account",
+					active: pathname === "/my-account",
 					requiresAuth: true,
 				},
 				{
 					icon: Bell,
 					label: t("receivedQuestions"),
-					href: "/perguntas-recebidas",
-					active: pathname === "/perguntas-recebidas",
+					href: "/received-questions",
+					active: pathname === "/received-questions",
 					badge: pendingQuestions > 0 ? pendingQuestions.toString() : undefined,
 					requiresAuth: true,
 				},
 				{
 					icon: Send,
 					label: t("sentQuestions"),
-					href: "/perguntas-enviadas",
-					active: pathname === "/perguntas-enviadas",
+					href: "/sent-questions",
+					active: pathname === "/sent-questions",
 					requiresAuth: true,
 				},
 				{
 					icon: CreditCard,
 					label: t("payments"),
-					href: "/pagamentos",
-					active: pathname === "/pagamentos",
+					href: "/payments",
+					active: pathname === "/payments",
 					requiresAuth: true,
 				},
 				{
 					icon: UserPlus,
 					label: t("followers"),
-					href: "/seguidores",
-					active: pathname === "/seguidores",
+					href: "/followers",
+					active: pathname === "/followers",
 					requiresAuth: true,
 				},
 				{
 					icon: Users,
 					label: t("following"),
-					href: "/seguindo",
-					active: pathname === "/seguindo",
+					href: "/following",
+					active: pathname === "/following",
 					requiresAuth: true,
 				},
 			);
@@ -141,20 +141,20 @@ export function MySidebar() {
 	}, [isAuthenticated, session, pathname, pendingQuestions, t]);
 
 	const legalItems: SidebarItem[] = [
-		{ icon: Info, label: t("about"), href: "/sobre", active: pathname === "/sobre", requiresAuth: false },
-		{ icon: Mail, label: t("contact"), href: "/contato", active: pathname === "/contato", requiresAuth: false },
+		{ icon: Info, label: t("about"), href: "/about", active: pathname === "/about", requiresAuth: false },
+		{ icon: Mail, label: t("contact"), href: "/contact", active: pathname === "/contact", requiresAuth: false },
 		{
 			icon: Shield,
 			label: t("privacyPolicy"),
-			href: "/politica-de-privacidade",
-			active: pathname === "/politica-de-privacidade",
+			href: "/privacy-policy",
+			active: pathname === "/privacy-policy",
 			requiresAuth: false,
 		},
 		{
 			icon: FileText,
 			label: t("termsOfUse"),
-			href: "/termos-de-uso",
-			active: pathname === "/termos-de-uso",
+			href: "/terms-of-use",
+			active: pathname === "/terms-of-use",
 			requiresAuth: false,
 		},
 	];
@@ -222,7 +222,7 @@ export function MySidebar() {
 					<span className="flex-1 text-left">{t("signOut")}</span>
 				</Button>
 			) : (
-				<Link href="/entrar">
+				<Link href="/login">
 					<Button
 						variant="ghost"
 						className="w-full justify-start h-11 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-950 font-bold"
@@ -285,14 +285,8 @@ export function MySidebar() {
 					</Button>
 
 					<div className="flex items-center space-x-2">
-						<Image
-							src="https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"
-							alt="Askedly Social Network"
-							width={32}
-							height={32}
-							className="rounded-lg"
-						/>
-						<span className="text-xl font-bold">Askedly Social Network</span>
+						<AskedlyLogo className="h-8 w-8" />
+						<span className="text-xl font-bold">Askedly</span>
 					</div>
 
 					<div className="flex items-center space-x-2">
@@ -311,14 +305,8 @@ export function MySidebar() {
 				<div className="flex flex-col h-full">
 					<div className="flex items-center h-16 px-6 border-b flex-shrink-0">
 						<div className="flex items-center space-x-3">
-							<Image
-								src="https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"
-								alt="Askedly Social Network"
-								width={40}
-								height={40}
-								className="rounded-lg"
-							/>
-							<span className="text-2xl font-bold">Askedly Social Network</span>
+							<AskedlyLogo className="h-10 w-10" />
+							<span className="text-2xl font-bold">Askedly</span>
 						</div>
 					</div>
 
@@ -337,13 +325,7 @@ export function MySidebar() {
 					<aside className="relative flex w-80 h-full flex-col bg-background border-r">
 						<div className="flex items-center justify-between h-16 px-6 border-b flex-shrink-0">
 							<div className="flex items-center space-x-3">
-								<Image
-									src="https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"
-									alt="Askedly Social Network"
-									width={32}
-									height={32}
-									className="rounded-lg"
-								/>
+								<AskedlyLogo className="h-8 w-8" />
 							</div>
 							<Button variant="ghost" size="sm" onClick={() => setSidebarOpen(false)}>
 								<X className="h-5 w-5" />

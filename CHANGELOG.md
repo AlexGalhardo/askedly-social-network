@@ -69,7 +69,7 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 - **Painel do admin** em `/admin` (404 para quem não é admin): totais por moeda, receita da plataforma, compras de créditos e saques.
 - **Modo demonstração em Docker** (`infra/docker-compose.demo.yaml`): Postgres, migrations, seed e app, com pagamentos simulados por `PAYMENTS_SIMULATED` (ignorado em produção na Vercel). O seed ganhou dados de pagamento para o admin (`admin@gmail.com`).
 - `infra/stripe-setup.ts`: cria ou atualiza o webhook da Stripe de forma idempotente.
-- Arquivos open source: `LICENSE.md`, `SECURITY.md`, `CONTRIBUTING.md`.
+- Arquivos open source: `LICENSE.md`, `SECURITY.md`, `CONTRIBUTE.md`.
 - markdownlint (`bun run lint:md`), no CI e no lint-staged.
 - Documentação: `docs/payments-stripe.md`, `stripe-setup.md`, `vercel-deploy.md`, `docker.md`, `i18n.md`, `tooling.md`.
 - **Pagamento com créditos via Stripe**, ao lado do PIX. O usuário compra créditos em dólar (Stripe Checkout, `POST /api/stripe/checkout`) e paga perguntas com eles (`POST /api/question/create-with-credits`). O webhook `/api/webhook/stripe` credita a compra de forma idempotente.

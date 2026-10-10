@@ -1,11 +1,11 @@
 {
 	"lastUpdated": "Última atualização: {date}",
 	"about": {
-		"metaTitle": "Sobre - Askedly Social Network",
+		"metaTitle": "Sobre - Askedly",
 		"metaDescription": "Saiba mais sobre o respondeae.com.br",
 		"heroTitle": "Receba Perguntas, Monetize suas Respostas.",
 		"heroBody": "Somos uma rede social de perguntas e respostas pagas. Aqui, você pode fazer perguntas públicas, privadas e anônimas para pessoas que você tem interesse. Seja para buscar conselhos, troca de conhecimento e experiências, ou por curiosidade.",
-		"statsTitle": "Askedly Social Network em Números",
+		"statsTitle": "Askedly em Números",
 		"statValue": "{value}+",
 		"statUsers": "Usuários Ativos",
 		"statAnswered": "Perguntas Respondidas",
@@ -27,12 +27,12 @@
 		"ctaButton": "Crie sua conta gratuitamente"
 	},
 	"terms": {
-		"metaTitle": "Termos de Uso - Askedly Social Network",
-		"metaDescription": "Veja os termos de uso da plataforma Askedly Social Network",
+		"metaTitle": "Termos de Uso - Askedly",
+		"metaDescription": "Veja os termos de uso da plataforma Askedly",
 		"acceptanceTitle": "1. Aceitação dos Termos",
-		"acceptanceBody": "Ao acessar e utilizar os serviços da plataforma do <strong>Askedly Social Network</strong> (https://respondeae.com.br), você concorda com os presentes Termos de Uso.",
+		"acceptanceBody": "Ao acessar e utilizar os serviços da plataforma do <strong>Askedly</strong> (https://respondeae.com.br), você concorda com os presentes Termos de Uso.",
 		"serviceTitle": "2. Descrição do Serviço",
-		"serviceBody": "O Askedly Social Network é uma plataforma onde os usuários podem fazer perguntas pagas para outras pessoas e receber respostas. As perguntas devem ter valor mínimo de {min}, com pagamento via PIX, e os valores sugeridos são: {v2}, {v5}, {v10}, {v20}, {v50} ou outro valor inteiro definido pelo usuário. Ao responder de forma adequada, o autor da resposta recebe o valor pago pela pergunta descontando taxas como descrito na seção 4 - Pagamentos.",
+		"serviceBody": "O Askedly é uma plataforma onde os usuários podem fazer perguntas pagas para outras pessoas e receber respostas. As perguntas devem ter valor mínimo de {min}, com pagamento via PIX, e os valores sugeridos são: {v2}, {v5}, {v10}, {v20}, {v50} ou outro valor inteiro definido pelo usuário. Ao responder de forma adequada, o autor da resposta recebe o valor pago pela pergunta descontando taxas como descrito na seção 4 - Pagamentos.",
 		"limitsTitle": "3. Limites de Uso Diário",
 		"limitsBody": "Cada usuário pode realizar até <strong>10 perguntas públicas</strong> e <strong>1 pergunta anônima</strong> por dia. Essa limitação visa prevenir abusos, spam e manter um ambiente saudável na plataforma. Dado a necessidade do uso da plataforma com o passar do tempo, esses valores podem ser aumentados ou diminuidos caso necessário.",
 		"paymentsTitle": "4. Pagamentos",
@@ -59,7 +59,7 @@
 		"withdrawalsBody": "Saques: Os pagamentos para saque são processados exclusivamente via PIX, enviada para a chave PIX configurada na sua conta. É necessário acumular pelo menos {minWithdraw} para poder fazer a solicitação de saque na plataforma.",
 		"refundsBody": "Reembolsos: Perguntas que você pagou e que foram recusadas a serem respondidas ou expiradas, o montante é acumulado na sua conta para que você possa sacar quando acumulado a partir de {minWithdraw} também. Não é possível usar esse dinheiro para fazer novas perguntas nesse momento, porque cada pergunta paga é atrelado ao pagamento de um PIX específico.",
 		"liabilityTitle": "11. Limitação de Responsabilidade",
-		"liabilityBody": "O Askedly Social Network não se responsabiliza por danos diretos, indiretos, incidentais ou consequenciais relacionados ao uso da plataforma. As perguntas e respostas feita pelos usuários é de responsabilidade exclusiva de quem o publica. Contamos com a colaboração da comunidade para manter um ambiente saudável e produtivo.",
+		"liabilityBody": "O Askedly não se responsabiliza por danos diretos, indiretos, incidentais ou consequenciais relacionados ao uso da plataforma. As perguntas e respostas feita pelos usuários é de responsabilidade exclusiva de quem o publica. Contamos com a colaboração da comunidade para manter um ambiente saudável e produtivo.",
 		"inactiveTitle": "12. Contas Inativas",
 		"inactiveBody": "Contas que passarem de 730 dias (2 anos) corridos sem serem acessadas (o usuário não entrou em sua conta durante esse período), serão consideradas inativas e apagadas da plataforma. Serão enviados 2 emails de aviso: o primeiro 7 dias antes, o segundo 48 horas antes da possível exclusão da conta, para que o usuário fique ciente.",
 		"changesTitle": "13. Modificações nos Termos",
@@ -68,8 +68,8 @@
 		"contactBody": "Em caso de dúvidas, sugestões ou problemas relacionados a estes Termos de Uso, entre em contato com nossa equipe no <link>formulário de contato</link>."
 	},
 	"privacy": {
-		"metaTitle": "Política de Privacidade - Askedly Social Network",
-		"metaDescription": "Veja a Política de Privacidade da plataforma Askedly Social Network",
+		"metaTitle": "Política de Privacidade - Askedly",
+		"metaDescription": "Veja a Política de Privacidade da plataforma Askedly",
 		"collectTitle": "1. Informações que Coletamos",
 		"collectBody": "Coletamos apenas os dados essenciais para o funcionamento da plataforma. Isso inclui nome, email, nickname e, no caso de login com o Google, a URL do avatar do perfil. Também armazenamos a chave PIX informada pelo usuário em suas configurações, utilizada exclusivamente para fins de recebimento de pagamentos. Além disso, coletamos informações inseridas voluntariamente no perfil público, como descrição, website e redes sociais (Instagram, Facebook, YouTube, Twitch, LinkedIn, TikTok).",
 		"useTitle": "2. Como Usamos suas Informações",
@@ -86,8 +86,8 @@
 		"contactBody": "Caso tenha dúvidas, solicitações ou queira exercer seus direitos de privacidade, entre em contato com nossa equipe no <link>formulário de contato</link>"
 	},
 	"contact": {
-		"metaTitle": "Contato - Askedly Social Network",
-		"metaDescription": "Contato da plataforma Askedly Social Network",
+		"metaTitle": "Contato - Askedly",
+		"metaDescription": "Contato da plataforma Askedly",
 		"title": "Contato",
 		"intro": "Tem alguma dúvida? Encontrou algum problema? Envie nos uma mensagem e retornaremos o mais breve possível.",
 		"nameLabel": "Seu Nome",

@@ -2,7 +2,7 @@
 
 import Script from "next/script";
 import { useRef } from "react";
-import { getTurnstile, TURNSTILE_SITE_KEY } from "@/lib/turnstile";
+import { getTurnstile, TURNSTILE_ENABLED, TURNSTILE_SITE_KEY } from "@/lib/turnstile";
 
 /**
  * Captcha do Cloudflare. `onReady` roda quando o script carrega e de novo a cada montagem se ele já estiver na
@@ -16,6 +16,8 @@ export function TurnstileWidget() {
 		if (!turnstile || !container.current || container.current.childElementCount > 0) return;
 		turnstile.render(container.current, { sitekey: TURNSTILE_SITE_KEY });
 	};
+
+	if (!TURNSTILE_ENABLED) return null;
 
 	return (
 		<>

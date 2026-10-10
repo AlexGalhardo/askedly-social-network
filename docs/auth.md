@@ -10,7 +10,7 @@ NextAuth v4 (`next-auth`), configurado em `lib/auth.ts` e exposto em `app/api/au
 ## Sessão
 
 - Estratégia **JWT** (`session.strategy = "jwt"`), expira em 30 dias.
-- **Revogação**: no sign-in o token grava `users.session_version`; em toda leitura o callback `jwt` compara com o banco (`assertSessionIsCurrent`). Troca e reset de senha sobem a versão, então todos os tokens anteriores param de valer, inclusive o do aparelho que trocou (que vai para `/entrar?senha-alterada=1`). Não reemitimos o token desse aparelho de propósito: um token roubado poderia fazer o mesmo.
+- **Revogação**: no sign-in o token grava `users.session_version`; em toda leitura o callback `jwt` compara com o banco (`assertSessionIsCurrent`). Troca e reset de senha sobem a versão, então todos os tokens anteriores param de valer, inclusive o do aparelho que trocou (que vai para `/login?senha-alterada=1`). Não reemitimos o token desse aparelho de propósito: um token roubado poderia fazer o mesmo.
 - O callback `session` lê só os campos da própria conta (`getUserForSession`, sem `include`). Reativar conta soft-deleted e gravar `last_login_at` acontecem só no sign-in.
 - **Perguntas, seguidores e bloqueios não estão na sessão**: cada tela busca o que usa por action (`actions/my-account-actions.ts`), via `useSessionBoundList` (listas) ou `useMySocialGraph` (quem eu sigo/bloqueei/me bloqueou).
 - Tipagem estendida: `Session` em `declare module "next-auth"` e o token em `declare module "next-auth/jwt"`, no próprio `lib/auth.ts`.

@@ -35,7 +35,7 @@ export async function startPayoutOnboarding(userId: string, country: string): Pr
 			where: { id: userId, stripe_account_id: null },
 			data: { stripe_account_id: `acct_sim_${userId}` },
 		});
-		return appUrl("/minha-conta?payouts=return");
+		return appUrl("/my-account?payouts=return");
 	}
 
 	const stripe = getStripe();
@@ -67,8 +67,8 @@ export async function startPayoutOnboarding(userId: string, country: string): Pr
 			type: "account_onboarding",
 			account_onboarding: {
 				configurations: ["recipient"],
-				refresh_url: appUrl("/minha-conta?payouts=refresh"),
-				return_url: appUrl("/minha-conta?payouts=return"),
+				refresh_url: appUrl("/my-account?payouts=refresh"),
+				return_url: appUrl("/my-account?payouts=return"),
 			},
 		},
 	});

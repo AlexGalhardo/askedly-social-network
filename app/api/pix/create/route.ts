@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 		const charge = await createPixCharge({
 			amount,
 			expiresIn: PIX_EXPIRES_IN_SECONDS,
-			description: `Askedly Social Network: pergunta para @${String(nickname ?? "").slice(0, 32)}`,
+			description: `Askedly: pergunta para @${String(nickname ?? "").slice(0, 32)}`,
 			metadata: { askerNickname: user.nickname },
 		});
 		await registerCharge(user.id, charge);

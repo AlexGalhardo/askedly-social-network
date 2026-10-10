@@ -20,7 +20,7 @@ test("pages run under the nonce CSP without violations", async ({ page, request 
 
 	const unique = Date.now();
 	await useUniqueClientIp(page);
-	await page.goto("/criar-conta");
+	await page.goto("/signup");
 	await page.locator("#name").fill("Conta CSP");
 	await page.locator("#nickname").fill(`c_${unique}`);
 	await page.locator("#email").fill(`csp-${unique}@example.com`);
@@ -29,18 +29,18 @@ test("pages run under the nonce CSP without violations", async ({ page, request 
 	await waitForCaptcha(page);
 	const violations: string[] = (
 		await page.evaluate(() => (window as unknown as { __cspViolations: string[] }).__cspViolations)
-	).map((v) => `/criar-conta: ${v}`);
+	).map((v) => `/signup: ${v}`);
 	await page.getByRole("button", { name: /criar conta gratuitamente/i }).click();
-	await page.waitForURL(/\/minha-conta/, { timeout: 15_000 });
+	await page.waitForURL(/\/my-account/, { timeout: 15_000 });
 
 	for (const path of [
-		"/minha-conta",
+		"/my-account",
 		"/",
-		"/top-curtidas",
+		"/top-liked",
 		`/c_${unique}`,
-		"/perguntas-recebidas",
-		"/contato",
-		"/sobre",
+		"/received-questions",
+		"/contact",
+		"/about",
 	]) {
 		await page.goto(path);
 		await page.waitForTimeout(1500);

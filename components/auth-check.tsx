@@ -17,7 +17,7 @@ export function AuthCheck({ children }: AuthCheckProps) {
 
 	useEffect(() => {
 		if (status === "unauthenticated") {
-			router.push("/entrar");
+			router.push("/login");
 		} else if (status !== "loading") {
 			setIsLoading(false);
 		}

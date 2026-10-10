@@ -22,7 +22,7 @@ export async function createCreditsCheckout(userId: string, amountCents: number)
 			data: { user_id: userId, checkout_session_id: sessionId, amount_cents: amountCents },
 		});
 		await fulfillCreditsPurchase(sessionId);
-		return appUrl("/minha-conta?credits=success");
+		return appUrl("/my-account?credits=success");
 	}
 
 	const session = await getStripe().checkout.sessions.create({
@@ -33,14 +33,14 @@ export async function createCreditsCheckout(userId: string, amountCents: number)
 				price_data: {
 					currency: "usd",
 					unit_amount: amountCents,
-					product_data: { name: "Askedly Social Network credits" },
+					product_data: { name: "Askedly credits" },
 				},
 			},
 		],
 		client_reference_id: userId,
 		integration_identifier: `credits_${randomBytes(4).toString("hex")}`,
-		success_url: appUrl("/minha-conta?credits=success"),
-		cancel_url: appUrl("/minha-conta?credits=cancel"),
+		success_url: appUrl("/my-account?credits=success"),
+		cancel_url: appUrl("/my-account?credits=cancel"),
 	});
 	if (!session.url) throw new Error("Stripe Checkout session has no URL");
 

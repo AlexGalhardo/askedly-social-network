@@ -1,10 +1,14 @@
 {
 	"language": "Idioma",
-	"locales": { "en": "English", "pt": "Português", "es": "Español" },
+	"locales": {
+		"en": "English",
+		"pt": "Português",
+		"es": "Español"
+	},
 	"meta": {
-		"title": "Askedly Social Network - Recibe Preguntas, Monetiza Tus Respuestas.",
+		"title": "Askedly - Recibe Preguntas, Monetiza Tus Respuestas.",
 		"description": "Comparte tu conocimiento y tus experiencias con personas interesadas en saber lo que tienes para decir.",
-		"twitterDescription": "Askedly Social Network es una plataforma donde puedes recibir y enviar preguntas a otros perfiles y monetizar tus respuestas.",
+		"twitterDescription": "Askedly es una plataforma donde puedes recibir y enviar preguntas a otros perfiles y monetizar tus respuestas.",
 		"keywords": "respondeae.com.br, preguntas, monetización, respuestas, plataforma social, ganar dinero"
 	},
 	"loading": "Cargando...",
@@ -13,8 +17,8 @@
 	"tryAgainLater": "Inténtalo de nuevo más tarde.",
 	"anonymousQuestion": "Pregunta Anónima",
 	"notFound": {
-		"metaTitle": "Página No Encontrada - Askedly Social Network",
-		"metaDescription": "Esta página no existe en la plataforma Askedly Social Network",
+		"metaTitle": "Página No Encontrada - Askedly",
+		"metaDescription": "Esta página no existe en la plataforma Askedly",
 		"title": "Página no encontrada",
 		"description": "La página que buscas no existe o fue eliminada.",
 		"redirecting": "Redirigiendo en <count>{seconds}</count> {seconds, plural, one {segundo} other {segundos}}..."
@@ -27,7 +31,7 @@
 		"lastUpdate": "Última actualización: {date}"
 	},
 	"footer": {
-		"rights": "© 2024 Askedly Social Network. Todos los derechos reservados."
+		"rights": "© 2024 Askedly. Todos los derechos reservados."
 	},
 	"questionList": {
 		"empty": "Todavía no hay preguntas. ¡Sé el primero en preguntar!",
@@ -56,5 +60,11 @@
 		"unfollow": "Dejar de Seguir",
 		"unfollowing": "Dejando...",
 		"unfollowError": "No se pudo dejar de seguir"
+	},
+	"errorPage": {
+		"title": "Algo salió mal",
+		"description": "No pudimos cargar esta página. Tus datos están seguros. Inténtalo de nuevo.",
+		"retry": "Reintentar",
+		"home": "Volver al inicio"
 	}
 }

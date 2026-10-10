@@ -4,7 +4,7 @@ Envio via [Resend](https://resend.com) (`RESEND_API_KEY`). Templates em React Em
 
 ## Templates existentes
 
-- `emails/contact-email.tsx` — usado por `app/api/send-contact-email/route.ts` (formulário de contato, `app/contato`)
+- `emails/contact-email.tsx` — usado por `app/api/send-contact-email/route.ts` (formulário de contato, `app/contact`)
 - `emails/reset-password-email.tsx` — usado pelo fluxo de recuperação de senha (`app/api/reset-password/*`)
 
 ## Fluxo de recuperação de senha

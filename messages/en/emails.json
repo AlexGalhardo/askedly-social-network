@@ -1,6 +1,6 @@
 {
 	"contact": {
-		"heading": "Askedly Social Network Contact Form",
+		"heading": "Askedly Contact Form",
 		"name": "Name:",
 		"email": "Email:",
 		"subject": "Subject:",
@@ -9,7 +9,7 @@
 	"resetPassword": {
 		"heading": "Password Recovery",
 		"greeting": "Hello {name},",
-		"intro": "We received a request to reset the password for your Askedly Social Network account.",
+		"intro": "We received a request to reset the password for your Askedly account.",
 		"ignore": "If you did not request a password reset, please ignore this email.",
 		"instruction": "To reset your password, click the button below:",
 		"button": "Reset Password",

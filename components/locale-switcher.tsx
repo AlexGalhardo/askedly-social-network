@@ -23,7 +23,7 @@ export function LocaleSwitcher() {
 					router.refresh();
 				})
 			}
-			className="rounded-md border bg-background px-2 py-1 text-sm"
+			className="rounded-md border bg-background px-2 py-1 text-sm text-foreground dark:[color-scheme:dark] [&>option]:bg-background [&>option]:text-foreground"
 		>
 			{locales.map((code) => (
 				<option key={code} value={code}>
