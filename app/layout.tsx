@@ -5,6 +5,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import Script from "next/script";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { MySidebar } from "@/components/my-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -15,7 +17,7 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "RespondeAê - Receba Perguntas, Monetize Suas Respostas.",
+	title: "Askedly Social Network - Receba Perguntas, Monetize Suas Respostas.",
 	description:
 		"Compartilhe conhecimento e suas experiências com pessoas interessadas em saber o que você tem a dizer.",
 	keywords: ["respondeae.com.br", "perguntas", "monetização", "respostas", "plataforma social", "ganhar dinheiro"],
@@ -23,17 +25,17 @@ export const metadata: Metadata = {
 		icon: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
 	},
 	openGraph: {
-		title: "Respondeae.com.br - Receba Perguntas. Monetize Suas Respostas.",
+		title: "Askedly Social Network - Receba Perguntas. Monetize Suas Respostas.",
 		description:
 			"Compartilhe conhecimento e suas experiências com pessoas interessadas em saber o que você tem a dizer.",
 		url: "https://respondeae.com.br",
-		siteName: "Respondeae.com.br",
+		siteName: "Askedly Social Network",
 		images: [
 			{
 				url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
 				width: 1200,
 				height: 630,
-				alt: "Respondeae.com.br",
+				alt: "Askedly Social Network",
 			},
 		],
 		locale: "pt_BR",
@@ -41,9 +43,9 @@ export const metadata: Metadata = {
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "RespondeAê - Receba Perguntas. Monetize Suas Respostas.",
+		title: "Askedly Social Network - Receba Perguntas. Monetize Suas Respostas.",
 		description:
-			"RespondeAê é uma plataforma onde você pode receber e enviar perguntas para outros perfis, e monetizar suas respostas.",
+			"Askedly Social Network é uma plataforma onde você pode receber e enviar perguntas para outros perfis, e monetizar suas respostas.",
 		images: ["https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"],
 	},
 	metadataBase: new URL("https://respondeae.com.br"),
@@ -58,29 +60,33 @@ export default async function RootLayout({
 	// página estática é gerada no build, sem requisição, e seus scripts seriam bloqueados.
 	const nonce = (await headers()).get("x-nonce") ?? undefined;
 
+	const locale = await getLocale();
+
 	return (
-		<html lang="pt-BR" suppressHydrationWarning>
+		<html lang={locale} suppressHydrationWarning>
 			<body className={inter.className}>
 				<GoogleAnalytics GA_MEASUREMENT_ID="G-3QEQRYL4P9" nonce={nonce} />
 
-				<Providers>
-					<ThemeProvider
-						attribute="class"
-						defaultTheme="light"
-						enableSystem={false}
-						disableTransitionOnChange
-						nonce={nonce}
-					>
-						<ReactQueryProvider>
-							<div className="min-h-screen bg-background">
-								<MySidebar />
-								<main className="pt-14 lg:pt-0 lg:max-w-7xl lg:mx-auto lg:pl-96 lg:pr-6 lg:min-h-screen">
-									{children}
-								</main>
-							</div>
-						</ReactQueryProvider>
-					</ThemeProvider>
-				</Providers>
+				<NextIntlClientProvider>
+					<Providers>
+						<ThemeProvider
+							attribute="class"
+							defaultTheme="light"
+							enableSystem={false}
+							disableTransitionOnChange
+							nonce={nonce}
+						>
+							<ReactQueryProvider>
+								<div className="min-h-screen bg-background">
+									<MySidebar />
+									<main className="pt-14 lg:pt-0 lg:max-w-7xl lg:mx-auto lg:pl-96 lg:pr-6 lg:min-h-screen">
+										{children}
+									</main>
+								</div>
+							</ReactQueryProvider>
+						</ThemeProvider>
+					</Providers>
+				</NextIntlClientProvider>
 
 				<Toaster />
 

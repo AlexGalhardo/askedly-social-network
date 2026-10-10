@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DATABASE_URL: "postgres://postgres:postgres@localhost:5432/perguntae_db?schema=public"
+  DATABASE_URL: "postgres://postgres:postgres@localhost:5432/askedly_db?schema=public"
   NEXTAUTH_SECRET: "ci-only-secret"
   NEXTAUTH_URL: "http://localhost:3000"
   NEXT_PUBLIC_APP_URL: "http://localhost:3000"
@@ -76,7 +76,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: perguntae_db
+          POSTGRES_DB: askedly_db
         ports:
           - 5432:5432
         options: >-
@@ -103,7 +103,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: perguntae_db
+          POSTGRES_DB: askedly_db
         ports:
           - 5432:5432
         options: >-

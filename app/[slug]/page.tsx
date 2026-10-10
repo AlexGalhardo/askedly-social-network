@@ -5,8 +5,8 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 	const resolvedParams = await params;
 	const nickname = resolvedParams.slug;
 
-	const title = `@${nickname} - Respondeae.com.br`;
-	const description = `Veja o perfil público de ${nickname} no Respondeae.com.br.`;
+	const title = `@${nickname} - Askedly Social Network`;
+	const description = `Veja o perfil público de ${nickname} no Askedly Social Network.`;
 
 	return {
 		title,
@@ -15,13 +15,13 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 			title,
 			description,
 			url: `https://respondeae.com.br/${nickname}`,
-			siteName: "Respondeae.com.br",
+			siteName: "Askedly Social Network",
 			images: [
 				{
 					url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",
 					width: 1200,
 					height: 630,
-					alt: "RespondeAê",
+					alt: "Askedly Social Network",
 				},
 			],
 			locale: "pt_BR",

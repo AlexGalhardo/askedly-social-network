@@ -1,7 +1,7 @@
 ---
-name: respondeae-local-verification
+name: askedly-local-verification
 description: >
-  Como validar uma mudança no RespondeAê localmente do mesmo jeito que o CI valida (lint, tipos, unit, integração,
+  Como validar uma mudança no Askedly Social Network localmente do mesmo jeito que o CI valida (lint, tipos, unit, integração,
   build, smoke, e2e em dev e em modo produção). Use antes de dar qualquer tarefa como pronta, quando um teste passa
   local e falha no CI, ou quando build/e2e falham por banco, captcha, Bun vs Node ou Prisma.
 ---
@@ -14,8 +14,8 @@ Nunca rode integração/smoke/e2e contra o banco do `.env` (é o banco de dev, c
 exporte a URL só para o comando:
 
 ```bash
-docker run -d --name respondeae-ci-pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=perguntae_db -p 55432:5432 postgres:17-alpine
-export DATABASE_URL="postgresql://postgres:postgres@localhost:55432/perguntae_db"
+docker run -d --name askedly-ci-pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=askedly_db -p 55432:5432 postgres:17-alpine
+export DATABASE_URL="postgresql://postgres:postgres@localhost:55432/askedly_db"
 bunx prisma migrate deploy
 ```
 

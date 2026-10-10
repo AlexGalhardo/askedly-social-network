@@ -274,12 +274,12 @@ export function MySidebar() {
 					<div className="flex items-center space-x-2">
 						<Image
 							src="https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"
-							alt="RespondeAê"
+							alt="Askedly Social Network"
 							width={32}
 							height={32}
 							className="rounded-lg"
 						/>
-						<span className="text-xl font-bold">RespondeAê</span>
+						<span className="text-xl font-bold">Askedly Social Network</span>
 					</div>
 
 					<div className="flex items-center space-x-2">
@@ -300,12 +300,12 @@ export function MySidebar() {
 						<div className="flex items-center space-x-3">
 							<Image
 								src="https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"
-								alt="RespondeAê"
+								alt="Askedly Social Network"
 								width={40}
 								height={40}
 								className="rounded-lg"
 							/>
-							<span className="text-2xl font-bold">RespondeAê</span>
+							<span className="text-2xl font-bold">Askedly Social Network</span>
 						</div>
 					</div>
 
@@ -326,7 +326,7 @@ export function MySidebar() {
 							<div className="flex items-center space-x-3">
 								<Image
 									src="https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct"
-									alt="RespondeAê"
+									alt="Askedly Social Network"
 									width={32}
 									height={32}
 									className="rounded-lg"

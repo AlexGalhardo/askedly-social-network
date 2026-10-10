@@ -1,0 +1,8 @@
+{
+	"unauthorized": "No autorizado",
+	"forbidden": "No tienes permiso para hacer esto",
+	"notFound": "No encontrado",
+	"invalidData": "Datos inválidos",
+	"internal": "Error interno del servidor",
+	"tryAgainLater": "Algo salió mal. Inténtalo de nuevo más tarde."
+}

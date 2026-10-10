@@ -9,7 +9,7 @@ export function Navbar() {
 					href="/feed"
 					className="text-2xl font-bold bg-gradient-to-r from-green-700 to-green-600 bg-clip-text text-transparent"
 				>
-					RespondeAê
+					Askedly Social Network
 				</Link>
 
 				<div className="flex items-center gap-4">

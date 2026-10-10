@@ -15,7 +15,7 @@ export function ContactEmail({ name, email, subject, message }: ContactEmailProp
 				<Container style={{ padding: "20px", maxWidth: "600px" }}>
 					<Section style={{ marginBottom: "20px" }}>
 						<Heading className="font-semibold text-[24px] text-indigo-400 leading-[32px]">
-							Formulário de Contato do RespondeAe
+							Formulário de Contato do Askedly Social Network
 						</Heading>
 					</Section>
 					<Section style={{ marginBottom: "10px" }}>

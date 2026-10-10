@@ -60,12 +60,12 @@ export class SeedUserFactory {
 
 	async createOfficialUser(): Promise<Omit<SeedUserInterface, "id">> {
 		return {
-			name: "RespondeAê Perfil Oficial",
+			name: "Askedly Social Network Perfil Oficial",
 			is_seed: true,
 			nickname: "respondeae",
 			email: "respondeae@gmail.com",
 			password: await hash("respondeaeoficialBR@123", 10),
-			description: "Perfil oficial do RespondeAe",
+			description: "Perfil oficial do Askedly Social Network",
 			website: faker.datatype.boolean() ? faker.internet.url() : null,
 			pix_key: faker.datatype.boolean() ? faker.internet.email() : null,
 			avatar_url: "https://jn8ro29yhv.ufs.sh/f/vHeKy2kb0BOP11yB1f902oNUJAhsEHWQqlITjdxySgXvfmct",

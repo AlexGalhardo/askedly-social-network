@@ -1,4 +1,4 @@
-# RespondeAê — Guia para Agentes de IA
+# Askedly Social Network — Guia para Agentes de IA
 
 Rede social de perguntas e respostas (estilo Retrospectiva/NGL) com perguntas pagas via PIX.
 Next.js 16 (App Router) + React 19 + Prisma 7/PostgreSQL + NextAuth + AbacatePay + Resend + UploadThing.
@@ -48,7 +48,7 @@ Skills de terceiros vendorizadas em `.claude/skills/` (origem/commit em `.claude
 - Revisão: `code-review-and-quality`, `ponytail-review`/`ponytail-audit`, `security-and-hardening` (OWASP), `performance-optimization`
 - UI: `impeccable`, `frontend-design`, `frontend-ui-engineering`, `ui-ux-pro-max`, `web-design-guidelines`, `vercel-react-best-practices`
 - Processo: `git-workflow-and-versioning`, `ci-cd-and-automation`, `documentation-and-adrs`, `planning-and-task-breakdown`
-- Do projeto: `respondeae-secure-endpoint` (toda action/rota/dado que vai ao browser) e `respondeae-local-verification` (validar como o CI antes de dar como pronto)
+- Do projeto: `askedly-secure-endpoint` (toda action/rota/dado que vai ao browser) e `askedly-local-verification` (validar como o CI antes de dar como pronto)
 
 ## Convenções
 

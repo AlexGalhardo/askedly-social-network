@@ -1,13 +1,13 @@
 ---
-name: respondeae-secure-endpoint
+name: askedly-secure-endpoint
 description: >
-  Checklist do RespondeAê para criar ou alterar uma Server Action (actions/), uma API route (app/api/) ou qualquer
+  Checklist do Askedly Social Network para criar ou alterar uma Server Action (actions/), uma API route (app/api/) ou qualquer
   função que devolva dados ao browser. Use sempre que for escrever "use server", um route.ts, uma query que alimenta
   página pública, ou mexer em login/cadastro/senha/pagamento. Baseada nos achados reais da auditoria em
   docs/security.md.
 ---
 
-# Endpoint seguro no RespondeAê
+# Endpoint seguro no Askedly Social Network
 
 Toda Server Action é um endpoint HTTP público, chamável por qualquer um com quaisquer argumentos. Tudo que uma
 action retorna, que um Server Component passa para um Client Component, e a sessão do NextAuth vão para o browser.

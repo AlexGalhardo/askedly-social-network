@@ -11,17 +11,17 @@ export default function TermosDeUsoClient() {
 
 					<h2 className="text-xl font-bold text-foreground mb-4">1. Aceitação dos Termos</h2>
 					<p className="mb-6">
-						Ao acessar e utilizar os serviços da plataforma do <strong>RespondeAê</strong>{" "}
+						Ao acessar e utilizar os serviços da plataforma do <strong>Askedly Social Network</strong>{" "}
 						(https://respondeae.com.br), você concorda com os presentes Termos de Uso.
 					</p>
 
 					<h2 className="text-xl font-bold text-foreground mb-4">2. Descrição do Serviço</h2>
 					<p className="mb-6">
-						O RespondeAê é uma plataforma onde os usuários podem fazer perguntas pagas para outras pessoas e
-						receber respostas. As perguntas devem ter valor mínimo de R$2,00, com pagamento via PIX, e os
-						valores sugeridos são: R$2, R$5, R$10, R$20, R$50 ou outro valor inteiro definido pelo usuário.
-						Ao responder de forma adequada, o autor da resposta recebe o valor pago pela pergunta
-						descontando taxas como descrito na seção 4 - Pagamentos.
+						O Askedly Social Network é uma plataforma onde os usuários podem fazer perguntas pagas para
+						outras pessoas e receber respostas. As perguntas devem ter valor mínimo de R$2,00, com pagamento
+						via PIX, e os valores sugeridos são: R$2, R$5, R$10, R$20, R$50 ou outro valor inteiro definido
+						pelo usuário. Ao responder de forma adequada, o autor da resposta recebe o valor pago pela
+						pergunta descontando taxas como descrito na seção 4 - Pagamentos.
 					</p>
 
 					<h2 className="text-xl font-bold text-foreground mb-4">3. Limites de Uso Diário</h2>
@@ -101,9 +101,9 @@ export default function TermosDeUsoClient() {
 
 					<h2 className="text-xl font-bold text-foreground mb-4">10. Limitação de Responsabilidade</h2>
 					<p className="mb-6">
-						O RespondeAê não se responsabiliza por danos diretos, indiretos, incidentais ou consequenciais
-						relacionados ao uso da plataforma. As perguntas e respostas feita pelos usuários é de
-						responsabilidade exclusiva de quem o publica. Contamos com a colaboração da comunidade para
+						O Askedly Social Network não se responsabiliza por danos diretos, indiretos, incidentais ou
+						consequenciais relacionados ao uso da plataforma. As perguntas e respostas feita pelos usuários
+						é de responsabilidade exclusiva de quem o publica. Contamos com a colaboração da comunidade para
 						manter um ambiente saudável e produtivo.
 					</p>
 

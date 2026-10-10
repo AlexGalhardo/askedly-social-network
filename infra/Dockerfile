@@ -1,5 +1,5 @@
 # Build/execução em container opcional (o deploy oficial é Vercel, ver docs/deployment.md).
-# Uso a partir da raiz do repo: docker build -f infra/Dockerfile -t respondeae .
+# Uso a partir da raiz do repo: docker build -f infra/Dockerfile -t askedly-social-network .
 FROM oven/bun:1.4.2-alpine AS base
 WORKDIR /app
 

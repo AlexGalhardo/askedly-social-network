@@ -32,7 +32,7 @@ echo "==> Subindo Postgres (infra/docker-compose.yaml)..."
 docker compose -f infra/docker-compose.yaml up -d
 
 echo "==> Aguardando Postgres ficar saudável..."
-until [ "$(docker inspect -f '{{.State.Health.Status}}' "$(docker compose -f infra/docker-compose.yaml ps -q perguntae_db)" 2>/dev/null)" = "healthy" ]; do
+until [ "$(docker inspect -f '{{.State.Health.Status}}' "$(docker compose -f infra/docker-compose.yaml ps -q askedly_db)" 2>/dev/null)" = "healthy" ]; do
 	sleep 1
 done
 

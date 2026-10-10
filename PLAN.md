@@ -1,4 +1,4 @@
-# PLANO — Refatoração RespondeAê para padrão Open Source
+# PLANO — Refatoração Askedly Social Network para padrão Open Source
 
 > Plano vivo. Cada sessão futura deve ler este arquivo antes de continuar.
 > Legenda: `[ ]` não iniciado · `[~]` parcial/depende de ação do dev · `[x]` concluído.
@@ -172,7 +172,7 @@ Executada com as skills `graphify` (mapa do código), `security-and-hardening`, 
 
 ## Fase 13 — Skills novas (.claude/skills/)
 
-- [x] Avaliar necessidade de skills específicas do projeto: criadas `respondeae-secure-endpoint` (checklist a partir dos achados reais da auditoria) e `respondeae-local-verification` (validar como o CI: banco descartável, Node, chaves de teste do Turnstile, armadilhas do Prisma 7). Migrations ficaram cobertas pela segunda
+- [x] Avaliar necessidade de skills específicas do projeto: criadas `askedly-secure-endpoint` (checklist a partir dos achados reais da auditoria) e `askedly-local-verification` (validar como o CI: banco descartável, Node, chaves de teste do Turnstile, armadilhas do Prisma 7). Migrations ficaram cobertas pela segunda
 
 ## Fase 14 — [FINAL] Auditoria de segurança OWASP Top Ten (aplicação inteira)
 

@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 		const { data, error } = await resendClient().emails.send({
 			from: EMAIL_FROM,
 			to: ["aleexgvieira@gmail.com"],
-			subject: `Respondeae.com.br - ${email} - ${subject}`,
+			subject: `Askedly Social Network - ${email} - ${subject}`,
 			react: ContactEmail({ name, email, subject, message }),
 		});
 

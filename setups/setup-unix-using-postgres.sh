@@ -32,7 +32,7 @@ if ! command -v psql >/dev/null 2>&1; then
 else
 	psql "$DB_URL" -c '\q' 2>/dev/null || {
 		echo "Não foi possível conectar em ${DB_URL}."
-		echo "Confirme que o Postgres está rodando e que o banco existe (ex: createdb perguntae_db)."
+		echo "Confirme que o Postgres está rodando e que o banco existe (ex: createdb askedly_db)."
 		exit 1
 	}
 fi
