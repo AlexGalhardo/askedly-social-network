@@ -87,7 +87,7 @@ The [`docs/`](docs) folder explains the project by area (it is also the context 
 - [Emails](docs/email.md)
 - [Uploads](docs/uploads.md)
 - [Telegram bot](docs/telegram-bot.md)
-- [Tests](docs/testing.md)
+- [Tests](docs/testing.md) and the [autonomous QA script](docs/qa.md)
 - [Deployment and CI/CD](docs/deployment.md) and the [Vercel deployment walkthrough](docs/vercel-deploy.md)
 - [Docker (demo mode)](docs/docker.md)
 - [Tooling](docs/tooling.md)

@@ -11,7 +11,8 @@
 | Unit/functional | pure functions (`lib/utils/*`, `lib/date-time.ts`, `lib/utils.ts`, payout calculation, profile sanitization, env validation in `lib/env.ts`, CSP) and the guard test that forbids `"use server"` in `lib/` | `*.test.ts` next to the file under test |
 | Integration | repositories and services against a real test Postgres (not mocked): users, withdrawal (including concurrent withdrawal), question creation (webhook amount, daily limit), expiry, cron authorization, password change (current password mandatory, Google account setting the first one), signup validated on the server, feed with no private data and no author of an anonymous question | `tests/integration/*.test.ts` |
 | Smoke | the application starts with `node .../next start` and responds (`/api/health` and `/`) | `tests/smoke/*.test.ts` |
-| E2E | browser flows: home, login form, signup, password change asking for the current password, profile, account pages, CSP with no violation. The paid question flow through PIX/answering is not covered yet | `tests/e2e/*.spec.ts` (Playwright) |
+| E2E | browser flows: home, login form, signup, password change asking for the current password, profile, account pages, CSP with no violation. The paid question flow through PIX/answering is covered by the QA script below | `tests/e2e/*.spec.ts` (Playwright) |
+| Autonomous QA | the whole running application, black box: pages/links/locales, auth, authorization of every API route, injection/XSS and both payment rails end to end. Not part of CI: it needs a running stack with simulated payments — see [`qa.md`](qa.md) | `qa.ts` (`bun run qa <baseUrl>`) |
 
 ## Running
 

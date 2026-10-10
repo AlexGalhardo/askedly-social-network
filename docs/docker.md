@@ -52,11 +52,14 @@ The rest of the code is the same as in production: credit debit, settlement, pla
 
 ## Automated check
 
-`tests/e2e/demo-check.mjs` walks through the running stack with Playwright's Chromium: language by `Accept-Language`, admin login with captcha, panel, simulated credit purchase, question paid with credits (debit verified), refusals (nonexistent owner, insufficient balance), simulated PIX and absence of CSP violations.
+`qa.ts` at the repo root walks the whole running stack with Playwright's Chromium and `fetch`, like a human QA
+engineer: every page/link/locale, auth, API-route authorization, injection/XSS, and the full PIX and Stripe
+payment rails end to end. It creates its own users through the real signup UI and needs no seed data beyond
+the admin. See [`qa.md`](qa.md) for the full suite list, flags and how to read the report.
 
 ```bash
-docker compose -f infra/docker-compose.demo.yaml exec db   psql -U postgres -d askedly_demo -Atc "select id, nickname from users where not is_admin limit 1"
-node tests/e2e/demo-check.mjs http://localhost:3000 <id> <nickname>
+APP_PORT=3300 docker compose -f infra/docker-compose.demo.yaml up --build -d
+bun run qa http://localhost:3300 --report=qa-report.json
 ```
 
 ## Details

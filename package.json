@@ -1,6 +1,6 @@
 {
   "name": "askedly-social-network",
-  "version": "0.17.2",
+  "version": "0.18.0",
   "private": true,
   "license": "MIT",
   "packageManager": "bun@1.4.2",
@@ -26,6 +26,7 @@
     "test:integration": "bun test tests/integration --timeout 20000",
     "test:smoke": "bun test tests/smoke --timeout 30000",
     "test:e2e": "playwright test",
+    "qa": "bun qa.ts",
     "prisma:generate": "bunx prisma generate",
     "prisma:migrate": "bunx prisma migrate dev",
     "prisma:studio": "bunx prisma studio",

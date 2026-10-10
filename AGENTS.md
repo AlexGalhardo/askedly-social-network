@@ -41,6 +41,7 @@ Infra (Docker/docker-compose) lives in `infra/`. Full application with simulated
 - [`docs/uploads.md`](docs/uploads.md) — UploadThing
 - [`docs/telegram-bot.md`](docs/telegram-bot.md) — Telegram logger/bot
 - [`docs/testing.md`](docs/testing.md) — how to run each kind of test
+- [`docs/qa.md`](docs/qa.md) — autonomous QA script (`bun qa.ts`) covering pages, auth, API authz, injection/XSS and both payment rails
 - [`docs/deployment.md`](docs/deployment.md) — CI/CD and deployment
 - [`docs/vercel-deploy.md`](docs/vercel-deploy.md) — Vercel deployment walkthrough (manually and with AI agents)
 - [`docs/docker.md`](docs/docker.md) — full application in Docker with simulated payments and seed

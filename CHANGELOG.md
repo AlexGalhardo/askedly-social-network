@@ -5,6 +5,12 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.18.0] - 2026-10-10
+
+### Added
+
+- `qa.ts` (`bun run qa <baseUrl>`): autonomous black-box QA of a running stack — pages, links and locales, auth, authorization of every API route (enumerated from `app/api`), SQL injection and stored XSS, and the PIX and Stripe credits rails end to end. It signs up its own users, refuses production and non-local hosts, and can write a JSON report (`--report`). It replaces the removed `tests/e2e/demo-check.mjs`. Documented in `docs/qa.md`
+
 ## [0.17.2] - 2026-10-10
 
 ### Changed
