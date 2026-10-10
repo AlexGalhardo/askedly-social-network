@@ -1,1 +1,22 @@
-{}
+{
+	"title": "Panel de administración",
+	"users": "Usuarios",
+	"payoutAccounts": "Cuentas de cobro de Stripe",
+	"questions": "Preguntas",
+	"answered": "Respondidas",
+	"awaiting": "Esperando respuesta",
+	"refused": "Rechazadas",
+	"expired": "Expiradas",
+	"pixVolume": "Volumen en PIX",
+	"pixRevenue": "Ingresos de la plataforma en PIX",
+	"creditsVolume": "Volumen en créditos",
+	"creditsRevenue": "Ingresos de la plataforma en créditos",
+	"creditsPurchased": "Créditos comprados",
+	"creditsOutstanding": "Créditos sin gastar",
+	"pendingSettlements": "Liquidaciones de créditos pendientes",
+	"withdrawals": "Retiros PIX",
+	"withdrawalsTotal": "Total retirado en PIX",
+	"latestPurchases": "Últimas compras de créditos",
+	"latestWithdrawals": "Últimos retiros PIX",
+	"empty": "Todavía no hay nada aquí."
+}

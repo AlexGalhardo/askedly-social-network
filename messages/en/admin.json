@@ -1,1 +1,22 @@
-{}
+{
+	"title": "Admin dashboard",
+	"users": "Users",
+	"payoutAccounts": "Stripe payout accounts",
+	"questions": "Questions",
+	"answered": "Answered",
+	"awaiting": "Awaiting answer",
+	"refused": "Refused",
+	"expired": "Expired",
+	"pixVolume": "PIX volume",
+	"pixRevenue": "PIX platform revenue",
+	"creditsVolume": "Credits volume",
+	"creditsRevenue": "Credits platform revenue",
+	"creditsPurchased": "Credits purchased",
+	"creditsOutstanding": "Unspent credits",
+	"pendingSettlements": "Pending credit settlements",
+	"withdrawals": "PIX withdrawals",
+	"withdrawalsTotal": "PIX withdrawn",
+	"latestPurchases": "Latest credit purchases",
+	"latestWithdrawals": "Latest PIX withdrawals",
+	"empty": "Nothing here yet."
+}

@@ -1,4 +1,5 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
+import { PAYMENTS_SIMULATED } from "@/lib/payment-simulation";
 import { appUrl, getStripe } from "@/lib/stripe";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -15,6 +16,15 @@ export function isValidCreditsPurchase(amountCents: unknown): amountCents is num
 
 /** Abre um Checkout da Stripe para comprar créditos (1 crédito = 1 centavo de dólar) e devolve a URL. */
 export async function createCreditsCheckout(userId: string, amountCents: number): Promise<string> {
+	if (PAYMENTS_SIMULATED) {
+		const sessionId = `sim_${randomUUID()}`;
+		await prisma.stripePurchase.create({
+			data: { user_id: userId, checkout_session_id: sessionId, amount_cents: amountCents },
+		});
+		await fulfillCreditsPurchase(sessionId);
+		return appUrl("/minha-conta?credits=success");
+	}
+
 	const session = await getStripe().checkout.sessions.create({
 		mode: "payment",
 		line_items: [

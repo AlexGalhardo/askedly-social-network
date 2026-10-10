@@ -7,6 +7,8 @@ export class SeedDatabaseCleaner {
 		console.log("Limpando tabelas existentes...");
 
 		await this.prisma.question.deleteMany();
+		await this.prisma.paymentWithdraw.deleteMany();
+		await this.prisma.stripePurchase.deleteMany();
 		console.log("Tabela 'question' limpa");
 
 		await this.prisma.webhookAbacatePay.deleteMany();

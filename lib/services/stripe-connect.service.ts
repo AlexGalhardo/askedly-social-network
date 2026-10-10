@@ -1,3 +1,4 @@
+import { PAYMENTS_SIMULATED } from "@/lib/payment-simulation";
 import { calculatePayout } from "@/lib/services/withdraw.service";
 import { appUrl, getStripe } from "@/lib/stripe";
 import TelegramLog from "@/lib/telegram-logger";
@@ -7,6 +8,7 @@ import { prisma } from "@/prisma/prisma-client";
 export type PayoutStatus = "none" | "pending" | "active";
 
 async function canReceiveTransfers(accountId: string): Promise<boolean> {
+	if (PAYMENTS_SIMULATED) return true;
 	const account = await getStripe().v2.core.accounts.retrieve(accountId, { include: ["configuration.recipient"] });
 	return account.configuration?.recipient?.capabilities?.stripe_balance?.stripe_transfers?.status === "active";
 }
@@ -27,6 +29,14 @@ export async function startPayoutOnboarding(userId: string, country: string): Pr
 		select: { email: true, name: true, stripe_account_id: true },
 	});
 	if (!user) throw new Error("User not found");
+
+	if (PAYMENTS_SIMULATED) {
+		await prisma.user.updateMany({
+			where: { id: userId, stripe_account_id: null },
+			data: { stripe_account_id: `acct_sim_${userId}` },
+		});
+		return appUrl("/minha-conta?payouts=return");
+	}
 
 	const stripe = getStripe();
 	let accountId = user.stripe_account_id;
@@ -76,6 +86,7 @@ export type SendTransfer = (input: TransferInput) => Promise<string | null>;
 
 const sendStripeTransfer: SendTransfer = async ({ accountId, amountCents, questionId }) => {
 	if (!(await canReceiveTransfers(accountId))) return null;
+	if (PAYMENTS_SIMULATED) return `tr_sim_${questionId}`;
 
 	const stripe = getStripe();
 	const transferGroup = `question_${questionId}`;

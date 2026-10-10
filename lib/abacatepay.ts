@@ -1,4 +1,5 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
+import { PAYMENTS_SIMULATED } from "@/lib/payment-simulation";
 
 // Segredos da AbacatePay: só podem ser lidos no servidor. Nunca importe este módulo em componente client
 // nem use prefixo NEXT_PUBLIC_, que embute o valor no bundle público do navegador.
@@ -48,6 +49,20 @@ export function createPixCharge(input: {
 	expiresIn: number;
 	metadata?: Record<string, string>;
 }): Promise<PixCharge> {
+	if (PAYMENTS_SIMULATED) {
+		return Promise.resolve({
+			id: `sim_${randomUUID()}`,
+			amount: input.amount,
+			status: "PENDING",
+			devMode: true,
+			brCode: "SIMULATED-PIX",
+			// PNG 1x1: a tela exige uma imagem de QR code.
+			brCodeBase64:
+				"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+			platformFee: 0,
+			expiresAt: new Date(Date.now() + input.expiresIn * 1000).toISOString(),
+		});
+	}
 	return request<PixCharge>("/transparents/create", {
 		method: "POST",
 		body: JSON.stringify({ method: "PIX", data: input }),
@@ -55,11 +70,13 @@ export function createPixCharge(input: {
 }
 
 export function checkPixCharge(id: string): Promise<{ id: string; status: PixChargeStatus; expiresAt: string }> {
+	if (PAYMENTS_SIMULATED) return Promise.resolve({ id, status: "PAID", expiresAt: new Date().toISOString() });
 	return request(`/transparents/check?id=${encodeURIComponent(id)}`);
 }
 
 /** Só funciona com chave de sandbox (devMode). */
 export function simulatePixPayment(id: string): Promise<{ id: string; status: PixChargeStatus }> {
+	if (PAYMENTS_SIMULATED) return Promise.resolve({ id, status: "PAID" });
 	return request(`/transparents/simulate-payment?id=${encodeURIComponent(id)}`, {
 		method: "POST",
 		body: JSON.stringify({ metadata: {} }),

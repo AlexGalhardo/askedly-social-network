@@ -11,6 +11,11 @@ RUN bun install --frozen-lockfile
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# NEXT_PUBLIC_* entra no bundle do browser, então precisa existir no build.
+ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
+ARG NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY
+ARG NEXT_PUBLIC_TEST_MODE=false
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \n    NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY \n    NEXT_PUBLIC_TEST_MODE=$NEXT_PUBLIC_TEST_MODE
 RUN bun run prisma:generate
 RUN bun run build
 
