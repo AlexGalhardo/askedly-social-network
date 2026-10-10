@@ -15,7 +15,7 @@ The project is built in four phases. A phase only starts once the exit criterion
 | 3. BETA | `0.x` | Real payments, audited security, three languages, production for invited users |
 | 4. 1.0.0 STABLE | `1.0.0` | Open to the public, open source, operable by anyone with the documentation |
 
-Releases are `0.x` until the Phase 4 exit criterion is met; `1.0.0` is cut then. Every commit on `main` is a release: SemVer bump in `package.json`, a section in `CHANGELOG.md`, a `vX.Y.Z` tag and a GitHub release (see `CONTRIBUTE.md`).
+Releases are `0.x` until the Phase 4 exit criterion is met; `1.0.0` is cut then. Every commit on `main` is a release: SemVer bump in `package.json`, a section in `CHANGELOG.md`, a `vX.Y.Z` tag and a GitHub release (see `CONTRIBUTING.md`).
 
 ## Locked decisions (do not ask again)
 
@@ -206,7 +206,7 @@ Goal: open to the public and maintained as an open source project. Someone arriv
 
 ### Open source
 
-- [x] `LICENSE.md` (MIT), `CONTRIBUTE.md`, `SECURITY.md`
+- [x] `LICENSE.md` (MIT), `CONTRIBUTING.md`, `SECURITY.md`
 - [x] `README.md` with what it is, stack, how to run and a map of the documentation
 - [ ] `CODE_OF_CONDUCT.md`
 - [ ] Issue and pull request templates in `.github/`

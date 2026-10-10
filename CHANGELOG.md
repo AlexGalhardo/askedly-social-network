@@ -5,6 +5,12 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [SemVer](https://semver.org/). Every commit on `main` is a release.
 
+## [0.17.2] - 2026-10-10
+
+### Changed
+
+- `CONTRIBUTE.md` is now `CONTRIBUTING.md`, the name GitHub links from issues and pull requests
+
 ## [0.17.1] - 2026-10-10
 
 ### Fixed

@@ -62,7 +62,7 @@ Third-party skills are vendored in `.claude/skills/` (origin/commit in `.claude/
 
 - Formatting: `.editorconfig` (tab, width 4, LF) is the source of truth; Biome reads it through `formatter.useEditorconfig`. YAML and `package.json` use spaces
 - Conventional Commits are mandatory (validated by commitlint in `commit-msg`)
-- Every commit on `main` is a release: bump `version` in `package.json` (SemVer, `0.x` until Phase 4 of `PLAN.md`), add the section to `CHANGELOG.md`, tag `vX.Y.Z` and publish the GitHub release (steps in `CONTRIBUTE.md`)
+- Every commit on `main` is a release: bump `version` in `package.json` (SemVer, `0.x` until Phase 4 of `PLAN.md`), add the section to `CHANGELOG.md`, tag `vX.Y.Z` and publish the GitHub release (steps in `CONTRIBUTING.md`)
 - Language: code, comments, docs and commit messages are in English. The UI is translated (en default, pt, es) through next-intl; user content is never translated
 - Comments only for edge cases/non-obvious decisions — never a redundant comment
 - Strongly typed TypeScript; avoid unjustified `any`
